@@ -1,0 +1,88 @@
+{
+  "version": "1",
+  "cognitoConfig": {
+    "identityPoolName": "mathtrainere76a1246_identitypool_e76a1246",
+    "allowUnauthenticatedIdentities": false,
+    "resourceNameTruncated": "mathtre76a1246",
+    "userPoolName": "mathtrainere76a1246_userpool_e76a1246",
+    "autoVerifiedAttributes": [
+      "email"
+    ],
+    "mfaConfiguration": "OFF",
+    "mfaTypes": [
+      "SMS Text Message"
+    ],
+    "smsAuthenticationMessage": "Your authentication code is {####}",
+    "smsVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Your verification code",
+    "emailVerificationMessage": "Your verification code is {####}",
+    "defaultPasswordPolicy": false,
+    "passwordPolicyMinLength": 8,
+    "passwordPolicyCharacters": [],
+    "requiredAttributes": [
+      "email",
+      "name"
+    ],
+    "aliasAttributes": [],
+    "userpoolClientGenerateSecret": false,
+    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientWriteAttributes": [
+      "email"
+    ],
+    "userpoolClientReadAttributes": [
+      "email"
+    ],
+    "userpoolClientLambdaRole": "mathtre76a1246_userpoolclient_lambda_role",
+    "userpoolClientSetAttributes": false,
+    "sharedId": "e76a1246",
+    "resourceName": "mathtrainere76a1246",
+    "authSelections": "identityPoolAndUserPool",
+    "useDefault": "default",
+    "usernameAttributes": [
+      "email"
+    ],
+    "triggers": {
+      "PostConfirmation": [
+        "add-to-group"
+      ]
+    },
+    "userPoolGroupList": [
+      "Estudiantes",
+      "Admins"
+    ],
+    "serviceName": "Cognito",
+    "usernameCaseSensitive": false,
+    "useEnabledMfas": true,
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "dependsOn": [
+      {
+        "category": "function",
+        "resourceName": "mathtrainere76a1246PostConfirmation",
+        "triggerProvider": "Cognito",
+        "attributes": [
+          "Arn",
+          "Name"
+        ]
+      }
+    ],
+    "permissions": [
+      "{\n  \"policyName\": \"AddToGroupCognito\",\n  \"trigger\": \"PostConfirmation\",\n  \"effect\": \"Allow\",\n  \"actions\": [\n    \"cognito-idp:AdminAddUserToGroup\",\n    \"cognito-idp:GetGroup\",\n    \"cognito-idp:CreateGroup\"\n  ],\n  \"resource\": {\n    \"paramType\": \"!GetAtt\",\n    \"keys\": [\n      \"UserPool\",\n      \"Arn\"\n    ]\n  }\n}"
+    ],
+    "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PostConfirmation\",\n    \"lambdaFunctionName\": \"mathtrainere76a1246PostConfirmation\"\n  }\n]",
+    "parentStack": {
+      "Ref": "AWS::StackId"
+    }
+  }
+}

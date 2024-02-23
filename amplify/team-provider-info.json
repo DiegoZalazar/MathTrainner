@@ -1,0 +1,30 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-mathtrainer-dev-123201-authRole",
+      "UnauthRoleArn": "arn:aws:iam::854726693500:role/amplify-mathtrainer-dev-123201-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::854726693500:role/amplify-mathtrainer-dev-123201-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-mathtrainer-dev-123201-deployment",
+      "UnauthRoleName": "amplify-mathtrainer-dev-123201-unauthRole",
+      "StackName": "amplify-mathtrainer-dev-123201",
+      "StackId": "arn:aws:cloudformation:us-east-1:854726693500:stack/amplify-mathtrainer-dev-123201/839a7b60-cc30-11ee-b68d-12191fcc8eff",
+      "AmplifyAppId": "d1tcehuncywhe",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-mathtrainer-dev-123201-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+    },
+    "categories": {
+      "auth": {
+        "mathtrainer4d6dcb4c": {},
+        "mathtrainere76a1246": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "mathtrainere76a1246PostConfirmation": {
+          "GROUP": "Estudiantes",
+          "deploymentBucketName": "amplify-mathtrainer-dev-123201-deployment",
+          "s3Key": "amplify-builds/mathtrainere76a1246PostConfirmation-416c4c66636531453348-build.zip"
+        }
+      }
+    }
+  }
+}
