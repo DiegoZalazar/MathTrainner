@@ -2,4 +2,9 @@
     <string name="app_name">MathTrainer</string>
     <string name="title_activity_admin_principal">AdminPrincipalActivity</string>
     <string name="title_activity_admin_usuarios">AdminUsuariosActivity</string>
+    <string name="title_activity_admin_modulos">AdminModulosActivity</string>
+    <string name="title_activity_admin_edit_mod">AdminEditModActivity</string>
+    <string name="title_activity_admin_lecciones">AdminLeccionesActivity</string>
+    <string name="title_activity_admin_ejercicios">AdminEjerciciosActivity</string>
+    <string name="title_activity_admin_delete_user">AdminDeleteUserActivity</string>
 </resources>

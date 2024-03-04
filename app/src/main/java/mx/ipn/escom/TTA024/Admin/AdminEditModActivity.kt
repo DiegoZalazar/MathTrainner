@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -37,72 +39,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import mx.ipn.escom.TTA024.Admin.ui.theme.MathTrainerTheme
 import mx.ipn.escom.TTA024.R
 
-class AdminPrincipalActivity : ComponentActivity() {
-
+class AdminEditModActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-            Principal()
+            EditModulo()
         }
-    }
-}
-
-
-@Composable
-fun BotonNavegacion(imagen: Int, textoDesplegable: String, clase: Class<*>) {
-    val context = LocalContext.current
-    Card(
-        modifier = Modifier
-            .background(Color.White)
-            .height(272.dp)
-            .width(330.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        )
-    ) {
-        Column(modifier = Modifier.background(Color.White)) {
-            Text(
-                text = textoDesplegable,
-                fontStyle = FontStyle.Italic,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                textAlign = TextAlign.Center,
-                modifier= Modifier
-                    .fillMaxWidth()
-                    .align(alignment = Alignment.CenterHorizontally).padding(top = 20.dp)
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            Image(
-                painter = painterResource(id = imagen),
-                contentDescription = "usuario",
-                modifier = Modifier
-                    .clickable {
-                        val navigate =
-                            Intent(
-                                context,
-                                clase
-                            )
-                        context.startActivity(navigate)
-                    }
-                    .align(alignment = Alignment.CenterHorizontally)
-                    .size(165.dp)
-                    .clip(CircleShape)                       // clip to the circle shape
-                    .border(2.dp, Color.White, CircleShape)   // add a border (optional)
-
-            )
-            Spacer(modifier = Modifier.fillMaxHeight())
-        }
-
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-fun Principal() {
+fun EditModulo() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
@@ -110,19 +62,28 @@ fun Principal() {
                 titleContentColor = MaterialTheme.colorScheme.primary,
             ),
             title = {
-                Text("Bienvenido, ")
+                Text("Editar Módulo, ")
             }
         )
-
+        Text(
+            text = "Tema: ",
+            fontStyle = FontStyle.Italic,
+            fontSize = 16.sp, modifier = Modifier.align(alignment = Alignment.Start).padding(top = 30.dp, start = 10.dp)
+        )
+        Text(
+            text = "Titulo: ",
+            fontStyle = FontStyle.Italic,
+            fontSize = 16.sp, modifier = Modifier.align(alignment = Alignment.Start).padding(top = 30.dp, start = 10.dp)
+        )
         Text(
             text = "Selecciona una opción:",
             fontStyle = FontStyle.Italic,
             fontSize = 24.sp, modifier = Modifier.align(alignment = Alignment.Start).padding(top = 30.dp, start = 10.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
-        BotonNavegacion(R.drawable.usuarioicon,"Consultar Usuarios", AdminUsuariosActivity::class.java)
+        BotonNavegacion(R.drawable.leccionicon,"Consultar Lecciónes", AdminUsuariosActivity::class.java)
         Spacer(modifier = Modifier.height(20.dp))
-        BotonNavegacion(R.drawable.modulosicon,"Consultar Módulos",AdminModulosActivity::class.java)
+        BotonNavegacion(R.drawable.ejerciciosicon,"Consultar Ejercicios",AdminModulosActivity::class.java)
         Spacer(modifier = Modifier.height(20.dp))
     }
 }
