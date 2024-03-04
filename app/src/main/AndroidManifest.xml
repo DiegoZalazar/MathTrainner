@@ -2,10 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
-
         android:name=".principalAmplify"
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,6 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MathTrainer"
         tools:targetApi="31">
+        <activity
+            android:name=".Admin.AdminUsuariosActivity"
+            android:exported="false"
+            android:label="@string/title_activity_admin_usuarios"
+            android:theme="@style/Theme.MathTrainer" />
+        <activity
+            android:name=".Admin.AdminPrincipalActivity"
+            android:exported="true"
+            android:label="@string/title_activity_admin_principal"
+            android:theme="@style/Theme.MathTrainer" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -26,8 +37,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
 </manifest>

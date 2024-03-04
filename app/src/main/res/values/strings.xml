@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MathTrainer</string>
+    <string name="title_activity_admin_principal">AdminPrincipalActivity</string>
+    <string name="title_activity_admin_usuarios">AdminUsuariosActivity</string>
 </resources>
