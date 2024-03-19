@@ -17,6 +17,11 @@
         android:theme="@style/Theme.MathTrainer"
         tools:targetApi="31">
         <activity
+            android:name=".Admin.AdminEditUserActivity"
+            android:exported="false"
+            android:label="@string/title_activity_admin_edit_user"
+            android:theme="@style/Theme.MathTrainer" />
+        <activity
             android:name=".Admin.AdminDeleteUserActivity"
             android:exported="false"
             android:label="@string/title_activity_admin_delete_user"

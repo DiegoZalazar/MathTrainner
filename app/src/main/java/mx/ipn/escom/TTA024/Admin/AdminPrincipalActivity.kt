@@ -117,7 +117,8 @@ fun Principal() {
         Text(
             text = "Selecciona una opción:",
             fontStyle = FontStyle.Italic,
-            fontSize = 24.sp, modifier = Modifier.align(alignment = Alignment.Start).padding(top = 30.dp, start = 10.dp)
+            fontSize = 24.sp,
+            modifier = Modifier.align(alignment = Alignment.Start).padding(top = 30.dp, start = 10.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
         BotonNavegacion(R.drawable.usuarioicon,"Consultar Usuarios", AdminUsuariosActivity::class.java)
