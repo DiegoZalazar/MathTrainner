@@ -21,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -37,22 +38,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import mx.ipn.escom.TTA024.R
+import mx.ipn.escom.TTA024.navigation.AppNavigation
+import mx.ipn.escom.TTA024.navigation.AppScreens
 
 class AdminPrincipalActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-            Principal()
+            AppNavigation()
         }
     }
 }
 
 
 @Composable
-fun BotonNavegacion(imagen: Int, textoDesplegable: String, clase: Class<*>) {
+fun BotonNavegacion(imagen: Int, textoDesplegable: String, navController: NavController) {
     val context = LocalContext.current
     Card(
         modifier = Modifier
@@ -72,7 +75,8 @@ fun BotonNavegacion(imagen: Int, textoDesplegable: String, clase: Class<*>) {
                 textAlign = TextAlign.Center,
                 modifier= Modifier
                     .fillMaxWidth()
-                    .align(alignment = Alignment.CenterHorizontally).padding(top = 20.dp)
+                    .align(alignment = Alignment.CenterHorizontally)
+                    .padding(top = 20.dp)
             )
             Spacer(modifier = Modifier.height(20.dp))
             Image(
@@ -80,12 +84,18 @@ fun BotonNavegacion(imagen: Int, textoDesplegable: String, clase: Class<*>) {
                 contentDescription = "usuario",
                 modifier = Modifier
                     .clickable {
-                        val navigate =
-                            Intent(
-                                context,
-                                clase
-                            )
-                        context.startActivity(navigate)
+                        if(textoDesplegable=="Consultar Usuarios"){
+                            navController.navigate(route = AppScreens.AdminUsuariosActivity.route)
+                        }
+                        if(textoDesplegable=="Consultar Lecciónes"){
+                            navController.navigate(route = AppScreens.AdminLeccionesActivity.route)
+                        }
+                        if(textoDesplegable=="Consultar Módulos"){
+                            navController.navigate(route = AppScreens.AdminModulosActivity.route)
+                        }
+                        if(textoDesplegable=="Consultar Ejercicios"){
+                            navController.navigate(route = AppScreens.AdminModulosActivity.route)
+                        }
                     }
                     .align(alignment = Alignment.CenterHorizontally)
                     .size(165.dp)
@@ -100,9 +110,8 @@ fun BotonNavegacion(imagen: Int, textoDesplegable: String, clase: Class<*>) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
 @Composable
-fun Principal() {
+fun PrincipalAdministrador(navController: NavController) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
@@ -118,12 +127,14 @@ fun Principal() {
             text = "Selecciona una opción:",
             fontStyle = FontStyle.Italic,
             fontSize = 24.sp,
-            modifier = Modifier.align(alignment = Alignment.Start).padding(top = 30.dp, start = 10.dp)
+            modifier = Modifier
+                .align(alignment = Alignment.Start)
+                .padding(top = 30.dp, start = 10.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
-        BotonNavegacion(R.drawable.usuarioicon,"Consultar Usuarios", AdminUsuariosActivity::class.java)
+        BotonNavegacion(R.drawable.usuarioicon,"Consultar Usuarios", navController)
         Spacer(modifier = Modifier.height(20.dp))
-        BotonNavegacion(R.drawable.modulosicon,"Consultar Módulos",AdminModulosActivity::class.java)
+        BotonNavegacion(R.drawable.modulosicon,"Consultar Módulos", navController)
         Spacer(modifier = Modifier.height(20.dp))
     }
 }

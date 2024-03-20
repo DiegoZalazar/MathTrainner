@@ -1,10 +1,6 @@
 package mx.ipn.escom.TTA024.Admin
 
 import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,19 +15,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,7 +29,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,29 +37,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import mx.ipn.escom.TTA024.Estudiante
 import mx.ipn.escom.TTA024.R
+import mx.ipn.escom.TTA024.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
-
-class AdminUsuariosActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            Usuarios()
-        }
-    }
-}
 
 @Composable
 fun RowScope.TableCell(
@@ -216,7 +195,7 @@ fun RowScope.TableCellDeleteImage(
 fun RowScope.TableCellEditImage(
     image: Int,
     tamano: Float,
-    clase: Class<*>,
+    navController: NavController,
     estudiante: Estudiante
 ) {
     val context = LocalContext.current
@@ -232,11 +211,7 @@ fun RowScope.TableCellEditImage(
             contentDescription = "usuario",
             modifier = Modifier
                 .clickable {
-                    val navigate = Intent(
-                        context,
-                        clase
-                    )
-                    context.startActivity(navigate)
+                    navController.navigate(route=AppScreens.AdminEditUserActivity.route)
                 }
                 .align(Alignment.Center)
         )
@@ -246,8 +221,7 @@ fun RowScope.TableCellEditImage(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview(showBackground = true)
-fun Usuarios() {
+fun UsuariosComposable(navController: NavHostController) {
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Nombre", "Eliminar", "Editar")
     val estudiante1 = Estudiante(1, "adal", "danidc", "halo_chif@hotmail.com", "activo")
@@ -300,7 +274,7 @@ fun Usuarios() {
                     TableCellEditImage(
                         image = R.drawable.editicon,
                         tamano = columsWeight,
-                        clase = AdminEditUserActivity::class.java,
+                        navController = navController,
                         estudiante = estudiante
                     )
 
