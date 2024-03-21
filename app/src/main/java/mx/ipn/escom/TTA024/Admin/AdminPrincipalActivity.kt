@@ -1,5 +1,6 @@
 package mx.ipn.escom.TTA024.Admin
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -73,7 +76,7 @@ fun BotonNavegacion(imagen: Int, textoDesplegable: String, navController: NavCon
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center,
-                modifier= Modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .align(alignment = Alignment.CenterHorizontally)
                     .padding(top = 20.dp)
@@ -84,16 +87,16 @@ fun BotonNavegacion(imagen: Int, textoDesplegable: String, navController: NavCon
                 contentDescription = "usuario",
                 modifier = Modifier
                     .clickable {
-                        if(textoDesplegable=="Consultar Usuarios"){
+                        if (textoDesplegable == "Consultar Usuarios") {
                             navController.navigate(route = AppScreens.AdminUsuariosActivity.route)
                         }
-                        if(textoDesplegable=="Consultar Lecciónes"){
+                        if (textoDesplegable == "Consultar Lecciónes") {
                             navController.navigate(route = AppScreens.AdminLeccionesActivity.route)
                         }
-                        if(textoDesplegable=="Consultar Módulos"){
+                        if (textoDesplegable == "Consultar Módulos") {
                             navController.navigate(route = AppScreens.AdminModulosActivity.route)
                         }
-                        if(textoDesplegable=="Consultar Ejercicios"){
+                        if (textoDesplegable == "Consultar Ejercicios") {
                             navController.navigate(route = AppScreens.AdminModulosActivity.route)
                         }
                     }
@@ -109,20 +112,12 @@ fun BotonNavegacion(imagen: Int, textoDesplegable: String, navController: NavCon
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrincipalAdministrador(navController: NavController) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = {
-                Text("Bienvenido, ")
-            }
-        )
+fun BodyPrincipalAdministrador(navController: NavController) {
 
+
+    Column(modifier= Modifier.fillMaxSize(),horizontalAlignment = Alignment.CenterHorizontally) {
+        Spacer(modifier = Modifier.height(50.dp))
         Text(
             text = "Selecciona una opción:",
             fontStyle = FontStyle.Italic,
@@ -132,9 +127,30 @@ fun PrincipalAdministrador(navController: NavController) {
                 .padding(top = 30.dp, start = 10.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
-        BotonNavegacion(R.drawable.usuarioicon,"Consultar Usuarios", navController)
+        BotonNavegacion(R.drawable.usuarioicon, "Consultar Usuarios", navController)
         Spacer(modifier = Modifier.height(20.dp))
-        BotonNavegacion(R.drawable.modulosicon,"Consultar Módulos", navController)
+        BotonNavegacion(R.drawable.modulosicon, "Consultar Módulos", navController)
         Spacer(modifier = Modifier.height(20.dp))
     }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PrincipalAdministrador(navController: NavController) {
+    Scaffold(topBar = {
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            title = {
+                Text("Bienvenido, ")
+            }
+        )
+    }
+    ) {
+        BodyPrincipalAdministrador(navController = navController)
+    }
+
 }

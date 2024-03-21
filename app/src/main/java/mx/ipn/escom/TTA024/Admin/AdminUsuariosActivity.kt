@@ -1,6 +1,6 @@
 package mx.ipn.escom.TTA024.Admin
 
-import android.content.Intent
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,9 +19,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -40,13 +44,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import mx.ipn.escom.TTA024.Estudiante
+import com.google.gson.Gson
 import mx.ipn.escom.TTA024.R
+import mx.ipn.escom.TTA024.models.Estudiante
 import mx.ipn.escom.TTA024.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
@@ -74,6 +78,28 @@ fun RowScope.TableCell(
 
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBackAppBarAdministrador(navController: NavController, texto: String) {
+    Scaffold(topBar = {
+        TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ),
+            title = {
+                Icon(imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Arrow Back",
+                    modifier = Modifier.clickable {
+                        navController.popBackStack()
+                    }.padding(2.dp))
+                Text(text = texto, modifier= Modifier.padding(start = 30.dp))
+            })
+    }) {
+
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogEliminarUsuario(
@@ -82,7 +108,7 @@ fun DialogEliminarUsuario(
     onConfirm: () -> Unit,
     estudiante: Estudiante
 ) {
-    val textoModifier = Modifier.padding(top=5.dp)
+    val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {
         AlertDialog(
 
@@ -92,13 +118,17 @@ fun DialogEliminarUsuario(
                 .clip(RoundedCornerShape(28.dp)),
             onDismissRequest = { onDismiss() },
         ) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
                 Spacer(modifier = Modifier.height(20.dp))
-                Column(modifier = Modifier
-                    .height(68.dp)
-                    .width(314.dp)) {
+                Column(
+                    modifier = Modifier
+                        .height(68.dp)
+                        .width(314.dp)
+                ) {
                     Text(
                         text = "¿Seguro que seas eliminar al usuario?",
                         fontStyle = FontStyle.Italic,
@@ -108,21 +138,45 @@ fun DialogEliminarUsuario(
                         textAlign = TextAlign.Center
                     )
                 }
-                Column(modifier = Modifier
-                    .padding(start = 10.dp)
-                    .width(296.dp)
-                    .height(168.dp)) {
-                    Text(text = "Nombre: " + estudiante.nombreEstudiante, fontSize = 20.sp,fontFamily = fontMonserrat, modifier=textoModifier)
-                    Text(text = "ID: " + estudiante.idEstudiante.toString(), fontSize = 20.sp,fontFamily = fontMonserrat, modifier=textoModifier)
-                    Text(text = "Correo: " + estudiante.correoEstudiante, fontSize = 20.sp,fontFamily = fontMonserrat, modifier=textoModifier)
-                    Text(text = "Usuario: " + estudiante.nombreUsuario, fontSize = 20.sp,fontFamily = fontMonserrat, modifier=textoModifier)
+                Column(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .width(296.dp)
+                        .height(168.dp)
+                ) {
+                    Text(
+                        text = "Nombre: " + estudiante.nombreEstudiante,
+                        fontSize = 20.sp,
+                        fontFamily = fontMonserrat,
+                        modifier = textoModifier
+                    )
+                    Text(
+                        text = "ID: " + estudiante.idEstudiante.toString(),
+                        fontSize = 20.sp,
+                        fontFamily = fontMonserrat,
+                        modifier = textoModifier
+                    )
+                    Text(
+                        text = "Correo: " + estudiante.correoEstudiante,
+                        fontSize = 20.sp,
+                        fontFamily = fontMonserrat,
+                        modifier = textoModifier
+                    )
+                    Text(
+                        text = "Usuario: " + estudiante.nombreUsuario,
+                        fontSize = 20.sp,
+                        fontFamily = fontMonserrat,
+                        modifier = textoModifier
+                    )
                     Spacer(modifier = Modifier.fillMaxHeight())
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 TextButton(
-                    onClick = { onConfirm()
+                    onClick = {
+                        onConfirm()
                         deleteUsuario()
-                    }, modifier = Modifier
+                    },
+                    modifier = Modifier
                         .width(300.dp)
                         .height(58.dp)
                         .align(Alignment.CenterHorizontally)
@@ -132,7 +186,12 @@ fun DialogEliminarUsuario(
                             shape = RoundedCornerShape(30.dp)
                         ),
                 ) {
-                    Text(text = "Si", fontFamily = fontMonserrat, color = redButton, fontSize = 18.sp)
+                    Text(
+                        text = "Si",
+                        fontFamily = fontMonserrat,
+                        color = redButton,
+                        fontSize = 18.sp
+                    )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -144,8 +203,13 @@ fun DialogEliminarUsuario(
                         .align(Alignment.CenterHorizontally)
                         .background(blueButton, RoundedCornerShape(30.dp)),
 
-                ) {
-                        Text(text = "No", color = Color.White,fontFamily = fontMonserrat, fontSize = 18.sp)
+                    ) {
+                    Text(
+                        text = "No",
+                        color = Color.White,
+                        fontFamily = fontMonserrat,
+                        fontSize = 18.sp
+                    )
                 }
 
 
@@ -191,6 +255,11 @@ fun RowScope.TableCellDeleteImage(
 
 }
 
+
+fun navigateToEstudiante(navController: NavController,estudiante: Estudiante){
+    val estudianteJson = Gson().toJson(estudiante)
+    navController.navigate(route = AppScreens.AdminEditUserActivity.route+"/$estudianteJson")
+}
 @Composable
 fun RowScope.TableCellEditImage(
     image: Int,
@@ -198,7 +267,7 @@ fun RowScope.TableCellEditImage(
     navController: NavController,
     estudiante: Estudiante
 ) {
-    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .border(1.dp, Color.Black)
@@ -211,7 +280,7 @@ fun RowScope.TableCellEditImage(
             contentDescription = "usuario",
             modifier = Modifier
                 .clickable {
-                    navController.navigate(route=AppScreens.AdminEditUserActivity.route)
+                    navigateToEstudiante(navController,estudiante)
                 }
                 .align(Alignment.Center)
         )
@@ -224,26 +293,19 @@ fun RowScope.TableCellEditImage(
 fun UsuariosComposable(navController: NavHostController) {
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Nombre", "Eliminar", "Editar")
-    val estudiante1 = Estudiante(1, "adal", "danidc", "halo_chif@hotmail.com", "activo")
-    val estudiante2 = Estudiante(2, "adal2", "danidc2", "halo_chif@hotmail.com2", "activo2")
-    val estudiante3 = Estudiante(3, "adal3", "danidc3", "halo_chif@hotmail.com3", "activo3")
+    val estudiante1 = Estudiante(1, "adal", "danidc", "halo_chif@hotmail.com", "activo","asd")
+    val estudiante2 = Estudiante(2, "adal2", "danidc2", "halo_chif@hotmail.com2", "activo2","123")
+    val estudiante3 = Estudiante(3, "adal3", "danidc3", "halo_chif@hotmail.com3", "activo3","asd123")
     val estudianteList = listOf<Estudiante>(estudiante1, estudiante2, estudiante3)
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
     // The LazyColumn will be our table. Notice the use of the weights below
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = {
-                Text("Usuarios")
-            }
-        )
+    TopBackAppBarAdministrador(navController = navController, texto = "Estudiantes")
 
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
+        Spacer(modifier = Modifier.height(60.dp))
         LazyColumn(
             Modifier
                 .fillMaxSize()

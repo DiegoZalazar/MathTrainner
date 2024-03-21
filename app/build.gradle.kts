@@ -50,6 +50,8 @@ android {
 }
 
 dependencies {
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     val nav_version = "2.7.7"
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.1")
@@ -96,7 +98,8 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     // Retrofit with moshi Converter
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
-
+    //GSON
+    implementation ("com.google.code.gson:gson:2.8.6")
 
 
 

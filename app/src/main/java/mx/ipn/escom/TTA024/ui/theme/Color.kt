@@ -14,3 +14,4 @@ val Pink40 = Color(0xFF7D5260)
 //A los valores hexadecimales solo agregarle el "0xFF" en lugar del "#"
 val blueButton = Color(0xFF175676) //"Ej: #175676 a 0xFF175676"
 val redButton = Color(0xFFD62839)
+val greenButton = Color(0xFFCDDCBD)

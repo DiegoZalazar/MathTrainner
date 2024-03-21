@@ -4,7 +4,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,26 +34,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
+import mx.ipn.escom.TTA024.models.Estudiante
+
 
 
 @Composable
-fun EditUserComposable(navController: NavController) {
-        var name by remember { mutableStateOf("") }
-        var email by remember { mutableStateOf("") }
-        var pswd by remember { mutableStateOf("") }
+fun EditUserComposable(navController: NavController, estudiante: Estudiante) {
+        var name by remember { mutableStateOf(estudiante.nombreUsuario) }
+        var email by remember { mutableStateOf(estudiante.correoEstudiante) }
+        var pswd by remember { mutableStateOf(estudiante.contrasenaEstudiante) }
         var pswdConfirm by remember { mutableStateOf("") }
-        var school by remember { mutableStateOf("") }
         var pswdVisible by remember { mutableStateOf(false) }
         var pswdConfirmVisible by remember { mutableStateOf(false) }
-        var terms by remember { mutableStateOf(false) }
+        var isErrorPassword by rememberSaveable { mutableStateOf(true) }
+        var isErrorName by rememberSaveable { mutableStateOf(false) }
+        var isErrorCorreo by rememberSaveable { mutableStateOf(false) }
+
+
+    var showSuccess by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+        fun validatePasswords(){
+            isErrorPassword = !pswd.equals(pswdConfirm)
+        }
 
         Column(
             modifier = Modifier
@@ -136,14 +145,14 @@ fun EditUserComposable(navController: NavController) {
                             IconButton(onClick = {pswdVisible = !pswdVisible}){
                                 Icon(imageVector  = image, description)
                             }
-                        },
-                        modifier = Modifier
-                            .padding(vertical = 16.dp)
+                        }
                     )
 
                     OutlinedTextField(
                         value = pswdConfirm,
-                        onValueChange = { pswdConfirm = it },
+                        onValueChange = { pswdConfirm = it
+                                        validatePasswords()
+                                        },
                         label = { Text("Confirmar Contraseña") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Password,
@@ -163,48 +172,49 @@ fun EditUserComposable(navController: NavController) {
                             }
                         },
                         modifier = Modifier
-                            .padding(vertical = 16.dp)
-                    )
-
-                    OutlinedTextField(
-                        value = school,
-                        onValueChange = { school = it },
-                        label = { Text("¿De qué escuela vienes?") },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        modifier = Modifier
-                            .padding(vertical = 16.dp)
+                            .padding(vertical = 16.dp),
+                        isError = isErrorPassword,
+                        supportingText = {
+                            if (isErrorPassword) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = "Las contraseñas deben ser iguales",
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    /*
-                    Row(
-                        modifier = modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = terms,
-                            onCheckedChange = { terms = it },
-                        )
-                        Text(
-                            text = "Acepto terminos y condiciones",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
 
                     Button(
-                        onClick = navigateToHome,
-                        modifier = modifier
+                        onClick = {
+                            if(!isErrorPassword){
+                                estudiante.nombreEstudiante = name
+                                estudiante.contrasenaEstudiante= pswd
+                                estudiante.correoEstudiante= email
+                                EditarUsuario(estudiante)
+                                showSuccess=true
+                            }
+
+                        },
+                        modifier = Modifier
                             .widthIn(min = 250.dp)
                             .padding(vertical = 8.dp)
                     ) {
-                        Text("Crear cuenta")
-                    }*/
+                        Text("Editar cuenta")
+                    }
+                    DialogConfirmarAccion(
+                        showSuccess, { showSuccess = false }, { showSuccess = false },
+                        texto="Estudiante eliminado",
+                        navController = navController
+                    )
                 }
             }
         }
+}
+
+
+
+fun EditarUsuario(estudiante: Estudiante, ){
+
 }
