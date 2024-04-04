@@ -96,10 +96,12 @@ dependencies {
     coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:1.1.5")
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     // Retrofit with moshi Converter
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     //GSON
     implementation ("com.google.code.gson:gson:2.8.6")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6")
 
 
 

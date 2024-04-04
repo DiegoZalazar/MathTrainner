@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.models
+package mx.ipn.escom.TTA024.data.models
 
 data class Estudiante(val idEstudiante: Int,
                       var nombreEstudiante: String,

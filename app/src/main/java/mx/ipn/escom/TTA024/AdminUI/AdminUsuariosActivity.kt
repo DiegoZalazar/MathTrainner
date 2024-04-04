@@ -1,6 +1,5 @@
-package mx.ipn.escom.TTA024.Admin
+package mx.ipn.escom.TTA024.AdminUI
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,17 +18,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.models.Estudiante
+import mx.ipn.escom.TTA024.data.models.Estudiante
 import mx.ipn.escom.TTA024.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
@@ -78,27 +70,7 @@ fun RowScope.TableCell(
 
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBackAppBarAdministrador(navController: NavController, texto: String) {
-    Scaffold(topBar = {
-        TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-        ),
-            title = {
-                Icon(imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Arrow Back",
-                    modifier = Modifier.clickable {
-                        navController.popBackStack()
-                    }.padding(2.dp))
-                Text(text = texto, modifier= Modifier.padding(start = 30.dp))
-            })
-    }) {
 
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -225,7 +197,7 @@ fun deleteUsuario() {
 
 
 @Composable
-fun RowScope.TableCellDeleteImage(
+fun RowScope.TableCellDeleteImageEstudiante(
     image: Int,
     tamano: Float,
     estudiante: Estudiante,
@@ -261,7 +233,7 @@ fun navigateToEstudiante(navController: NavController,estudiante: Estudiante){
     navController.navigate(route = AppScreens.AdminEditUserActivity.route+"/$estudianteJson")
 }
 @Composable
-fun RowScope.TableCellEditImage(
+fun RowScope.TableCellEditImageEstudiante(
     image: Int,
     tamano: Float,
     navController: NavController,
@@ -328,12 +300,12 @@ fun UsuariosComposable(navController: NavHostController) {
                 Row(Modifier.fillMaxWidth()) {
                     TableCell(text = estudiante.idEstudiante.toString(), weight = columsWeight)
                     TableCell(text = estudiante.nombreUsuario, weight = columsWeight)
-                    TableCellDeleteImage(
+                    TableCellDeleteImageEstudiante(
                         image = R.drawable.deleteicon,
                         tamano = columsWeight,
                         estudiante = estudiante
                     )
-                    TableCellEditImage(
+                    TableCellEditImageEstudiante(
                         image = R.drawable.editicon,
                         tamano = columsWeight,
                         navController = navController,

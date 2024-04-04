@@ -17,17 +17,17 @@
         android:theme="@style/Theme.MathTrainer"
         tools:targetApi="31">
         <activity
-            android:name=".Admin.CommonComposables"
+            android:name=".AdminUI.CommonComposables"
             android:exported="false"
             android:label="@string/title_activity_common_composables"
             android:theme="@style/Theme.MathTrainer" />
         <activity
-            android:name=".Admin.AdminEditUserActivity"
+            android:name=".AdminUI.AdminEditUserActivity"
             android:exported="false"
             android:label="@string/title_activity_admin_edit_user"
             android:theme="@style/Theme.MathTrainer" />
         <activity
-            android:name=".Admin.AdminDeleteUserActivity"
+            android:name=".AdminUI.AdminDeleteUserActivity"
             android:exported="false"
             android:label="@string/title_activity_admin_delete_user"
             android:theme="@style/Theme.MathTrainer" />
@@ -42,22 +42,22 @@
             android:label="@string/title_activity_admin_lecciones"
             android:theme="@style/Theme.MathTrainer" />
         <activity
-            android:name=".Admin.AdminEditModActivity"
+            android:name=".AdminUI.AdminEditModActivity"
             android:exported="false"
             android:label="@string/title_activity_admin_edit_mod"
             android:theme="@style/Theme.MathTrainer" />
         <activity
-            android:name=".Admin.AdminModulosActivity"
+            android:name=".AdminUI.AdminModulosActivity"
             android:exported="false"
             android:label="@string/title_activity_admin_modulos"
             android:theme="@style/Theme.MathTrainer" />
         <activity
-            android:name=".Admin.AdminUsuariosActivity"
+            android:name=".AdminUI.AdminUsuariosActivity"
             android:exported="false"
             android:label="@string/title_activity_admin_usuarios"
             android:theme="@style/Theme.MathTrainer" />
         <activity
-            android:name=".Admin.AdminPrincipalActivity"
+            android:name=".AdminUI.AdminPrincipalActivity"
             android:exported="true"
             android:label="@string/title_activity_admin_principal"
             android:theme="@style/Theme.MathTrainer" />
