@@ -19,7 +19,7 @@ import com.amplifyframework.ui.authenticator.SignedInState
 import com.amplifyframework.ui.authenticator.ui.Authenticator
 import kotlinx.coroutines.launch
 
-
+// hollaaa
 //import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
