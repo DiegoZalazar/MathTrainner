@@ -9,4 +9,10 @@
     <string name="title_activity_admin_delete_user">AdminDeleteUserActivity</string>
     <string name="title_activity_admin_edit_user">AdminEditUserActivity</string>
     <string name="title_activity_common_composables">CommonComposables</string>
+    <string name="lesson_content">Pasos:\n
+Start standing with your feet hip-width apart. Lower your body into a squat position, placing your hands on the ground in front of you.
+Quickly jump your feet back into a plank position, keeping your body in a straight line from your head to your toes.
+Perform a push-up, keeping your core tight and your elbows close to your body.
+Jump your feet back towards your hands, and then jump up into the air, reaching your arms overhead.
+Land softly and immediately lower your body back into the squat position to repeat the movement.</string>
 </resources>
