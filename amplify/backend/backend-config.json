@@ -1,4 +1,28 @@
 {
+  "api": {
+    "AdminQueries": {
+      "authorizationType": "AMAZON_COGNITO_USER_POOLS",
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "mathtrainere76a1246"
+        },
+        {
+          "attributes": [
+            "Arn",
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "AdminQueriesf9e4789b"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
   "auth": {
     "mathtrainere76a1246": {
       "customAuth": false,
@@ -55,6 +79,20 @@
     }
   },
   "function": {
+    "AdminQueriesf9e4789b": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "mathtrainere76a1246"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "mathtrainere76a1246PostConfirmation": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -62,6 +100,22 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_AdminQueriesf9e4789b_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "AdminQueriesf9e4789b"
+        }
+      ]
+    },
+    "AMPLIFY_function_AdminQueriesf9e4789b_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "AdminQueriesf9e4789b"
+        }
+      ]
+    },
     "AMPLIFY_function_mathtrainere76a1246PostConfirmation_GROUP": {
       "usedBy": [
         {
