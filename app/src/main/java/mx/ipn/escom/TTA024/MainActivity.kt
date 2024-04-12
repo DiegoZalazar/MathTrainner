@@ -18,6 +18,7 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.ui.authenticator.SignedInState
 import com.amplifyframework.ui.authenticator.ui.Authenticator
 import kotlinx.coroutines.launch
+import mx.ipn.escom.TTA024.principalAmplify
 
 
 //import org.json.JSONObject
