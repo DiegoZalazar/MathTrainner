@@ -23,7 +23,14 @@
           "GROUP": "Estudiantes",
           "deploymentBucketName": "amplify-mathtrainer-dev-123201-deployment",
           "s3Key": "amplify-builds/mathtrainere76a1246PostConfirmation-416c4c66636531453348-build.zip"
+        },
+        "AdminQueriesf9e4789b": {
+          "deploymentBucketName": "amplify-mathtrainer-dev-123201-deployment",
+          "s3Key": "amplify-builds/AdminQueriesf9e4789b-72384b43765573596a37-build.zip"
         }
+      },
+      "api": {
+        "AdminQueries": {}
       }
     }
   }

@@ -83,6 +83,7 @@
     "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PostConfirmation\",\n    \"lambdaFunctionName\": \"mathtrainere76a1246PostConfirmation\"\n  }\n]",
     "parentStack": {
       "Ref": "AWS::StackId"
-    }
+    },
+    "adminQueryGroup": "Admins"
   }
 }
