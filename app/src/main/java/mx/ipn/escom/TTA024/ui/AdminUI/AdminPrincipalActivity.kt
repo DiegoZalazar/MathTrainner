@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.AdminUI
+package mx.ipn.escom.TTA024.ui.AdminUI
 
 import android.annotation.SuppressLint
 import android.os.Bundle

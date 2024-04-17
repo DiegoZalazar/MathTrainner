@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.AdminUI
+package mx.ipn.escom.TTA024.ui.AdminUI
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -42,7 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.data.models.Estudiante
+import mx.ipn.escom.TTA024.data.models.EstudianteModel
 import mx.ipn.escom.TTA024.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
@@ -78,7 +78,7 @@ fun DialogEliminarUsuario(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    estudiante: Estudiante
+    estudiante: EstudianteModel
 ) {
     val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {
@@ -200,7 +200,7 @@ fun deleteUsuario() {
 fun RowScope.TableCellDeleteImageEstudiante(
     image: Int,
     tamano: Float,
-    estudiante: Estudiante,
+    estudiante: EstudianteModel,
 ) {
     val context = LocalContext.current
     var showDelete by rememberSaveable {
@@ -228,7 +228,7 @@ fun RowScope.TableCellDeleteImageEstudiante(
 }
 
 
-fun navigateToEstudiante(navController: NavController,estudiante: Estudiante){
+fun navigateToEstudiante(navController: NavController,estudiante: EstudianteModel){
     val estudianteJson = Gson().toJson(estudiante)
     navController.navigate(route = AppScreens.AdminEditUserActivity.route+"/$estudianteJson")
 }
@@ -237,7 +237,7 @@ fun RowScope.TableCellEditImageEstudiante(
     image: Int,
     tamano: Float,
     navController: NavController,
-    estudiante: Estudiante
+    estudiante: EstudianteModel
 ) {
 
     Box(
@@ -265,10 +265,10 @@ fun RowScope.TableCellEditImageEstudiante(
 fun UsuariosComposable(navController: NavHostController) {
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Nombre", "Eliminar", "Editar")
-    val estudiante1 = Estudiante(1, "adal", "danidc", "halo_chif@hotmail.com", "activo","asd")
-    val estudiante2 = Estudiante(2, "adal2", "danidc2", "halo_chif@hotmail.com2", "activo2","123")
-    val estudiante3 = Estudiante(3, "adal3", "danidc3", "halo_chif@hotmail.com3", "activo3","asd123")
-    val estudianteList = listOf<Estudiante>(estudiante1, estudiante2, estudiante3)
+    val estudiante1 = EstudianteModel(1, "adal", "danidc", "halo_chif@hotmail.com", "activo","asd")
+    val estudiante2 = EstudianteModel(2, "adal2", "danidc2", "halo_chif@hotmail.com2", "activo2","123")
+    val estudiante3 = EstudianteModel(3, "adal3", "danidc3", "halo_chif@hotmail.com3", "activo3","asd123")
+    val estudianteList = listOf<EstudianteModel>(estudiante1, estudiante2, estudiante3)
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()

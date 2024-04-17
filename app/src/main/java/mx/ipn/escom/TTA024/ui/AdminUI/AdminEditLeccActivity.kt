@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.AdminUI
+package mx.ipn.escom.TTA024.ui.AdminUI
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -40,7 +40,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import mx.ipn.escom.TTA024.data.models.Leccion
+import mx.ipn.escom.TTA024.data.models.LeccionModel
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
@@ -49,7 +49,7 @@ import mx.ipn.escom.TTA024.ui.theme.redButton
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AdminEditLeccionComposable(navController: NavController, leccion: Leccion?){
+fun AdminEditLeccionComposable(navController: NavController, leccion: LeccionModel?){
     var titulo by remember {
         var titTemp:String=""
         if(leccion!=null){

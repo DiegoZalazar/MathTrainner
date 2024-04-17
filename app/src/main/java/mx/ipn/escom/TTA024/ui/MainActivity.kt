@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024
+package mx.ipn.escom.TTA024.ui
 
 //import android.renderscript.ScriptGroup.Input
 

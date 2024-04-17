@@ -57,12 +57,12 @@
             android:label="@string/title_activity_admin_usuarios"
             android:theme="@style/Theme.MathTrainer" />
         <activity
-            android:name=".AdminUI.AdminPrincipalActivity"
+            android:name=".ui.AdminUI.AdminPrincipalActivity"
             android:exported="true"
             android:label="@string/title_activity_admin_principal"
             android:theme="@style/Theme.MathTrainer" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MathTrainer">

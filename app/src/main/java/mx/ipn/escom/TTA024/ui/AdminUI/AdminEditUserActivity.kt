@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.AdminUI
+package mx.ipn.escom.TTA024.ui.AdminUI
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -45,11 +45,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavController
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.data.models.Estudiante
+import mx.ipn.escom.TTA024.data.models.EstudianteModel
 
 
 @Composable
-fun EditUserComposable(navController: NavController, estudiante: Estudiante) {
+fun EditUserComposable(navController: NavController, estudiante: EstudianteModel) {
         var name by remember { mutableStateOf(estudiante.nombreUsuario) }
         var email by remember { mutableStateOf(estudiante.correoEstudiante) }
         var pswd by remember { mutableStateOf(estudiante.contrasenaEstudiante) }
@@ -235,6 +235,6 @@ fun EditUserComposable(navController: NavController, estudiante: Estudiante) {
 
 
 
-fun EditarUsuario(estudiante: Estudiante, ){
+fun EditarUsuario(estudiante: EstudianteModel, ){
 
 }

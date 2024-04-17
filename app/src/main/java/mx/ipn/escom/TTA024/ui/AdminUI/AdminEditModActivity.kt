@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.AdminUI
+package mx.ipn.escom.TTA024.ui.AdminUI
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +15,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.data.models.Modulo
+import mx.ipn.escom.TTA024.data.models.ModuloModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditModulo(navController: NavHostController, modulo: Modulo) {
+fun EditModulo(navController: NavHostController, modulo: ModuloModel) {
     TopBackAppBarAdministrador(
         navController=navController,
         texto = "Editar Módulo"

@@ -41,24 +41,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
-import mx.ipn.escom.TTA024.AdminUI.TableCell
-import mx.ipn.escom.TTA024.AdminUI.TopBackAppBarAdministrador
-import mx.ipn.escom.TTA024.data.models.Leccion
-import mx.ipn.escom.TTA024.data.models.Modulo
+import mx.ipn.escom.TTA024.ui.AdminUI.TableCell
+import mx.ipn.escom.TTA024.ui.AdminUI.TopBackAppBarAdministrador
+import mx.ipn.escom.TTA024.data.models.LeccionModel
+import mx.ipn.escom.TTA024.data.models.ModuloModel
 import mx.ipn.escom.TTA024.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
 
 @Composable
-fun LeccionesAdminComposable(navController: NavHostController, modulo: Modulo){
+fun LeccionesAdminComposable(navController: NavHostController, modulo: ModuloModel){
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Titulo","Nivel","Eliminar","Editar")
-    val leccion1 = Leccion(1,"Integracion partes","Paso 1: integrar",3)
-    val leccion2 = Leccion(1,"Integracion cambio variable","Paso 1: Cambiar variable",2)
-    val leccion3 = Leccion(1,"Derivacion regla de cadena","Paso 1: Formular",1)
+    val leccion1 = LeccionModel(1,"Integracion partes","Paso 1: integrar",3)
+    val leccion2 = LeccionModel(1,"Integracion cambio variable","Paso 1: Cambiar variable",2)
+    val leccion3 = LeccionModel(1,"Derivacion regla de cadena","Paso 1: Formular",1)
 
-    val leccionesList = listOf<Leccion>(leccion1, leccion2, leccion3)
+    val leccionesList = listOf<LeccionModel>(leccion1, leccion2, leccion3)
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
@@ -120,7 +120,7 @@ fun LeccionesAdminComposable(navController: NavHostController, modulo: Modulo){
 fun RowScope.TableCellDeleteImageLeccion(
     image: Int,
     tamano: Float,
-    leccion: Leccion,
+    leccion: LeccionModel,
 ) {
     val context = LocalContext.current
     var showDelete by rememberSaveable {
@@ -151,7 +151,7 @@ fun RowScope.TableCellEditImageLeccion(
     image: Int,
     tamano: Float,
     navController: NavController,
-    leccion: Leccion,
+    leccion: LeccionModel,
 ) {
 
     Box(
@@ -179,7 +179,7 @@ fun DialogEliminarLeccion(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    leccion: Leccion,
+    leccion: LeccionModel,
 ) {
     val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {
@@ -290,7 +290,7 @@ fun deleteLeccion() {
     TODO("Not yet implemented")
 }
 
-fun navigateToEditLeccion(navController: NavController, leccion: Leccion?){
+fun navigateToEditLeccion(navController: NavController, leccion: LeccionModel?){
     val leccionJson = Gson().toJson(leccion)
     navController.navigate(route = AppScreens.AdminEditLeccActivity.route+"/$leccionJson")
 }

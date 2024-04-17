@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.AdminUI
+package mx.ipn.escom.TTA024.ui.AdminUI
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -44,14 +44,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.gson.Gson
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.data.models.Modulo
+import mx.ipn.escom.TTA024.data.models.ModuloModel
 import mx.ipn.escom.TTA024.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.greenButton
 
 
 @Composable
-fun BotonNavegacion(imagen: Int, textoDesplegable: String, navController: NavController, modulo: Modulo?=null) {
+fun BotonNavegacion(imagen: Int, textoDesplegable: String, navController: NavController, modulo: ModuloModel?=null) {
     val context = LocalContext.current
     Card(
         modifier = Modifier
@@ -105,12 +105,12 @@ fun BotonNavegacion(imagen: Int, textoDesplegable: String, navController: NavCon
     }
 }
 
-fun navigateToLecciones(navController: NavController,modulo: Modulo?){
+fun navigateToLecciones(navController: NavController,modulo: ModuloModel?){
     val moduloJson = Gson().toJson(modulo)
     navController.navigate(route = AppScreens.AdminLeccionesActivity.route+"/$moduloJson")
 }
 
-fun navigateToEjercicios(navController: NavController,modulo: Modulo?){
+fun navigateToEjercicios(navController: NavController,modulo: ModuloModel?){
     val moduloJson = Gson().toJson(modulo)
     print(moduloJson)
     navController.navigate(route = AppScreens.AdminEjerciciosActivity.route+"/$moduloJson")

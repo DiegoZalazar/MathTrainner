@@ -41,24 +41,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
-import mx.ipn.escom.TTA024.AdminUI.TableCell
-import mx.ipn.escom.TTA024.AdminUI.TopBackAppBarAdministrador
-import mx.ipn.escom.TTA024.data.models.Ejercicio
-import mx.ipn.escom.TTA024.data.models.Modulo
+import mx.ipn.escom.TTA024.ui.AdminUI.TableCell
+import mx.ipn.escom.TTA024.ui.AdminUI.TopBackAppBarAdministrador
+import mx.ipn.escom.TTA024.data.models.EjercicioModel
+import mx.ipn.escom.TTA024.data.models.ModuloModel
 import mx.ipn.escom.TTA024.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
 
 @Composable
-fun EjerciciosAdminComposable(navController: NavHostController, modulo: Modulo){
+fun EjerciciosAdminComposable(navController: NavHostController, modulo: ModuloModel){
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Tipo","Nivel","Eliminar","Editar")
-    val ejercicio1 = Ejercicio(1, "Completa la siguiente integral","2x",3,"Abierta",3)
-    val ejercicio2 = Ejercicio(2, "Completa la siguiente derivada","2x",3,"Abierta",3)
-    val ejercicio3 = Ejercicio(3, "Selecciona la opcion correcta a la respuesta de la integral:","2x , 4x",1,"Opcion multiple",2)
+    val ejercicio1 = EjercicioModel(1, "Completa la siguiente integral","2x",3,"Abierta",3)
+    val ejercicio2 = EjercicioModel(2, "Completa la siguiente derivada","2x",3,"Abierta",3)
+    val ejercicio3 = EjercicioModel(3, "Selecciona la opcion correcta a la respuesta de la integral:","2x , 4x",1,"Opcion multiple",2)
 
-    val ejercicioList = listOf<Ejercicio>(ejercicio1, ejercicio2, ejercicio3)
+    val ejercicioList = listOf<EjercicioModel>(ejercicio1, ejercicio2, ejercicio3)
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
@@ -120,7 +120,7 @@ fun EjerciciosAdminComposable(navController: NavHostController, modulo: Modulo){
 fun RowScope.TableCellDeleteImageEjercicio(
     image: Int,
     tamano: Float,
-    ejercicio: Ejercicio,
+    ejercicio: EjercicioModel,
 ) {
     val context = LocalContext.current
     var showDelete by rememberSaveable {
@@ -151,7 +151,7 @@ fun RowScope.TableCellEditImageEjercicio(
     image: Int,
     tamano: Float,
     navController: NavController,
-    ejercicio: Ejercicio,
+    ejercicio: EjercicioModel,
 ) {
 
     Box(
@@ -179,7 +179,7 @@ fun DialogEliminarEjercicio(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    ejercicio: Ejercicio,
+    ejercicio: EjercicioModel,
 ) {
     val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {
@@ -296,7 +296,7 @@ fun deleteEjercicio() {
     TODO("Not yet implemented")
 }
 
-fun navigateToEditEjercicio(navController: NavController,ejercicio: Ejercicio?){
+fun navigateToEditEjercicio(navController: NavController,ejercicio: EjercicioModel?){
     val ejercicioJson = Gson().toJson(ejercicio)
     navController.navigate(route = AppScreens.AdminEditEjerActivity.route+"/$ejercicioJson")
 }

@@ -7,19 +7,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
-import mx.ipn.escom.TTA024.AdminUI.AdminEditEjercicioComposable
-import mx.ipn.escom.TTA024.AdminUI.AdminEditLeccionComposable
-import mx.ipn.escom.TTA024.AdminUI.EditModulo
-import mx.ipn.escom.TTA024.AdminUI.EditUserComposable
-import mx.ipn.escom.TTA024.AdminUI.ModulosAdminComposable
-import mx.ipn.escom.TTA024.AdminUI.PrincipalAdministrador
-import mx.ipn.escom.TTA024.AdminUI.UsuariosComposable
+import mx.ipn.escom.TTA024.ui.AdminUI.AdminEditEjercicioComposable
+import mx.ipn.escom.TTA024.ui.AdminUI.AdminEditLeccionComposable
+import mx.ipn.escom.TTA024.ui.AdminUI.EditModulo
+import mx.ipn.escom.TTA024.ui.AdminUI.EditUserComposable
+import mx.ipn.escom.TTA024.ui.AdminUI.ModulosAdminComposable
+import mx.ipn.escom.TTA024.ui.AdminUI.PrincipalAdministrador
+import mx.ipn.escom.TTA024.ui.AdminUI.UsuariosComposable
 import mx.ipn.escom.TTA024.EjerciciosAdminComposable
 import mx.ipn.escom.TTA024.LeccionesAdminComposable
-import mx.ipn.escom.TTA024.data.models.Ejercicio
-import mx.ipn.escom.TTA024.data.models.Estudiante
-import mx.ipn.escom.TTA024.data.models.Leccion
-import mx.ipn.escom.TTA024.data.models.Modulo
+import mx.ipn.escom.TTA024.data.models.EjercicioModel
+import mx.ipn.escom.TTA024.data.models.EstudianteModel
+import mx.ipn.escom.TTA024.data.models.LeccionModel
+import mx.ipn.escom.TTA024.data.models.ModuloModel
 
 @Composable
 fun AppNavigation() {
@@ -37,7 +37,7 @@ fun AppNavigation() {
             })) {
                 backStackEntry ->
                 backStackEntry?.arguments?.getString("modulo")?.let { json ->
-                val modulo = Gson().fromJson(json, Modulo::class.java)
+                val modulo = Gson().fromJson(json, ModuloModel::class.java)
                 EditModulo(navController,modulo)
             }
         }
@@ -48,7 +48,7 @@ fun AppNavigation() {
             })
         ) { backStackEntry ->
             backStackEntry?.arguments?.getString("user")?.let { json ->
-                val user = Gson().fromJson(json, Estudiante::class.java)
+                val user = Gson().fromJson(json, EstudianteModel::class.java)
                 EditUserComposable(navController, user)
             }
         }
@@ -57,7 +57,7 @@ fun AppNavigation() {
         })) {
                 backStackEntry ->
             backStackEntry?.arguments?.getString("modulo")?.let { json ->
-                val modulo = Gson().fromJson(json, Modulo::class.java)
+                val modulo = Gson().fromJson(json, ModuloModel::class.java)
                 LeccionesAdminComposable(navController,modulo)
             }
         }
@@ -66,7 +66,7 @@ fun AppNavigation() {
         })) {
                 backStackEntry ->
             backStackEntry?.arguments?.getString("modulo")?.let { json ->
-                val modulo = Gson().fromJson(json, Modulo::class.java)
+                val modulo = Gson().fromJson(json, ModuloModel::class.java)
                 EjerciciosAdminComposable(navController,modulo)
             }
         }
@@ -76,7 +76,7 @@ fun AppNavigation() {
         })) {
                 backStackEntry ->
             backStackEntry?.arguments?.getString("ejercicio")?.let { json ->
-                val ejercicio = Gson().fromJson(json, Ejercicio::class.java)
+                val ejercicio = Gson().fromJson(json, EjercicioModel::class.java)
                 AdminEditEjercicioComposable(navController,ejercicio)
             }
         }
@@ -86,7 +86,7 @@ fun AppNavigation() {
         })) {
                 backStackEntry ->
             backStackEntry?.arguments?.getString("leccion")?.let { json ->
-                val leccion = Gson().fromJson(json, Leccion::class.java)
+                val leccion = Gson().fromJson(json, LeccionModel::class.java)
                 AdminEditLeccionComposable(navController,leccion)
             }
         }

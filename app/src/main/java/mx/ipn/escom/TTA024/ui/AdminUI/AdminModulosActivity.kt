@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.AdminUI
+package mx.ipn.escom.TTA024.ui.AdminUI
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -42,7 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.data.models.Modulo
+import mx.ipn.escom.TTA024.data.models.ModuloModel
 import mx.ipn.escom.TTA024.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
@@ -53,11 +53,11 @@ import mx.ipn.escom.TTA024.ui.theme.redButton
 fun ModulosAdminComposable(navController: NavHostController) {
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Titulo","Eliminar","Editar")
-    val modulo1 = Modulo(1, "Regla cadena")
-    val modulo2 = Modulo(2, "Integral definida")
-    val modulo3 = Modulo(3, "Integral indefinida")
+    val modulo1 = ModuloModel(1, "Regla cadena")
+    val modulo2 = ModuloModel(2, "Integral definida")
+    val modulo3 = ModuloModel(3, "Integral indefinida")
 
-    val moduloList = listOf<Modulo>(modulo1, modulo2, modulo3)
+    val moduloList = listOf<ModuloModel>(modulo1, modulo2, modulo3)
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
@@ -111,7 +111,7 @@ fun ModulosAdminComposable(navController: NavHostController) {
 fun RowScope.TableCellDeleteImageModulo(
     image: Int,
     tamano: Float,
-    modulo: Modulo,
+    modulo: ModuloModel,
 ) {
     val context = LocalContext.current
     var showDelete by rememberSaveable {
@@ -139,7 +139,7 @@ fun RowScope.TableCellDeleteImageModulo(
 }
 
 
-fun navigateToModulo(navController: NavController,   modulo: Modulo){
+fun navigateToModulo(navController: NavController,   modulo: ModuloModel){
     val moduloJson = Gson().toJson(modulo)
     navController.navigate(route = AppScreens.AdminEditModActivity.route+"/$moduloJson")
 }
@@ -148,7 +148,7 @@ fun RowScope.TableCellEditImageModulo(
     image: Int,
     tamano: Float,
     navController: NavController,
-    modulo: Modulo,
+    modulo: ModuloModel,
 ) {
 
     Box(
@@ -176,7 +176,7 @@ fun DialogEliminarModulo(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    modulo: Modulo
+    modulo: ModuloModel
 ) {
     val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {

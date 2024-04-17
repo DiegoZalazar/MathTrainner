@@ -3,18 +3,17 @@ package mx.ipn.escom.TTA024.data.network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mx.ipn.escom.TTA024.core.RetrofitHelper
-import mx.ipn.escom.TTA024.data.models.Modulo
+import mx.ipn.escom.TTA024.data.models.ModuloModel
 import retrofit2.Response
+import javax.inject.Inject
 
-class ModuloService {
+class ModuloService @Inject constructor(private val api:ModuloApiClient) {
 
-    private val retrofit = RetrofitHelper.getRetrofit()
-
-    suspend fun getModulos(): List<Modulo>{
-        return withContext(Dispatchers.IO){
-            val response: Response<List<Modulo>> = retrofit.create(ModuloApi::class.java).getAllModulos()
-            response.body()?: emptyList()
+    suspend fun getModulos(): List<ModuloModel> {
+        return withContext(Dispatchers.IO) {
+            val response = api.getAllModulos()
+            response.body() ?: emptyList()
         }
-
     }
+
 }

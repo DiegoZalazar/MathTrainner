@@ -1,6 +1,9 @@
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -88,7 +91,6 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation ("com.amplifyframework:aws-auth-cognito:2.14.10")
     // Authenticator dependency
     implementation ("com.amplifyframework.ui:authenticator:1.0.1")
@@ -102,6 +104,12 @@ dependencies {
     //GSON
     implementation ("com.google.code.gson:gson:2.8.6")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6")
+    //dagger hilt
+    implementation ("com.google.dagger:hilt-android:2.35")
+    kapt ("com.google.dagger:hilt-android-compiler:2.35")
+    //Room
+    implementation ("androidx.room:room-ktx:2.4.0")
+    kapt ("androidx.room:room-compiler:2.4.0")
 
 
 
