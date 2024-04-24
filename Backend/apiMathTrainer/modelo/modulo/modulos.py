@@ -12,6 +12,6 @@ def lambda_handler(event, context):
     else:
         response = {
             'statusCode': 400,
-            'body':'Unsupported HTTP method'
+            'body': 'Unsupported HTTP method'
         }
     return response

@@ -67,8 +67,7 @@
           "attributes": [
             "UserPoolId",
             "AppClientIDWeb",
-            "AppClientID",
-            "IdentityPoolId"
+            "AppClientID"
           ],
           "category": "auth",
           "resourceName": "mathtrainere76a1246"

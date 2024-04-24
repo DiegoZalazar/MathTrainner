@@ -28,4 +28,31 @@ manifest_hash = ""
 packagetype = "Zip"
 functions = ["LeccionesFunction", "LeccionFunction"]
 
+[function_build_definitions.99b44fdb-a68d-435c-9748-0c2d879682f6]
+codeuri = "C:\\Users\\diego\\AndroidStudioProjects\\MathTrainer\\Backend\\apiMathTrainer\\modelo\\ejercicio"
+runtime = "python3.10"
+architecture = "x86_64"
+handler = "ejercicios.lambda_handler"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["EjerciciosFunction", "EjrecicioFunction"]
+
+[function_build_definitions.b2f00a4e-04a8-4004-833c-48db8d5b843f]
+codeuri = "C:\\Users\\diego\\AndroidStudioProjects\\MathTrainer\\Backend\\apiMathTrainer\\modelo\\examen"
+runtime = "python3.10"
+architecture = "x86_64"
+handler = "examenDiagnostico.lambda_handler"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["ExamenDiagnosticoFunction"]
+
+[function_build_definitions.f9b49304-39a0-452b-af63-36a200255701]
+codeuri = "C:\\Users\\diego\\AndroidStudioProjects\\MathTrainer\\Backend\\apiMathTrainer\\modelo\\sesion"
+runtime = "python3.10"
+architecture = "x86_64"
+handler = "sesionEjercicio.lambda_handler"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["EjerciciosSesionFunction", "LeccionSesionFunction"]
+
 [layer_build_definitions]

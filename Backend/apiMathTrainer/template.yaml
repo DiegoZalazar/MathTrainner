@@ -60,8 +60,6 @@ Resources:
           Properties:
             Path: /modulos
             Method: any
-
-
   ModuloFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -76,6 +74,7 @@ Resources:
           Properties:
             Path: /modulos/{idModulo}
             Method: any
+
   LeccionesFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -102,9 +101,82 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /modulos/{idModulo}/lecciones/{idLecciones}
+            Path: /modulos/{idModulo}/lecciones/{idLeccion}
             Method: any
 
+  EjerciciosFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: modelo/ejercicio
+      Handler: ejercicios.lambda_handler
+      Runtime: python3.10
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /modulos/{idModulo}/ejercicios
+            Method: any
+  EjrecicioFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: modelo/ejercicio
+      Handler: ejercicio.lambda_handler
+      Runtime: python3.10
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /modulos/{idModulo}/ejercicios/{idEjercicio}
+            Method: any
+
+  ExamenDiagnosticoFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: modelo/examen
+      Handler: examenDiagnostico.lambda_handler
+      Runtime: python3.10
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /estudiante/{idEstudiante}/examen
+            Method: any
+
+  EjerciciosSesionFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: modelo/sesion
+      Handler: sesionEjercicio.lambda_handler
+      Runtime: python3.10
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /estudiante/{idEstudiante}/sesion/ejercicios/{idModulo}
+            Method: any
+
+  LeccionSesionFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: modelo/sesion
+      Handler: sesionLeccion.lambda_handler
+      Runtime: python3.10
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /estudiante/{idEstudiante}/sesion/leccion/{idModulo}
+            Method: any
 
 
 Outputs:

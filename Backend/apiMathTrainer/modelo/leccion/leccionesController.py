@@ -11,6 +11,9 @@ def GetAll(event):
         leccion_dao = LeccionDAO(os.environ['HOST'], os.environ['USER'], os.environ['PASSWORD'], os.environ['DB'])
         response_body = leccion_dao.FindAll(idModulo)
         status_code = 200
+    except KeyError as e:
+        response_body = {'message': f' Missing arguments: {e}'}
+        status_code = 400
     except Exception as e:
         response_body = {'message': f'Internal Server Error: {e}'}
         status_code = 500
@@ -38,7 +41,7 @@ def Post(event):
         response_body = f"Data insert success with: ID {moduloId}"
         status_code = 200
     except KeyError as e:
-        response_body = {'message': f'Body mising arguments: {e}'}
+        response_body = {'message': f' Missing arguments: {e}'}
         status_code = 400
     except Exception as e:
         response_body = {'message': f'Internal Server Error: {e}'}

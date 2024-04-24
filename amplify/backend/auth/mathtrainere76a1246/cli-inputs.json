@@ -1,8 +1,6 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "mathtrainere76a1246_identitypool_e76a1246",
-    "allowUnauthenticatedIdentities": false,
     "resourceNameTruncated": "mathtre76a1246",
     "userPoolName": "mathtrainere76a1246_userpool_e76a1246",
     "autoVerifiedAttributes": [
@@ -27,23 +25,25 @@
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [
-      "email"
+      "email",
+      "name"
     ],
     "userpoolClientReadAttributes": [
       "email"
     ],
     "userpoolClientLambdaRole": "mathtre76a1246_userpoolclient_lambda_role",
-    "userpoolClientSetAttributes": false,
+    "userpoolClientSetAttributes": true,
     "sharedId": "e76a1246",
     "resourceName": "mathtrainere76a1246",
-    "authSelections": "identityPoolAndUserPool",
-    "useDefault": "default",
+    "authSelections": "userPoolOnly",
+    "useDefault": "manual",
     "usernameAttributes": [
       "email"
     ],
     "triggers": {
       "PostConfirmation": [
-        "add-to-group"
+        "add-to-group",
+        "custom"
       ]
     },
     "userPoolGroupList": [
@@ -84,6 +84,10 @@
     "parentStack": {
       "Ref": "AWS::StackId"
     },
-    "adminQueryGroup": "Admins"
+    "adminQueryGroup": "Admins",
+    "userPoolGroups": false,
+    "adminQueries": true,
+    "hostedUI": false,
+    "authProviders": []
   }
 }
