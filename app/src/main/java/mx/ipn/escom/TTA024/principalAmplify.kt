@@ -12,7 +12,7 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class principalAmplify: Application() {
-    override fun onCreate() {
+    /*override fun onCreate() {
         super.onCreate()
 
         try {
@@ -40,5 +40,5 @@ class principalAmplify: Application() {
             { Log.i("MyAmplifyApp", "GET succeeded: $it") },
             { Log.e("MyAmplifyApp", "GET failed.", it) }
         )
-    }
+    }*/
 }

@@ -17,6 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -43,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.2"
     }
     packaging {
         resources {
@@ -105,12 +106,20 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.8.6")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6")
     //dagger hilt
-    implementation ("com.google.dagger:hilt-android:2.35")
-    kapt ("com.google.dagger:hilt-android-compiler:2.35")
+    implementation ("com.google.dagger:hilt-android:2.48")
+    kapt ("com.google.dagger:hilt-android-compiler:2.48")
     //Room
     implementation ("androidx.room:room-ktx:2.4.0")
     kapt ("androidx.room:room-compiler:2.4.0")
-
-
+    // ViewModel
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
+    // Fragment
+    implementation ("androidx.fragment:fragment-ktx:1.3.2")
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.3.5")
+    // Activity
+    implementation ("androidx.activity:activity-ktx:1.2.2")
+    // LiveData
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.6.6")
 
 }

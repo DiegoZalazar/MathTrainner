@@ -1,42 +1,31 @@
 package mx.ipn.escom.TTA024.ui.viewmodels;
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import mx.ipn.escom.TTA024.data.models.ModuloModel
-import mx.ipn.escom.TTA024.domain.ModulosUseCases
+import mx.ipn.escom.TTA024.domain.GetModulosUseCase
+import mx.ipn.escom.TTA024.domain.model.Modulo
 import javax.inject.Inject
 
 @HiltViewModel
 class ModuloViewModel @Inject constructor(
-    private val modulosUseCases: ModulosUseCases,
+    private val getModulosUseCase: GetModulosUseCase,
 ) : ViewModel() {
 
-    val quoteModel = MutableLiveData<ModuloModel>()
+    val modulosModel = MutableLiveData<List<Modulo>>()
     val isLoading = MutableLiveData<Boolean>()
+
 
     fun onCreate() {
         viewModelScope.launch {
             isLoading.postValue(true)
-            val result = getQuotesUseCase()
-
-            if (!result.isNullOrEmpty()) {
-                quoteModel.postValue(result[0])
-                isLoading.postValue(false)
-            }
+            val result = getModulosUseCase()
+            modulosModel.postValue(result)
         }
     }
 
-    fun randomQuote() {
-        viewModelScope.launch {
-            isLoading.postValue(true)
-            val quote = getRandomQuoteUseCase()
-            if (quote != null) {
-                quoteModel.value = quote
-            }
-            isLoading.postValue(false)
-        }
-    }
 }

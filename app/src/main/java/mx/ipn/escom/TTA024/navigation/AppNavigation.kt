@@ -20,9 +20,10 @@ import mx.ipn.escom.TTA024.data.models.EjercicioModel
 import mx.ipn.escom.TTA024.data.models.EstudianteModel
 import mx.ipn.escom.TTA024.data.models.LeccionModel
 import mx.ipn.escom.TTA024.data.models.ModuloModel
+import mx.ipn.escom.TTA024.ui.viewmodels.ModuloViewModel
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(moduloViewModel: ModuloViewModel) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -92,7 +93,7 @@ fun AppNavigation() {
         }
 
         composable(route = AppScreens.AdminModulosActivity.route) {
-            ModulosAdminComposable(navController)
+            ModulosAdminComposable(navController,moduloViewModel)
         }
         composable(route = AppScreens.AdminUsuariosActivity.route) {
             UsuariosComposable(navController)

@@ -25,15 +25,6 @@ import androidx.navigation.NavController
 import mx.ipn.escom.TTA024.R
 import mx.ipn.escom.TTA024.navigation.AppNavigation
 
-class AdminPrincipalActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            AppNavigation()
-        }
-    }
-}
 
 
 

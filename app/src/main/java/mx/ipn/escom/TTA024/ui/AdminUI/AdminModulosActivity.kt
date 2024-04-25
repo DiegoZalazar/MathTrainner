@@ -1,5 +1,6 @@
 package mx.ipn.escom.TTA024.ui.AdminUI
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,28 +44,35 @@ import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import mx.ipn.escom.TTA024.R
 import mx.ipn.escom.TTA024.data.models.ModuloModel
+import mx.ipn.escom.TTA024.domain.model.Modulo
 import mx.ipn.escom.TTA024.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
+import mx.ipn.escom.TTA024.ui.viewmodels.ModuloViewModel
+import androidx.compose.runtime.livedata.observeAsState
 
+class AdminModulosActivity: ComponentActivity() {
 
+}
 @Composable
-fun ModulosAdminComposable(navController: NavHostController) {
+fun ModulosAdminComposable(navController: NavHostController, moduloViewModel: ModuloViewModel) {
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Titulo","Eliminar","Editar")
-    val modulo1 = ModuloModel(1, "Regla cadena")
-    val modulo2 = ModuloModel(2, "Integral definida")
-    val modulo3 = ModuloModel(3, "Integral indefinida")
-
-    val moduloList = listOf<ModuloModel>(modulo1, modulo2, modulo3)
+    val modulo1 = Modulo(1, "Regla cadena")
+    val modulo2 = Modulo(2, "Integral definida")
+    val modulo3 = Modulo(3, "Integral indefinida")
+    //moduloViewModel.onCreate()
+    //val moduloList: List<ModuloModel> = listOf<ModuloModel>(modulo1, modulo2, modulo3)
+    val moduloList = listOf<Modulo>(modulo1, modulo2, modulo3)
+    //val listaModulos by moduloViewModel.modulosModel.observeAsState(initial = arrayListOf())
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
     // The LazyColumn will be our table. Notice the use of the weights below
 
     TopBackAppBarAdministrador(navController = navController, texto = "Módulos")
-
+    
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(60.dp))
         LazyColumn(
@@ -107,11 +115,12 @@ fun ModulosAdminComposable(navController: NavHostController) {
     }
 }
 
+
 @Composable
 fun RowScope.TableCellDeleteImageModulo(
     image: Int,
     tamano: Float,
-    modulo: ModuloModel,
+    modulo: Modulo,
 ) {
     val context = LocalContext.current
     var showDelete by rememberSaveable {
@@ -139,7 +148,7 @@ fun RowScope.TableCellDeleteImageModulo(
 }
 
 
-fun navigateToModulo(navController: NavController,   modulo: ModuloModel){
+fun navigateToModulo(navController: NavController,   modulo: Modulo){
     val moduloJson = Gson().toJson(modulo)
     navController.navigate(route = AppScreens.AdminEditModActivity.route+"/$moduloJson")
 }
@@ -148,7 +157,7 @@ fun RowScope.TableCellEditImageModulo(
     image: Int,
     tamano: Float,
     navController: NavController,
-    modulo: ModuloModel,
+    modulo: Modulo,
 ) {
 
     Box(
@@ -163,7 +172,7 @@ fun RowScope.TableCellEditImageModulo(
             contentDescription = "modulo",
             modifier = Modifier
                 .clickable {
-                    navigateToModulo(navController,modulo)
+                    navigateToModulo(navController, modulo)
                 }
                 .align(Alignment.Center)
         )
@@ -176,7 +185,7 @@ fun DialogEliminarModulo(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    modulo: ModuloModel
+    modulo: Modulo
 ) {
     val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {
