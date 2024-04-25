@@ -1,7 +1,8 @@
 {
   "trigger": true,
   "modules": [
-    "add-to-group"
+    "add-to-group",
+    "custom"
   ],
   "parentResource": "mathtrainere76a1246",
   "functionName": "mathtrainere76a1246PostConfirmation",
