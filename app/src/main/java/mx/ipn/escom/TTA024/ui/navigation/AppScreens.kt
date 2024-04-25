@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.navigation
+package mx.ipn.escom.TTA024.ui.navigation
 
 sealed class AppScreens(val route: String){
     object AdminEditModActivity: AppScreens("editmodulo_admin")

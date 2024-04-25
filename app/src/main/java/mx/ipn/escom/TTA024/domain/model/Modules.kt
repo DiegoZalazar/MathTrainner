@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.ui.data
+package mx.ipn.escom.TTA024.domain.model
 
 val modules = listOf(
     Module(1,true),

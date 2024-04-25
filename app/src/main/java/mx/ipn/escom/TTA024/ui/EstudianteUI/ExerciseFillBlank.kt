@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.ui.estudiante
+package mx.ipn.escom.TTA024.ui.EstudianteUI
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

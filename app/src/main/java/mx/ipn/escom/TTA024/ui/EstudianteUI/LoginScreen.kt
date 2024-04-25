@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.ui.estudiante
+package mx.ipn.escom.TTA024.ui.EstudianteUI
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -40,7 +40,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
-import java.time.format.TextStyle
 
 @Composable
 fun LoginScreen(

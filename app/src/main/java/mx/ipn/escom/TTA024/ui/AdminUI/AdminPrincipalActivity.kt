@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.navigation.AppNavigation
+import mx.ipn.escom.TTA024.ui.navigation.AppNavigation
 
 
 

@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.domain
+package mx.ipn.escom.TTA024.domain.usecases
 
 import mx.ipn.escom.TTA024.data.ModuloRepository
 import mx.ipn.escom.TTA024.domain.model.Modulo

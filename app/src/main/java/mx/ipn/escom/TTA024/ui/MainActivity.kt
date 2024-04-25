@@ -19,7 +19,7 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.ui.authenticator.SignedInState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import mx.ipn.escom.TTA024.navigation.AppNavigation
+import mx.ipn.escom.TTA024.ui.navigation.AppNavigation
 import mx.ipn.escom.TTA024.ui.viewmodels.ModuloViewModel
 
 // hollaaa

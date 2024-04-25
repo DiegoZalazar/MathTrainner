@@ -43,7 +43,7 @@ import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import mx.ipn.escom.TTA024.R
 import mx.ipn.escom.TTA024.data.models.EstudianteModel
-import mx.ipn.escom.TTA024.navigation.AppScreens
+import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton

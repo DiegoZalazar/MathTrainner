@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.navigation
+package mx.ipn.escom.TTA024.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType

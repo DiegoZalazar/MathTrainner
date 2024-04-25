@@ -45,7 +45,7 @@ import mx.ipn.escom.TTA024.ui.AdminUI.TableCell
 import mx.ipn.escom.TTA024.ui.AdminUI.TopBackAppBarAdministrador
 import mx.ipn.escom.TTA024.data.models.EjercicioModel
 import mx.ipn.escom.TTA024.data.models.ModuloModel
-import mx.ipn.escom.TTA024.navigation.AppScreens
+import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton

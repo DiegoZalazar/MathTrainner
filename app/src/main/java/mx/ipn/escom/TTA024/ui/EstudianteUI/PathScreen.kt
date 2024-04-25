@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.ui.estudiante
+package mx.ipn.escom.TTA024.ui.EstudianteUI
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -26,8 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.ui.data.Module
-import mx.ipn.escom.TTA024.ui.data.modules
+import mx.ipn.escom.TTA024.domain.model.Module
+import mx.ipn.escom.TTA024.domain.model.modules
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 @Composable
