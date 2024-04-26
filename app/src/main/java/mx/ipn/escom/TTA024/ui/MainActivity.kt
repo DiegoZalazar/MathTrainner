@@ -9,10 +9,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
@@ -23,6 +27,7 @@ import mx.ipn.escom.TTA024.ui.navigation.AppNavigation
 import mx.ipn.escom.TTA024.ui.viewmodels.ModuloViewModel
 import com.amplifyframework.ui.authenticator.ui.Authenticator
 import mx.ipn.escom.TTA024.principalAmplify
+import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 // hollaaa
 //import org.json.JSONObject
@@ -37,6 +42,15 @@ class MainActivity : ComponentActivity() {
 //            Authenticator { state ->   // no funcionan algunos componentes de este composable porque el daniel cambio las versiones de java y kotlin .I.
 //                SignedInContent(state)
 //            }
+            MathTrainerTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+
+                ) {
+                    MathTrainer()
+                }
+            }
 
         }
     }

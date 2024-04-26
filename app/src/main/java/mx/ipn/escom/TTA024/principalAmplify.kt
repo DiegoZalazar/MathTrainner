@@ -35,20 +35,20 @@ class principalAmplify: Application() {
 //                { Log.e ("AuthQuickStart", "Sign up failed", it) }
 //            )
 
-            Amplify.Auth.confirmSignUp(
-                "sergio_demian_ae@hotmail.com", "154828",
-                { result ->
-                    if (result.isSignUpComplete) {
-                        Log.i("AuthQuickstart", "Confirm signUp succeeded")
-                    } else {
-                        Log.i("AuthQuickstart","Confirm sign up not complete")
-                    }
-                },
-                { Log.e("AuthQuickstart", "Failed to confirm sign up", it) }
-            )
+//            Amplify.Auth.confirmSignUp(
+//                "sergio_demian_ae@hotmail.com", "804037",
+//                { result ->
+//                    if (result.isSignUpComplete) {
+//                        Log.i("AuthQuickstart", "Confirm signUp succeeded")
+//                    } else {
+//                        Log.i("AuthQuickstart","Confirm sign up not complete")
+//                    }
+//                },
+//                { Log.e("AuthQuickstart", "Failed to confirm sign up", it) }
+//            )
 
 
-//            Amplify.Auth.signIn("a@a.com", "12E45678",
+//            Amplify.Auth.signIn("sergio_demian_ae@hotmail.com", "Password123",
 //                { result ->
 //                    if (result.isSignedIn) {
 //                        Log.i("AuthQuickstart", "Sign in succeeded")
@@ -58,10 +58,7 @@ class principalAmplify: Application() {
 //                },
 //                { Log.e("AuthQuickstart", "Failed to sign in", it) }
 //            )
-//            Amplify.Auth.fetchAuthSession(
-//                { Log.i("AmplifyQuickstart", "Auth session = $it") },
-//                { error -> Log.e("AmplifyQuickstart", "Failed to fetch auth session", error) }
-//            )
+
         } catch (error: AmplifyException) {
             Log.e("MyAmplifyApp", "Could not initialize Amplify.", error)
         }
