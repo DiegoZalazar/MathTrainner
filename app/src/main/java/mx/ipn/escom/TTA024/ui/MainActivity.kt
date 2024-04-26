@@ -21,6 +21,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import mx.ipn.escom.TTA024.ui.navigation.AppNavigation
 import mx.ipn.escom.TTA024.ui.viewmodels.ModuloViewModel
+import com.amplifyframework.ui.authenticator.ui.Authenticator
+import mx.ipn.escom.TTA024.principalAmplify
 
 // hollaaa
 //import org.json.JSONObject
@@ -31,10 +33,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            AppNavigation(moduloViewModel)
-            /*Authenticator { state ->
-                SignedInContent(state)
-            }*/
+//            AppNavigation(moduloViewModel)
+//            Authenticator { state ->   // no funcionan algunos componentes de este composable porque el daniel cambio las versiones de java y kotlin .I.
+//                SignedInContent(state)
+//            }
 
         }
     }
