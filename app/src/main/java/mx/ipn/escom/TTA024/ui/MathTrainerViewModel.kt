@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.amplifyframework.auth.AuthUserAttributeKey
+import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 
 class MathTrainerViewModel() : ViewModel() {
@@ -23,8 +25,19 @@ class MathTrainerViewModel() : ViewModel() {
         )
     }
 
-    fun initSesion() {
-        Amplify.Auth.signIn("sergio_demian_ae@hotmail.com", "Password123",
+    fun signUp(email: String, nombre: String, password: String){
+        val options = AuthSignUpOptions.builder()
+            .userAttribute(AuthUserAttributeKey.email(), email)  // no me roben mi cuenta
+            .userAttribute(AuthUserAttributeKey.name(), nombre)
+            .build()
+        Amplify.Auth.signUp(email, password, options,
+            { Log.i("AuthQuickStart", "Sign up succeeded: $it") },
+            { Log.e ("AuthQuickStart", "Sign up failed", it) }
+        )
+    }
+
+    fun signIn(username: String, password: String) {
+        Amplify.Auth.signIn(username, password,
                 { result ->
                     if (result.isSignedIn) {
                         Log.i("AuthQuickstart", "Sign in succeeded")

@@ -43,8 +43,8 @@ import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 @Composable
 fun LoginScreen(
-    navigateToHome: () -> Unit = {},
-    navigateToRegister: () -> Unit = {},
+    navigateToHome: (String,String) -> Unit,
+    navigateToSignUp: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var usr by remember { mutableStateOf("") }
@@ -67,7 +67,7 @@ fun LoginScreen(
             )
         )
         Spacer(modifier = Modifier.height(32.dp))
-        Box(
+        Column(
             modifier = Modifier
                 .width(330.dp)
                 .border(
@@ -76,7 +76,8 @@ fun LoginScreen(
                     shape = MaterialTheme.shapes.large
                 )
                 .padding(16.dp)
-                .wrapContentHeight()
+                .wrapContentHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Bienvenido a MathTrainer",
@@ -115,14 +116,14 @@ fun LoginScreen(
                 modifier = Modifier.padding(vertical = 16.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            OutlinedButton(onClick = navigateToRegister,
+            OutlinedButton(onClick = navigateToSignUp,
                 modifier = Modifier    // dem: Si da error, cambia a modifier con minuscula
                     .widthIn(min = 250.dp)
                     .padding(vertical = 8.dp)
             ) {
                Text("Registrarse")
             }
-            Button(onClick = navigateToHome,
+            Button(onClick = { navigateToHome(usr,pswd) },
                 modifier = Modifier
                     .widthIn(min = 250.dp)
                     .padding(vertical = 8.dp)
@@ -134,23 +135,24 @@ fun LoginScreen(
                 modifier = Modifier.clickable( onClick = { /*TODO: navigateToForgotPswd*/})
             )
         }
+        Spacer(modifier = Modifier.height(24.dp))
+        Text("¿No tienes una cuenta?")
+        Text(
+            text = "Registrate",
+            style = androidx.compose.ui.text.TextStyle(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            ),
+            modifier = Modifier.clickable( onClick = navigateToSignUp )
+        )
     }
-    Spacer(modifier = Modifier.height(24.dp))
-    Text("¿No tienes una cuenta?")
-    Text(
-        text = "Registrate",
-        style = androidx.compose.ui.text.TextStyle(
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        ),
-        modifier = Modifier.clickable( onClick = navigateToRegister )
-    )
+
 }
 
 @Preview(showBackground = true, device = "id:pixel_5")
 @Composable
 fun LoginPreview(){
     MathTrainerTheme {
-        LoginScreen()
+        LoginScreen(navigateToHome = {a,b -> })
     }
 }

@@ -1,6 +1,7 @@
 package mx.ipn.escom.TTA024.ui.EstudianteUI
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,7 +47,7 @@ import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 @Composable
 fun SignUpScreen(
     navigateToHome : () -> Unit = {},
-    navigateToRegister: () -> Unit = {},
+    navigateToSignIn: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     var name by remember { mutableStateOf("") }
@@ -85,8 +86,6 @@ fun SignUpScreen(
                 .wrapContentHeight()
         ){
             Column(
-                modifier = Modifier
-                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ){
@@ -195,6 +194,16 @@ fun SignUpScreen(
                 ) {
                     Text("Crear cuenta")
                 }
+                Spacer(modifier = Modifier.height(24.dp))
+                Text("¿Ya tienes una cuenta?")
+                Text(
+                    text = "Inicia sesion",
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.clickable( onClick = navigateToSignIn )
+                )
             }
         }
     }

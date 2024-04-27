@@ -27,6 +27,7 @@ import mx.ipn.escom.TTA024.ui.navigation.AppNavigation
 import mx.ipn.escom.TTA024.ui.viewmodels.ModuloViewModel
 import com.amplifyframework.ui.authenticator.ui.Authenticator
 import mx.ipn.escom.TTA024.principalAmplify
+import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExampleNavExercises
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 // hollaaa
@@ -48,7 +49,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
 
                 ) {
-                    MathTrainer()
+                    ExampleNavExercises()
                 }
             }
 

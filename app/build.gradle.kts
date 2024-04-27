@@ -39,6 +39,8 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        allWarningsAsErrors = false
+        freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
     }
     buildFeatures {
         compose = true
@@ -121,5 +123,8 @@ dependencies {
     // LiveData
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.6")
+
+    // WebView
+    implementation("com.google.accompanist:accompanist-webview:0.31.3-beta")
 
 }
