@@ -126,5 +126,6 @@ dependencies {
 
     // WebView
     implementation("com.google.accompanist:accompanist-webview:0.31.3-beta")
-
+    // Extended icons
+    implementation("androidx.compose.material:material-icons-extended:1.6.6")
 }

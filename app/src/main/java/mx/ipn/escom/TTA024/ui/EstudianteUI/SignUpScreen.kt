@@ -18,6 +18,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
@@ -128,8 +130,8 @@ fun SignUpScreen(
                     visualTransformation = if (pswdVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         val image = if (pswdVisible)
-                            Icons.Default.Check
-                        else Icons.Default.Clear
+                            Icons.Default.VisibilityOff
+                        else Icons.Default.Visibility
 
                         // Please provide localized description for accessibility services
                         val description = if (pswdVisible) "Hide password" else "Show password"
@@ -153,8 +155,10 @@ fun SignUpScreen(
                     visualTransformation = if (pswdConfirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         val image = if (pswdConfirmVisible)
-                            Icons.Default.Check
-                        else Icons.Default.Clear
+                            Icons.Default.VisibilityOff
+                        else Icons.Default.Visibility
+
+
 
                         // Please provide localized description for accessibility services
                         val description = if (pswdConfirmVisible) "Hide password" else "Show password"
@@ -196,6 +200,7 @@ fun SignUpScreen(
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 Text("¿Ya tienes una cuenta?")
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Inicia sesion",
                     style = androidx.compose.ui.text.TextStyle(

@@ -17,7 +17,7 @@ import com.amplifyframework.auth.options.AuthSignUpOptions
 class principalAmplify: Application() {
     override fun onCreate() {
         super.onCreate()
-        /*
+
         try {
             // Add these lines to add the `AWSApiPlugin` and `AWSCognitoAuthPlugin`
 
@@ -62,7 +62,7 @@ class principalAmplify: Application() {
         } catch (error: AmplifyException) {
             Log.e("MyAmplifyApp", "Could not initialize Amplify.", error)
         }
-        */
+
     }
     fun getUserList() {
         val request = RestOptions.builder()

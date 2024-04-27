@@ -16,6 +16,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -103,8 +105,8 @@ fun LoginScreen(
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     val image = if (passwordVisible)
-                        Icons.Default.Check
-                    else Icons.Default.Clear
+                        Icons.Default.VisibilityOff
+                    else Icons.Default.Visibility
 
                     // Please provide localized description for accessibility services
                     val description = if (passwordVisible) "Hide password" else "Show password"
@@ -116,13 +118,6 @@ fun LoginScreen(
                 modifier = Modifier.padding(vertical = 16.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            OutlinedButton(onClick = navigateToSignUp,
-                modifier = Modifier    // dem: Si da error, cambia a modifier con minuscula
-                    .widthIn(min = 250.dp)
-                    .padding(vertical = 8.dp)
-            ) {
-               Text("Registrarse")
-            }
             Button(onClick = { navigateToHome(usr,pswd) },
                 modifier = Modifier
                     .widthIn(min = 250.dp)
@@ -137,6 +132,14 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.height(24.dp))
         Text("¿No tienes una cuenta?")
+        Spacer(modifier = Modifier.height(8.dp))
+//        OutlinedButton(onClick = navigateToSignUp,
+//            modifier = Modifier    // dem: Si da error, cambia a modifier con minuscula
+//                .widthIn(min = 250.dp)
+//                .padding(vertical = 8.dp)
+//        ) {
+//            Text("Registrarse")
+//        }
         Text(
             text = "Registrate",
             style = androidx.compose.ui.text.TextStyle(
