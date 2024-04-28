@@ -1,5 +1,6 @@
 package mx.ipn.escom.TTA024.ui.EstudianteUI
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +21,10 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,12 +47,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.amplifyframework.auth.AuthUserAttributeKey
+import com.amplifyframework.auth.options.AuthSignUpOptions
+import com.amplifyframework.core.Amplify
+import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 @Composable
 fun SignUpScreen(
-    navigateToHome : () -> Unit = {},
-    navigateToSignIn: () -> Unit = {},
+    navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     var name by remember { mutableStateOf("") }
@@ -60,6 +67,9 @@ fun SignUpScreen(
     var pswdVisible by remember { mutableStateOf(false) }
     var pswdConfirmVisible by remember { mutableStateOf(false) }
     var terms by remember { mutableStateOf(false) }
+
+    var loading by remember { mutableStateOf(false) }
+    var isSignUpComplete = false
 
     Column(
         modifier = Modifier
@@ -191,7 +201,17 @@ fun SignUpScreen(
                 }
 
                 Button(
-                    onClick = navigateToHome,
+                    onClick = {
+                        loading = true
+                        isSignUpComplete = signUp(email = email, nombre = name, password = pswdConfirm)
+                        if(isSignUpComplete){
+                            navController.navigate("home"){
+                                popUpTo("login")
+                            }
+                        }else{
+                            navController.navigate("${MathTrainerNavScreens.VerifyEmail.name}/${email}")
+                        }
+                    },
                     modifier = modifier
                         .widthIn(min = 250.dp)
                         .padding(vertical = 8.dp)
@@ -207,17 +227,42 @@ fun SignUpScreen(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     ),
-                    modifier = Modifier.clickable( onClick = navigateToSignIn )
+                    modifier = Modifier.clickable( onClick = {
+                        navController.popBackStack(MathTrainerNavScreens.SignIn.name, false)
+                    } )
                 )
             }
         }
     }
-}
-
-@Preview(showBackground = true, device = "id:pixel_5")
-@Composable
-fun SignUpScreenPreview(){
-    MathTrainerTheme {
-        SignUpScreen()
+    if(loading){
+        AlertDialog(onDismissRequest = { /*TODO*/ }) {
+            CircularProgressIndicator()
+        }
     }
 }
+
+fun signUp(email: String, nombre: String, password: String): Boolean{
+    var isSignUpComplete = false
+    val options = AuthSignUpOptions.builder()
+        .userAttribute(AuthUserAttributeKey.email(), email)  // no me roben mi cuenta
+        .userAttribute(AuthUserAttributeKey.name(), nombre)
+        .build()
+    Amplify.Auth.signUp(email, password, options,
+        {
+            Log.i("AuthQuickStart", "Sign up succeeded: $it")
+            isSignUpComplete = it.isSignUpComplete
+        },
+        {
+            Log.e ("AuthQuickStart", "Sign up failed", it)
+        }
+    )
+    return isSignUpComplete
+}
+
+//@Preview(showBackground = true, device = "id:pixel_5")
+//@Composable
+//fun SignUpScreenPreview(){
+//    MathTrainerTheme {
+//        SignUpScreen()
+//    }
+//}

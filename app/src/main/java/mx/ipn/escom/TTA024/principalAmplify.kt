@@ -17,6 +17,7 @@ import com.amplifyframework.auth.options.AuthSignUpOptions
 class principalAmplify: Application() {
     override fun onCreate() {
         super.onCreate()
+        var signedIn = false
 
         try {
             // Add these lines to add the `AWSApiPlugin` and `AWSCognitoAuthPlugin`
@@ -25,6 +26,12 @@ class principalAmplify: Application() {
             Amplify.configure(applicationContext)
 
             Log.i("MyAmplifyApp", "Initialized Amplify.")
+            Amplify.Auth.fetchAuthSession(
+                {
+                    Log.i("AmplifyQuickstart", "Auth session = $it")
+                },
+                { error -> Log.e("AmplifyQuickstart", "Failed to fetch auth session", error) }
+            )
             // getUserList()
 //            val options = AuthSignUpOptions.builder()
 //                .userAttribute(AuthUserAttributeKey.email(), "sergio_demian_ae@hotmail.com")  // no me roben mi cuenta

@@ -39,20 +39,26 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-//            AppNavigation(moduloViewModel)
-//            Authenticator { state ->   // no funcionan algunos componentes de este composable porque el daniel cambio las versiones de java y kotlin .I.
-//                SignedInContent(state)
-//            }
             MathTrainerTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
-
                 ) {
                     MathTrainer()
                 }
             }
-
+//            Authenticator { state ->   // no funcionan algunos componentes de este composable porque el daniel cambio las versiones de java y kotlin .I.
+//                SignedInContent(state)
+//            }
+//            MathTrainerTheme {
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colorScheme.background
+//
+//                ) {
+//                    MathTrainer()
+//                }
+//            }
         }
     }
 }

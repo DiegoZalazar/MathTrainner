@@ -1,5 +1,6 @@
 package mx.ipn.escom.TTA024.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,18 +14,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import mx.ipn.escom.TTA024.ui.EstudianteUI.LoginScreen
+import androidx.navigation.navArgument
+import androidx.navigation.navigation
+import com.amplifyframework.core.Amplify
+import mx.ipn.escom.TTA024.ui.EstudianteUI.SignInScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.SignUpScreen
+import mx.ipn.escom.TTA024.ui.EstudianteUI.VerifyEmailScreen
 
 enum class MathTrainerNavScreens{
-    Login,
-    Home,
+    SplashScreen,
+    SignIn,
+    SignUp,
+    VerifyEmail,
+    AppHome,
     Exercises
 }
 
@@ -33,61 +45,94 @@ fun MathTrainer(
     navController: NavHostController = rememberNavController()
 ){
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val viewModel : MathTrainerViewModel = viewModel()
-    var showSignIn by remember { mutableStateOf(true) }
+    val loginViewModel: LoginViewModel = viewModel()
 
     Box(modifier = Modifier.fillMaxSize()){
         NavHost(
             navController = navController,
-            startDestination = MathTrainerNavScreens.Login.name
+            startDestination = MathTrainerNavScreens.SplashScreen.name
         ) {
-            composable(route = MathTrainerNavScreens.Login.name){
-                Login(
-                    signIn = viewModel::signIn,
-                    showSignIn = showSignIn
-                ) {
-                    showSignIn = it
+            navigation(
+                route = "login",
+                startDestination = MathTrainerNavScreens.SignIn.name
+            ) {
+                composable(route = MathTrainerNavScreens.SignIn.name){
+                    SignInScreen(navController, loginViewModel)
+                }
+                composable(route = MathTrainerNavScreens.SignUp.name){
+                    SignUpScreen(navController)
+                }
+
+                composable(route = "${MathTrainerNavScreens.VerifyEmail.name}/{email}", arguments = listOf(navArgument(name = "email") {type = NavType.StringType})){
+                    backStackEntry -> 
+                    VerifyEmailScreen(navController = navController, email = backStackEntry.arguments?.getString("email")?: "")
                 }
             }
-            composable(route = MathTrainerNavScreens.Home.name){
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    if(viewModel.isSignedIn){
-                        Text(text = "Sesion iniciada")
-                    }
-                    Button(onClick = { navController.navigate(MathTrainerNavScreens.Login.name) }) {
-                        Text("Cerrar Sesion")
-                    }
+
+            navigation(
+                route = "home",
+                startDestination = MathTrainerNavScreens.AppHome.name
+            ) {
+                composable(route = MathTrainerNavScreens.AppHome.name){
+                    Home(
+                        navToLogin = {
+                            Amplify.Auth.signOut {
+                                Log.i("Amplify", "SignOut = ${it}")
+                            }
+                            navController.navigate("login"){
+                                popUpTo("home")
+                            }
+                        },
+                        isSignedIn = true
+                    )
                 }
+            }
+
+            composable(MathTrainerNavScreens.SplashScreen.name){
+                MathTrainerSplashScreen(
+                    navToHome = {
+                        Log.i("Amplify", "navigating to home")
+                        navController.navigate("home")
+                    },
+                    navToLogin = {
+                        Log.i("Amplify", "navigating to login")
+                        navController.navigate("login")
+                    }
+                )
             }
         }
     }
-
-
-
-
 }
 
 @Composable
-fun Login(
-    signIn: (String, String) -> Unit,
-    showSignIn: Boolean,
-    changeShowSignIn: (Boolean) -> Unit
-){
-    if(showSignIn){
-        LoginScreen(
-            navigateToHome = signIn,
-            navigateToSignUp = { changeShowSignIn(false) }
-        )
-    }else{
-        SignUpScreen(
-            navigateToSignIn = { changeShowSignIn(true) }
-        )
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavController): T{
+    val navGraphRoute = destination.parent?.route ?: return viewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return viewModel(parentEntry)
+}
+
+@Composable
+fun Home(
+    navToLogin: () -> Unit,
+    isSignedIn: Boolean
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        if(isSignedIn){
+            Text(text = "Sesion iniciada")
+        }
+        Button(onClick = { navToLogin() }) {
+            Text("Cerrar Sesion")
+        }
     }
 }
+
+
 
 @Composable
 fun StarExercisesScreen(

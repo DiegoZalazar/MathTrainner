@@ -1,9 +1,9 @@
 package mx.ipn.escom.TTA024.ui.EstudianteUI
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,15 +14,14 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,17 +40,27 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.amplifyframework.core.Amplify
+import mx.ipn.escom.TTA024.ui.LoginViewModel
+import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 @Composable
-fun LoginScreen(
-    navigateToHome: (String,String) -> Unit,
-    navigateToSignUp: () -> Unit = {},
+fun SignInScreen(
+    navController: NavController,
+    viewModel: LoginViewModel,
     modifier: Modifier = Modifier
 ) {
     var usr by remember { mutableStateOf("") }
     var pswd by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    val valido = remember(usr, pswd) {
+        usr.isNotEmpty() && pswd.isNotEmpty()
+    }
+    var isLoading by remember { mutableStateOf(false) }
+    var showAlert by remember { mutableStateOf(false) }
+    var msgAlert by remember { mutableStateOf(AlertSignInState()) }
 
     Column(
         modifier = Modifier
@@ -118,10 +127,17 @@ fun LoginScreen(
                 modifier = Modifier.padding(vertical = 16.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navigateToHome(usr,pswd) },
+            Button(
+                onClick = {
+                    viewModel.signIn(email = usr, pswrd = pswd, home = {
+                        Log.i("Amplify", "navigating to home")
+                        navController.navigate("home")
+                    })
+                },
                 modifier = Modifier
                     .widthIn(min = 250.dp)
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp),
+                enabled = valido
             ) {
                 Text("Iniciar Sesion")
             }
@@ -146,16 +162,70 @@ fun LoginScreen(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             ),
-            modifier = Modifier.clickable( onClick = navigateToSignUp )
+            modifier = Modifier.clickable( onClick = { navController.navigate(MathTrainerNavScreens.SignUp.name) } )
         )
     }
-
-}
-
-@Preview(showBackground = true, device = "id:pixel_5")
-@Composable
-fun LoginPreview(){
-    MathTrainerTheme {
-        LoginScreen(navigateToHome = {a,b -> })
+    
+    if(isLoading){
+        AlertDialog(onDismissRequest = { isLoading = false }) {
+            CircularProgressIndicator()
+        }
+    }
+    if(showAlert){
+        SignInAlert(state = msgAlert, dimiss = {showAlert = false})
     }
 }
+
+@Composable
+fun SignInAlert(
+    state: AlertSignInState,
+    dimiss: () -> Unit
+){
+    AlertDialog(
+        onDismissRequest = { dimiss() }
+    ){
+        Column(){
+            Text(text = state.title, style = MaterialTheme.typography.headlineMedium)
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = state.msg)
+        }
+    }
+}
+
+data class AlertSignInState(
+    val title: String = "",
+    val msg: String = "",
+    val success: Boolean = false
+)
+
+fun sigIn(username: String, password: String): AlertSignInState {
+    var title = ""
+    var msg = ""
+    var success = false
+    Amplify.Auth.signIn(username, password,
+        { result ->
+            if (result.isSignedIn) {
+                Log.i("AuthQuickstart", "Sign in succeeded")
+                title = "Inicio de sesion exitoso"
+                success = true
+            } else {
+                Log.i("AuthQuickstart", "Sign in not complete")
+                title = "Registro no completo"
+            }
+        },
+        {
+            Log.e("AuthQuickstart", "Failed to sign in", it)
+            title = "Error"
+            msg = it.message?: "Correo o contraseña incorrectos"
+        }
+    )
+    return AlertSignInState(title,msg,success)
+}
+
+//@Preview(showBackground = true, device = "id:pixel_5")
+//@Composable
+//fun LoginPreview(){
+//    MathTrainerTheme {
+//        SignInScreen(signInAndNavToHome = { a, b -> })
+//    }
+//}
