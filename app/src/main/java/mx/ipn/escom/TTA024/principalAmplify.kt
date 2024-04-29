@@ -21,7 +21,6 @@ class principalAmplify: Application() {
 
         try {
             // Add these lines to add the `AWSApiPlugin` and `AWSCognitoAuthPlugin`
-
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             Amplify.configure(applicationContext)
 

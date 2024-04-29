@@ -1,5 +1,7 @@
 package mx.ipn.escom.TTA024.data.network
 
+import mx.ipn.escom.TTA024.data.models.EjercicioModel
+import mx.ipn.escom.TTA024.data.models.LeccionModel
 import mx.ipn.escom.TTA024.data.models.ModuloModel
 import retrofit2.Response
 import retrofit2.http.Body
@@ -10,15 +12,20 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ModuloApiClient {
-    @GET("/dev/modulos")
+    @GET("/Prod/modulos")
     suspend fun getAllModulos(): Response<List<ModuloModel>>
+    @POST("/Prod/modulos")
+    suspend fun insertModulo(@Body moduloModel: ModuloModel): Response<String>
 
-    @POST("/dev/modulos")
-    suspend fun insertModulo(@Body moduloModel: ModuloModel): Response<List<ModuloModel>>
-
-    @PUT("/dev/modulos/{id}")
+    @PUT("/Prod/modulos/{id}")
     suspend fun updateModulo(@Path("id") id_modulo: Int,@Body moduloModel: ModuloModel): Response<List<ModuloModel>>
 
-    @DELETE("/dev/modulos/{id}")
-    suspend fun deleteModulo(@Path("id") id_modulo: Int): Response<List<ModuloModel>>
+    @DELETE("/Prod/modulos/{id}")
+    suspend fun deleteModulo(@Path("id") id_modulo: Int): Response<String>
+
+    @GET("/Prod/modulos/{id}/lecciones") //Modificar endPoint
+    suspend fun getLeccionesByModulo(): Response<List<LeccionModel>>
+
+    @GET("/Prod/modulos/{id}/ejercicios") //Modificar endPoint
+    suspend fun getEjerciciosByModulo(): Response<List<EjercicioModel>>
 }

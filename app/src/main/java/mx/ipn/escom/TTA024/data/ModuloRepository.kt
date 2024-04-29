@@ -8,7 +8,6 @@ import mx.ipn.escom.TTA024.data.models.ModuloModel
 import mx.ipn.escom.TTA024.data.network.ModuloService
 import mx.ipn.escom.TTA024.domain.model.Modulo
 import mx.ipn.escom.TTA024.domain.model.toDomain
-import mx.ipn.escom.TTA024.ui.viewmodels.ModuloViewModel
 import javax.inject.Inject
 
 
@@ -20,6 +19,16 @@ class ModuloRepository @Inject constructor(
     suspend fun getAllModulosFromAPI(): List<Modulo> {
         val response: List<ModuloModel> = api.getModulos()
         return response.map { it.toDomain() }
+    }
+
+    suspend fun insertModuloFromAPI(moduloModel: ModuloModel): String {
+        val response: String = api.insertModulo(moduloModel)
+        return response
+    }
+
+    suspend fun deleteModuloFromApi(id_modulo: Int): String {
+        val response: String = api.deleteModulo(id_modulo)
+        return response
     }
 
     /*suspend fun getAllQuotesFromDatabase():List<Quote>{

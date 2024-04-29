@@ -43,29 +43,28 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.data.models.ModuloModel
 import mx.ipn.escom.TTA024.domain.model.Modulo
 import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
-import mx.ipn.escom.TTA024.ui.viewmodels.ModuloViewModel
 import androidx.compose.runtime.livedata.observeAsState
+import mx.ipn.escom.TTA024.ui.viewmodels.ModulosAdminViewModel
 
 class AdminModulosActivity: ComponentActivity() {
 
 }
 @Composable
-fun ModulosAdminComposable(navController: NavHostController, moduloViewModel: ModuloViewModel) {
+fun ModulosAdminComposable(navController: NavHostController, moduloViewModel: ModulosAdminViewModel) {
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Titulo","Eliminar","Editar")
-    val modulo1 = Modulo(1, "Regla cadena")
+    /*val modulo1 = Modulo(1, "Regla cadena")
     val modulo2 = Modulo(2, "Integral definida")
-    val modulo3 = Modulo(3, "Integral indefinida")
-    //moduloViewModel.onCreate()
+    val modulo3 = Modulo(3, "Integral indefinida")*/
+    moduloViewModel.onCreate()
     //val moduloList: List<ModuloModel> = listOf<ModuloModel>(modulo1, modulo2, modulo3)
-    val moduloList = listOf<Modulo>(modulo1, modulo2, modulo3)
-    //val listaModulos by moduloViewModel.modulosModel.observeAsState(initial = arrayListOf())
+    //val moduloList = listOf<Modulo>(modulo1, modulo2, modulo3)
+    val moduloList by moduloViewModel.modulosModel.observeAsState(initial = arrayListOf())
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
@@ -94,13 +93,14 @@ fun ModulosAdminComposable(navController: NavHostController, moduloViewModel: Mo
             items(moduloList) {
                 val modulo = it
 
-                Row(Modifier.fillMaxWidth()) {
+                Row(Modifier.fillMaxWidth().fillMaxHeight()) {
                     TableCell(text = modulo.idModulo.toString(), weight = columsWeight)
                     TableCell(text = modulo.nombreModulo, weight = columsWeight)
                     TableCellDeleteImageModulo(
                         image = R.drawable.deleteicon,
                         tamano = columsWeight,
-                        modulo = modulo
+                        modulo = modulo,
+                        viewModel = moduloViewModel
                     )
                     TableCellEditImageModulo(
                         image = R.drawable.editicon,
@@ -121,6 +121,7 @@ fun RowScope.TableCellDeleteImageModulo(
     image: Int,
     tamano: Float,
     modulo: Modulo,
+    viewModel: ModulosAdminViewModel
 ) {
     val context = LocalContext.current
     var showDelete by rememberSaveable {
@@ -143,7 +144,7 @@ fun RowScope.TableCellDeleteImageModulo(
                 .align(Alignment.Center)
         )
     }
-    DialogEliminarModulo(showDelete, { showDelete = false }, { showDelete = false }, modulo)
+    DialogEliminarModulo(showDelete, { showDelete = false }, { showDelete = false }, modulo, viewModel)
 
 }
 
@@ -185,7 +186,8 @@ fun DialogEliminarModulo(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    modulo: Modulo
+    modulo: Modulo,
+    viewModel: ModulosAdminViewModel
 ) {
     val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {
@@ -241,7 +243,7 @@ fun DialogEliminarModulo(
                 TextButton(
                     onClick = {
                         onConfirm()
-                        deleteModulo()
+                        deleteModulo(viewModel, modulo)
                     },
                     modifier = Modifier
                         .width(300.dp)
@@ -286,6 +288,6 @@ fun DialogEliminarModulo(
     }
 }
 
-fun deleteModulo() {
-    TODO("Not yet implemented")
+fun deleteModulo(viewModel: ModulosAdminViewModel, modulo: Modulo) {
+    viewModel.onDeleteModulo(modulo)
 }
