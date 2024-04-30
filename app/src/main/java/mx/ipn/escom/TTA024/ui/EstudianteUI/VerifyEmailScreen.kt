@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.kotlin.core.Amplify
@@ -150,7 +151,7 @@ fun VerifyEmailScreen(
         }
     }
     if(loading){
-        AlertDialog(onDismissRequest = { /*TODO*/ }) {
+        Dialog(onDismissRequest = { /*TODO*/ }) {
             CircularProgressIndicator()
         }
         LaunchedEffect(key1 = true) {
