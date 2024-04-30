@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +27,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.amplifyframework.auth.AuthUser
 import com.amplifyframework.core.Amplify
+import kotlinx.coroutines.launch
 import mx.ipn.escom.TTA024.ui.EstudianteUI.SignInScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.SignUpScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.VerifyEmailScreen
@@ -118,6 +121,7 @@ fun Home(
     navToLogin: () -> Unit,
     isSignedIn: Boolean
 ) {
+    val auth = Amplify.Auth
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -125,6 +129,7 @@ fun Home(
     ) {
         if(isSignedIn){
             Text(text = "Sesion iniciada")
+            Text("Bienvenido ")
         }
         Button(onClick = { navToLogin() }) {
             Text("Cerrar Sesion")
