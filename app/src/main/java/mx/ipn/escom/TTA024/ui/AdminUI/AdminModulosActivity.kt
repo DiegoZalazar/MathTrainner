@@ -1,10 +1,14 @@
 package mx.ipn.escom.TTA024.ui.AdminUI
 
+import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,8 +23,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -49,29 +60,42 @@ import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import mx.ipn.escom.TTA024.ui.viewmodels.ModulosAdminViewModel
 
-class AdminModulosActivity: ComponentActivity() {
+class AdminModulosActivity : ComponentActivity() {
 
 }
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ModulosAdminComposable(navController: NavHostController, moduloViewModel: ModulosAdminViewModel) {
+fun ModulosAdminComposable(
+    navController: NavHostController,
+    moduloViewModel: ModulosAdminViewModel
+) {
     // Just a fake data... a Pair of Int and String
-    val headers = arrayOf("Id", "Titulo","Eliminar","Editar")
-    /*val modulo1 = Modulo(1, "Regla cadena")
+    val headers = arrayOf("Id", "Titulo", "Eliminar", "Editar")
+    val modulo1 = Modulo(1, "Regla cadena")
     val modulo2 = Modulo(2, "Integral definida")
-    val modulo3 = Modulo(3, "Integral indefinida")*/
-    moduloViewModel.onCreate()
-    //val moduloList: List<ModuloModel> = listOf<ModuloModel>(modulo1, modulo2, modulo3)
-    //val moduloList = listOf<Modulo>(modulo1, modulo2, modulo3)
-    val moduloList by moduloViewModel.modulosModel.observeAsState(initial = arrayListOf())
+    val modulo3 = Modulo(3, "Integral indefinida")
+    val moduloList = listOf<Modulo>(modulo1, modulo2, modulo3)
+
+    /*moduloViewModel.onCreate()
+    val moduloList by moduloViewModel.modulosModel.observeAsState(initial = arrayListOf())*/
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
     // The LazyColumn will be our table. Notice the use of the weights below
 
+
+    val context = LocalContext.current
     TopBackAppBarAdministrador(navController = navController, texto = "Módulos")
-    
+
+
+
+
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(60.dp))
         LazyColumn(
@@ -93,7 +117,11 @@ fun ModulosAdminComposable(navController: NavHostController, moduloViewModel: Mo
             items(moduloList) {
                 val modulo = it
 
-                Row(Modifier.fillMaxWidth().fillMaxHeight()) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                ) {
                     TableCell(text = modulo.idModulo.toString(), weight = columsWeight)
                     TableCell(text = modulo.nombreModulo, weight = columsWeight)
                     TableCellDeleteImageModulo(
@@ -113,8 +141,118 @@ fun ModulosAdminComposable(navController: NavHostController, moduloViewModel: Mo
             }
         }
     }
+    buttonAddModulo(moduloViewModel = moduloViewModel)
+
+
 }
 
+@Composable
+fun buttonAddModulo(moduloViewModel: ModulosAdminViewModel) {
+    var showAdd by rememberSaveable {
+        mutableStateOf(false)
+    }
+    Column( modifier = Modifier.fillMaxSize(),horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.Bottom) {
+        FloatingActionButton(onClick =
+        {
+            showAdd = true
+        }
+        )
+        {
+            Icon(Icons.Default.Add, contentDescription = "Add")
+        }
+    }
+
+
+    DialogAddModulo(showAdd, { showAdd = false }, { showAdd = false }, viewModel = moduloViewModel)
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DialogAddModulo(
+    show: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+    viewModel: ModulosAdminViewModel
+) {
+    val textoModifier = Modifier.padding(top = 5.dp)
+    var titulo by remember {
+        var titTemp: String = ""
+        mutableStateOf(titTemp)
+    }
+    if (show) {
+        AlertDialog(
+
+            modifier = Modifier
+                .height(506.dp)
+                .width(351.dp)
+                .clip(RoundedCornerShape(28.dp)),
+            onDismissRequest = { onDismiss() },
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                OutlinedTextField(
+                    value = titulo,
+                    onValueChange = { titulo = it },
+                    label = { Text("Titulo") },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                TextButton(
+                    onClick = {
+                        onConfirm()
+                        addModulo(viewModel, modulo = Modulo(0, titulo))
+                    },
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(58.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .border(
+                            width = 3.dp,
+                            color = redButton,
+                            shape = RoundedCornerShape(30.dp)
+                        ),
+                ) {
+                    Text(
+                        text = "Agregar",
+                        fontFamily = fontMonserrat,
+                        color = redButton,
+                        fontSize = 18.sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+
+                TextButton(
+                    onClick = { onDismiss() },
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(58.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .background(blueButton, RoundedCornerShape(30.dp)),
+
+                    ) {
+                    Text(
+                        text = "Cancelar",
+                        color = Color.White,
+                        fontFamily = fontMonserrat,
+                        fontSize = 18.sp
+                    )
+                }
+                Spacer(modifier = Modifier.fillMaxHeight())
+            }
+        }
+    }
+}
 
 @Composable
 fun RowScope.TableCellDeleteImageModulo(
@@ -144,15 +282,22 @@ fun RowScope.TableCellDeleteImageModulo(
                 .align(Alignment.Center)
         )
     }
-    DialogEliminarModulo(showDelete, { showDelete = false }, { showDelete = false }, modulo, viewModel)
+    DialogEliminarModulo(
+        showDelete,
+        { showDelete = false },
+        { showDelete = false },
+        modulo,
+        viewModel
+    )
 
 }
 
 
-fun navigateToModulo(navController: NavController,   modulo: Modulo){
+fun navigateToModulo(navController: NavController, modulo: Modulo) {
     val moduloJson = Gson().toJson(modulo)
-    navController.navigate(route = AppScreens.AdminEditModActivity.route+"/$moduloJson")
+    navController.navigate(route = AppScreens.AdminEditModActivity.route + "/$moduloJson")
 }
+
 @Composable
 fun RowScope.TableCellEditImageModulo(
     image: Int,
@@ -290,4 +435,8 @@ fun DialogEliminarModulo(
 
 fun deleteModulo(viewModel: ModulosAdminViewModel, modulo: Modulo) {
     viewModel.onDeleteModulo(modulo)
+}
+
+fun addModulo(viewModel: ModulosAdminViewModel, modulo: Modulo) {
+    viewModel.onCreateModulo(modulo)
 }

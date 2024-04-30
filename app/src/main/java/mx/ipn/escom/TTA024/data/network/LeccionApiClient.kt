@@ -1,7 +1,6 @@
 package mx.ipn.escom.TTA024.data.network
 
 import mx.ipn.escom.TTA024.data.models.LeccionModel
-import mx.ipn.escom.TTA024.data.models.ModuloModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
