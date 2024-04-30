@@ -4,47 +4,41 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.amplifyframework.auth.AuthUserAttributeKey
-import com.amplifyframework.auth.options.AuthSignUpOptions
-import com.amplifyframework.core.Amplify
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.amplifyframework.auth.AuthException
+import com.amplifyframework.kotlin.core.Amplify
+import kotlinx.coroutines.delay
+import mx.ipn.escom.TTA024.ui.EstudianteUI.AlertSignInState
 
 class LoginViewModel() : ViewModel() {
-    private val auth = Amplify.Auth
-    private val _loading = MutableLiveData(false)
+    var loading by mutableStateOf(false)
 
-    fun signIn(email: String, pswrd: String, home: () -> Unit) = viewModelScope.launch{
+    suspend fun signIn(email: String, pswrd: String, home: () -> Unit) : AlertSignInState {
+        loading = true
+        var title = ""
+        var msg = ""
+        var success = false
+        var show = true
+        delay(2000L)
         try {
-            var succed = false
-            auth.signIn(email, pswrd,
-                { result ->
-                    if (result.isSignedIn) {
-                        Log.i("AuthQuickstart", "Sign in succeeded")
-                        GlobalScope.launch{
-                            withContext(Dispatchers.Main) {
-                                // Código que deseas ejecutar en el hilo principal
-                                home()
-                            }
-                        }
-                    } else {
-                        Log.i("AuthQuickstart", "Sign in not complete")
-                    }
-                },
-                {
-                    Log.e("AuthQuickstart", "Failed to sign in", it)
-                }
-            )
-            if(succed){home()}
-        } catch (ex: Exception){
-            Log.e("LoginViewModel", "Error: ${ex}")
+            val result = Amplify.Auth.signIn(email, pswrd)
+            if (result.isSignedIn) {
+                Log.i("AuthQuickstart", "Sign in succeeded")
+                success = true
+                show = false
+                home()
+            } else {
+                Log.e("AuthQuickstart", "Sign in not complete")
+                title = "Error"
+                msg = "Inicio de sesion no completado"
+            }
+        } catch (error: AuthException) {
+            Log.e("AuthQuickstart", "Sign in failed", error)
+            title = "Error"
+            msg = "Contraseña o Email incorrecto"
         }
-
+        loading = false
+        return AlertSignInState(title= title, msg = msg, success = success, show = show)
     }
 
 }

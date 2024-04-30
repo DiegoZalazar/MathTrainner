@@ -25,7 +25,6 @@ import com.amplifyframework.ui.authenticator.SignedInState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import mx.ipn.escom.TTA024.ui.navigation.AppNavigation
-import com.amplifyframework.ui.authenticator.ui.Authenticator
 import mx.ipn.escom.TTA024.principalAmplify
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExampleNavExercises
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
@@ -45,18 +44,6 @@ class MainActivity : ComponentActivity() {
                     MathTrainer()
                 }
             }
-//            Authenticator { state ->   // no funcionan algunos componentes de este composable porque el daniel cambio las versiones de java y kotlin .I.
-//                SignedInContent(state)
-//            }
-//            MathTrainerTheme {
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colorScheme.background
-//
-//                ) {
-//                    MathTrainer()
-//                }
-//            }
         }
     }
 }

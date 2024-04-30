@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +39,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.amplifyframework.core.Amplify
+import com.amplifyframework.auth.AuthException
+import com.amplifyframework.kotlin.core.Amplify
+
 import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
@@ -125,15 +128,7 @@ fun VerifyEmailScreen(
                 Button(
                     onClick = {
                         loading = true
-                        if(confirmSignUp(email, code)){
-                            Toast.makeText(context, "Inicio de sesion exitoso", Toast.LENGTH_SHORT).show()
-                            navController.navigate("home"){
-                                popUpTo("login")
-                            }
-                        }else{
-                            Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
-                            navController.popBackStack(MathTrainerNavScreens.SignIn.name, true)
-                        }
+
                     },
                     modifier = modifier
                         .widthIn(min = 250.dp)
@@ -158,25 +153,51 @@ fun VerifyEmailScreen(
         AlertDialog(onDismissRequest = { /*TODO*/ }) {
             CircularProgressIndicator()
         }
+        LaunchedEffect(key1 = true) {
+            if(confirmSignUp(email, code)){
+                Toast.makeText(context, "Inicio de sesion exitoso", Toast.LENGTH_SHORT).show()
+                navController.navigate("home"){
+                    popUpTo("login")
+                }
+            }else{
+                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                navController.popBackStack(MathTrainerNavScreens.SignIn.name, true)
+            }
+            loading = false
+        }
+
     }
 }
 
-fun confirmSignUp(email: String, code: String): Boolean {
-    var succeed = false
-    Amplify.Auth.confirmSignUp(
-        email, code,
-        { result ->
-            if (result.isSignUpComplete) {
-                Log.i("AuthQuickstart", "Confirm signUp succeeded")
-                succeed = true
-            } else {
-                Log.i("AuthQuickstart","Confirm sign up not complete")
-            }
-        },
-        { Log.e("AuthQuickstart", "Failed to confirm sign up", it) }
-    )
-    return succeed
+suspend fun confirmSignUp(email: String, code: String): Boolean {
+    return try {
+        val result = Amplify.Auth.confirmSignUp(email, code)
+        if (result.isSignUpComplete) {
+            Log.i("AuthQuickstart", "Signup confirmed")
+        } else {
+            Log.i("AuthQuickstart", "Signup confirmation not yet complete")
+        }
+        result.isSignUpComplete
+    } catch (error: AuthException) {
+        Log.e("AuthQuickstart", "Failed to confirm signup", error)
+        return false
+    }
 }
+
+//var succeed = false
+//Amplify.Auth.confirmSignUp(
+//email, code,
+//{ result ->
+//    if (result.isSignUpComplete) {
+//        Log.i("AuthQuickstart", "Confirm signUp succeeded")
+//        succeed = true
+//    } else {
+//        Log.i("AuthQuickstart","Confirm sign up not complete")
+//    }
+//},
+//{ Log.e("AuthQuickstart", "Failed to confirm sign up", it) }
+//)
+//return succeed
 
 //@Preview(showBackground = true, device = "id:pixel_5")
 //@Composable

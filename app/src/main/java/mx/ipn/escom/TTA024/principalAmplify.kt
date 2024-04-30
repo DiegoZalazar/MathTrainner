@@ -2,35 +2,39 @@ package mx.ipn.escom.TTA024
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.rememberCoroutineScope
 import com.amplifyframework.AmplifyException
-import com.amplifyframework.api.ApiException
 import com.amplifyframework.api.rest.RestOptions
-
-import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
-import com.amplifyframework.core.Amplify
-import dagger.hilt.android.HiltAndroidApp
 import com.amplifyframework.auth.AuthException
-import com.amplifyframework.auth.AuthUserAttributeKey
-import com.amplifyframework.auth.options.AuthSignUpOptions
+import dagger.hilt.android.HiltAndroidApp
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
+import com.amplifyframework.kotlin.core.Amplify
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.launch
+
 
 @HiltAndroidApp
 class principalAmplify: Application() {
     override fun onCreate() {
         super.onCreate()
-        var signedIn = false
 
         try {
             // Add these lines to add the `AWSApiPlugin` and `AWSCognitoAuthPlugin`
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             Amplify.configure(applicationContext)
-
             Log.i("MyAmplifyApp", "Initialized Amplify.")
-            Amplify.Auth.fetchAuthSession(
-                {
-                    Log.i("AmplifyQuickstart", "Auth session = $it")
-                },
-                { error -> Log.e("AmplifyQuickstart", "Failed to fetch auth session", error) }
-            )
+
+
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    val session = Amplify.Auth.fetchAuthSession()
+                    Log.i("AmplifyQuickstart", "Auth session = $session")
+                } catch (error: AuthException) {
+                    Log.e("AmplifyQuickstart", "Failed to fetch auth session", error)
+                }
+            }
             // getUserList()
 //            val options = AuthSignUpOptions.builder()
 //                .userAttribute(AuthUserAttributeKey.email(), "sergio_demian_ae@hotmail.com")  // no me roben mi cuenta
@@ -70,14 +74,14 @@ class principalAmplify: Application() {
         }
 
     }
-    fun getUserList() {
-        val request = RestOptions.builder()
-            .addPath("/listUsers")
-            .build()
-
-        Amplify.API.get("AdminQueries",request,
-            { Log.i("MyAmplifyApp", "GET succeeded: $it") },
-            { Log.e("MyAmplifyApp", "GET failed.", it) }
-        )
-    }
+//    fun getUserList() {
+//        val request = RestOptions.builder()
+//            .addPath("/listUsers")
+//            .build()
+//
+//        Amplify.API.get("AdminQueries",request,
+//            { Log.i("MyAmplifyApp", "GET succeeded: $it") },
+//            { Log.e("MyAmplifyApp", "GET failed.", it) }
+//        )
+//    }
 }

@@ -19,12 +19,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.amplifyframework.core.Amplify
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.amplifyframework.auth.AuthException
+import com.amplifyframework.kotlin.core.Amplify
 
 @Composable
 fun MathTrainerSplashScreen(
@@ -32,38 +28,19 @@ fun MathTrainerSplashScreen(
     navToLogin: () -> Unit
 ) {
     LaunchedEffect(key1 = true) {
-        Amplify.Auth.fetchAuthSession(
-            {
-                Log.i("Amplify", "Auth session = $it")
-                if(it.isSignedIn){
-                    GlobalScope.launch{
-                        withContext(Dispatchers.Main) {
-                            // Código que deseas ejecutar en el hilo principal
-                            navToHome()
-                        }
-                    }
-                }else{
-                    GlobalScope.launch{
-                        withContext(Dispatchers.Main) {
-                            // Código que deseas ejecutar en el hilo principal
-                            navToLogin()
-                        }
-                    }
-                }
-            },
-            {
-                error -> Log.e("Amplify", "Failed to fetch auth session", error)
-                GlobalScope.launch{
-                    withContext(Dispatchers.Main) {
-                        // Código que deseas ejecutar en el hilo principal
-                        navToLogin()
-                    }
-                }
+        try {
+            val session = Amplify.Auth.fetchAuthSession()
+            Log.i("AmplifyQuickstart", "Auth session = $session")
+            if(session.isSignedIn){
+                navToHome()
+            }else{
+                navToLogin()
             }
-        )
+        } catch (error: AuthException) {
+            Log.e("AmplifyQuickstart", "Failed to fetch auth session", error)
+            navToLogin()
+        }
     }
-
-
 
     Column(
         modifier = Modifier.fillMaxSize(),

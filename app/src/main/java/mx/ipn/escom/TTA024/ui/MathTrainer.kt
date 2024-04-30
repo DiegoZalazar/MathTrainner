@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,8 +28,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUser
-import com.amplifyframework.core.Amplify
+import com.amplifyframework.kotlin.core.Amplify
 import kotlinx.coroutines.launch
 import mx.ipn.escom.TTA024.ui.EstudianteUI.SignInScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.SignUpScreen
@@ -79,9 +81,6 @@ fun MathTrainer(
                 composable(route = MathTrainerNavScreens.AppHome.name){
                     Home(
                         navToLogin = {
-                            Amplify.Auth.signOut {
-                                Log.i("Amplify", "SignOut = ${it}")
-                            }
                             navController.navigate("login"){
                                 popUpTo("home")
                             }
@@ -121,7 +120,38 @@ fun Home(
     navToLogin: () -> Unit,
     isSignedIn: Boolean
 ) {
-    val auth = Amplify.Auth
+    val scope = rememberCoroutineScope()
+    var user by remember {
+        mutableStateOf("")
+    }
+    var closeSesionLoading by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(key1 = true) {
+        try {
+            val session = Amplify.Auth.fetchAuthSession()
+            Log.i("AmplifyQuickstart", "Auth session = $session")
+            if(session.isSignedIn){
+                user = Amplify.Auth.getCurrentUser().username
+            }
+        } catch (error: AuthException) {
+            Log.e("AmplifyQuickstart", "Failed to fetch auth session", error)
+            navToLogin()
+        }
+    }
+    if(closeSesionLoading){
+        LaunchedEffect(key1 = true) {
+            try {
+                Amplify.Auth.signOut()
+                navToLogin()
+            } catch (error: AuthException) {
+                Log.e("AmplifyQuickstart", "Failed to sign out auth session", error)
+                navToLogin()
+            }
+            closeSesionLoading = false
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -129,9 +159,9 @@ fun Home(
     ) {
         if(isSignedIn){
             Text(text = "Sesion iniciada")
-            Text("Bienvenido ")
+            Text("Bienvenido ${user}")
         }
-        Button(onClick = { navToLogin() }) {
+        Button(onClick = { closeSesionLoading = true }) {
             Text("Cerrar Sesion")
         }
     }

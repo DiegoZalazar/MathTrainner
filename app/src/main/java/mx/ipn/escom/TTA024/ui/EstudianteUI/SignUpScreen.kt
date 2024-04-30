@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,9 +49,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.options.AuthSignUpOptions
-import com.amplifyframework.core.Amplify
+import com.amplifyframework.kotlin.core.Amplify
+
 import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
@@ -203,14 +206,7 @@ fun SignUpScreen(
                 Button(
                     onClick = {
                         loading = true
-                        isSignUpComplete = signUp(email = email, nombre = name, password = pswdConfirm)
-                        if(isSignUpComplete){
-                            navController.navigate("home"){
-                                popUpTo("login")
-                            }
-                        }else{
-                            navController.navigate("${MathTrainerNavScreens.VerifyEmail.name}/${email}")
-                        }
+
                     },
                     modifier = modifier
                         .widthIn(min = 250.dp)
@@ -238,31 +234,31 @@ fun SignUpScreen(
         AlertDialog(onDismissRequest = { /*TODO*/ }) {
             CircularProgressIndicator()
         }
+        LaunchedEffect(key1 = true) {
+            isSignUpComplete = signUp(email = email, nombre = name, password = pswdConfirm)
+            if(isSignUpComplete){
+                navController.navigate("home"){
+                    popUpTo("login")
+                }
+            }else{
+                navController.navigate("${MathTrainerNavScreens.VerifyEmail.name}/${email}")
+            }
+        }
+        loading = false
     }
 }
 
-fun signUp(email: String, nombre: String, password: String): Boolean{
-    var isSignUpComplete = false
+suspend fun signUp(email: String, nombre: String, password: String): Boolean{
     val options = AuthSignUpOptions.builder()
-        .userAttribute(AuthUserAttributeKey.email(), email)  // no me roben mi cuenta
+        .userAttribute(AuthUserAttributeKey.email(), email)
         .userAttribute(AuthUserAttributeKey.name(), nombre)
         .build()
-    Amplify.Auth.signUp(email, password, options,
-        {
-            Log.i("AuthQuickStart", "Sign up succeeded: $it")
-            isSignUpComplete = it.isSignUpComplete
-        },
-        {
-            Log.e ("AuthQuickStart", "Sign up failed", it)
-        }
-    )
-    return isSignUpComplete
+    return try {
+        val result = Amplify.Auth.signUp(email, password, options)
+        Log.i("AuthQuickStart", "Result: $result")
+        result.isSignUpComplete
+    } catch (error: AuthException) {
+        Log.e("AuthQuickStart", "Sign up failed", error)
+        false
+    }
 }
-
-//@Preview(showBackground = true, device = "id:pixel_5")
-//@Composable
-//fun SignUpScreenPreview(){
-//    MathTrainerTheme {
-//        SignUpScreen()
-//    }
-//}
