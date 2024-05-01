@@ -19,5 +19,8 @@ interface LeccionApiClient {
     suspend fun updateLeccion(@Path("id") id_leccion: Int, @Body leccionModel: LeccionModel): Response<List<LeccionModel>>
 
     @DELETE("/Prod/lecciones/{id}")
-    suspend fun deleteModulo(@Path("id") id_leccion: Int): Response<String>
+    suspend fun deleteLeccion(@Path("id") id_leccion: Int): Response<String>
+
+    @GET("/Prod/modulos/{id}/lecciones") //Modificar endPoint
+    suspend fun getLeccionesByModulo(@Path("id") id_modulo: Int): Response<List<LeccionModel>>
 }

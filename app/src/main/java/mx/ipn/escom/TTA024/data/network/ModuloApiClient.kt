@@ -23,8 +23,7 @@ interface ModuloApiClient {
     @DELETE("/Prod/modulos/{id}")
     suspend fun deleteModulo(@Path("id") id_modulo: Int): Response<String>
 
-    @GET("/Prod/modulos/{id}/lecciones") //Modificar endPoint
-    suspend fun getLeccionesByModulo(): Response<List<LeccionModel>>
+
 
     @GET("/Prod/modulos/{id}/ejercicios") //Modificar endPoint
     suspend fun getEjerciciosByModulo(): Response<List<EjercicioModel>>

@@ -54,9 +54,9 @@ import mx.ipn.escom.TTA024.ui.theme.redButton
 fun LeccionesAdminComposable(navController: NavHostController, modulo: ModuloModel){
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Titulo","Nivel","Eliminar","Editar")
-    val leccion1 = LeccionModel(1,"Integracion partes","Paso 1: integrar",3)
-    val leccion2 = LeccionModel(1,"Integracion cambio variable","Paso 1: Cambiar variable",2)
-    val leccion3 = LeccionModel(1,"Derivacion regla de cadena","Paso 1: Formular",1)
+    val leccion1 = LeccionModel(1,"Integracion partes","Paso 1: integrar",3,1,"none")
+    val leccion2 = LeccionModel(1,"Integracion cambio variable","Paso 1: Cambiar variable",2,1,"none")
+    val leccion3 = LeccionModel(1,"Derivacion regla de cadena","Paso 1: Formular",1,1,"none")
 
     val leccionesList = listOf<LeccionModel>(leccion1, leccion2, leccion3)
     // Each cell of a column must have the same weight.

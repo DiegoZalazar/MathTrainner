@@ -151,7 +151,7 @@ fun buttonAddModulo(moduloViewModel: ModulosAdminViewModel) {
     var showAdd by rememberSaveable {
         mutableStateOf(false)
     }
-    Column( modifier = Modifier.fillMaxSize(),horizontalAlignment = Alignment.End,
+    Column( modifier = Modifier.fillMaxSize().padding(bottom = 4.dp , end = 4.dp),horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.Bottom) {
         FloatingActionButton(onClick =
         {

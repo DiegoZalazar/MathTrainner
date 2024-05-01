@@ -1,8 +1,12 @@
 package mx.ipn.escom.TTA024.data.models
 
-data class LeccionModel(val idLeccion: Int,
-                        var tituloLeccion: String,
-                        var descripcionLeccion: String,
-                        var nivelLeccion: Int){
+import com.google.gson.annotations.SerializedName
+
+data class LeccionModel(@SerializedName("idModulo")  val idLeccion: Int,
+                        @SerializedName("tituloLeccion")  var tituloLeccion: String,
+                        @SerializedName("descripcionLeccion")  var descripcionLeccion: String,
+                        @SerializedName("nivelLeccion")  var nivelLeccion: Int,
+                        @SerializedName("idModulo") var idModulo: Int,
+                        @SerializedName("recursoMultimedia") var recursoMultimedia: String){
 
 }
