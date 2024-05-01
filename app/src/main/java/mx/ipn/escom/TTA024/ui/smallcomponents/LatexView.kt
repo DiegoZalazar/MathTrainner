@@ -12,6 +12,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.accompanist.web.LoadingState
+import com.google.accompanist.web.rememberWebViewState
+
 //import com.google.accompanist.web.LoadingState
 //import com.google.accompanist.web.rememberWebViewState
 
@@ -25,7 +28,6 @@ fun LaTeXView(
     val color = MaterialTheme.colorScheme.onSecondary.toArgb()
 
     var webView: WebView? by remember { mutableStateOf(null) }
-    /*
     val state = rememberWebViewState("file:///android_asset/latex_render.html")
 
     if (state.loadingState is LoadingState.Finished) {
@@ -41,7 +43,7 @@ fun LaTeXView(
             it.setOnTouchListener { _, event -> true }
             it.setBackgroundColor(0)
         }
-    )*/
+    )
 }
 
 @Preview(showBackground = true, device = "id:pixel_5")
