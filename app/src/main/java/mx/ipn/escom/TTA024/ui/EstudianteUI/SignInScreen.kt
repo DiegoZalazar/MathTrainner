@@ -7,21 +7,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -42,15 +37,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import com.amplifyframework.kotlin.core.Amplify
 import mx.ipn.escom.TTA024.ui.LoginViewModel
 import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
-import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
+import mx.ipn.escom.TTA024.ui.smallcomponents.SignInAlertState
+import mx.ipn.escom.TTA024.ui.smallcomponents.SignInAlert
 
 @Composable
 fun SignInScreen(
@@ -66,7 +59,7 @@ fun SignInScreen(
     }
     var isLoading by remember { mutableStateOf(false) }
     var showAlert by remember { mutableStateOf(false) }
-    var msgAlert by remember { mutableStateOf(AlertSignInState()) }
+    var msgAlert by remember { mutableStateOf(SignInAlertState()) }
 
     Column(
         modifier = Modifier
@@ -183,49 +176,13 @@ fun SignInScreen(
     }
 
     if(msgAlert.show){
-        SignInAlert(state = msgAlert, dimiss = {
+        Log.i("SignInScreen", "error: ${msgAlert.error}")
+        SignInAlert(state = msgAlert, dismiss = {
             isLoading = false
             msgAlert = msgAlert.copy(show = false)
         })
     }
 }
-
-@Composable
-fun SignInAlert(
-    state: AlertSignInState,
-    dimiss: () -> Unit
-){
-    Dialog(
-        onDismissRequest = { dimiss() }
-    ){
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(375.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-        ){
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Text(text = state.title, style = MaterialTheme.typography.headlineMedium)
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(text = state.msg)
-            }
-        }
-    }
-    Log.i("SignInScreen", "alert messagge{ title:${state.title}, msg:${state.msg} }")
-}
-
-data class AlertSignInState(
-    val title: String = "",
-    val msg: String = "",
-    val success: Boolean = false,
-    val show: Boolean = false
-)
 
 //@Preview(showBackground = true, device = "id:pixel_5")
 //@Composable

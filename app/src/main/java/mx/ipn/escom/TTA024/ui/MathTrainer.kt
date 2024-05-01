@@ -30,6 +30,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUser
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
+import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.kotlin.core.Amplify
 import kotlinx.coroutines.launch
 import mx.ipn.escom.TTA024.ui.EstudianteUI.SignInScreen
@@ -137,6 +139,25 @@ fun Home(
         } catch (error: AuthException) {
             Log.e("AmplifyQuickstart", "Failed to fetch auth session", error)
             navToLogin()
+        }
+
+        try {
+            val attributes = Amplify.Auth.fetchUserAttributes()
+            Log.i("AuthDemo", "User attributes = $attributes")
+        } catch (error: AuthException) {
+            Log.e("AuthDemo", "Failed to fetch user attributes", error)
+        }
+
+        try {
+            val session = Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession
+            val id = session.identityIdResult
+            if (id.type == AuthSessionResult.Type.SUCCESS) {
+                Log.i("AuthQuickStart", "IdentityId: ${id.value}")
+            } else if (id.type == AuthSessionResult.Type.FAILURE) {
+                Log.i("AuthQuickStart", "IdentityId not present: ${id.error}")
+            }
+        } catch (error: AuthException) {
+            Log.e("AuthQuickStart", "Failed to fetch session", error)
         }
     }
     if(closeSesionLoading){

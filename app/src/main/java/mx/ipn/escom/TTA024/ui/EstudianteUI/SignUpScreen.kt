@@ -48,6 +48,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttributeKey
@@ -66,7 +67,6 @@ fun SignUpScreen(
     var email by remember { mutableStateOf("") }
     var pswd by remember { mutableStateOf("") }
     var pswdConfirm by remember { mutableStateOf("") }
-    var school by remember { mutableStateOf("") }
     var pswdVisible by remember { mutableStateOf(false) }
     var pswdConfirmVisible by remember { mutableStateOf(false) }
     var terms by remember { mutableStateOf(false) }
@@ -231,7 +231,7 @@ fun SignUpScreen(
         }
     }
     if(loading){
-        AlertDialog(onDismissRequest = { /*TODO*/ }) {
+        Dialog(onDismissRequest = { /*TODO*/ }) {
             CircularProgressIndicator()
         }
         LaunchedEffect(key1 = true) {
@@ -243,8 +243,8 @@ fun SignUpScreen(
             }else{
                 navController.navigate("${MathTrainerNavScreens.VerifyEmail.name}/${email}")
             }
+            loading = false
         }
-        loading = false
     }
 }
 
