@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
@@ -73,6 +75,21 @@ fun SignUpScreen(
 
     var loading by remember { mutableStateOf(false) }
     var isSignUpComplete = false
+    val validName = remember(name){
+        name.isEmpty() || Regex("^[a-zA-Z0-9_ -]{3,60}\$").matches(name)
+    }
+    val validEmail = remember(email){
+        email.isEmpty() || Regex("[a-zA-Z0–9._-]+@[a-z]+\\.+[a-z]+").matches(email)
+    }
+    val validPassword = remember(pswd){
+        pswd.isEmpty() || Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).{8,}\$").matches(pswd)
+    }
+    val validConfirmationPassword = remember(pswd, pswdConfirm){
+        pswdConfirm.isEmpty() || pswd == pswdConfirm
+    }
+    val validForm = remember(name, email, pswd, pswdConfirm, validName, validEmail, validPassword, validConfirmationPassword){
+        name.isNotEmpty() && email.isNotEmpty() && pswd.isNotEmpty() && pswdConfirm.isNotEmpty() && validName && validEmail && validPassword && validConfirmationPassword
+    }
 
     Column(
         modifier = Modifier
@@ -101,6 +118,7 @@ fun SignUpScreen(
                 .wrapContentHeight()
         ){
             Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ){
@@ -111,34 +129,36 @@ fun SignUpScreen(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Nombre") },
+                    label = { if(validName) Text("Nombre") else Text("Al menos 3 caracteres") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
                     ),
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.dp),
+                    isError = !validName
                 )
 
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Email") },
+                    label = { if(validEmail) Text("Email") else Text("Ingresa un email valido")} ,
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
                     ),
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.dp),
+                    isError = !validEmail
                 )
 
                 OutlinedTextField(
                     value = pswd,
                     onValueChange = { pswd = it },
-                    label = { Text("Contraseña") },
+                    label = { if(validPassword) Text("Contraseña") else Text("Debe contener al menos: 8 caracteres, mayúsculas, minúsculas y números.") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     visualTransformation = if (pswdVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -154,13 +174,14 @@ fun SignUpScreen(
                         }
                     },
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.dp),
+                    isError = !validPassword
                 )
 
                 OutlinedTextField(
                     value = pswdConfirm,
                     onValueChange = { pswdConfirm = it },
-                    label = { Text("Confirmar Contraseña") },
+                    label = { if(validConfirmationPassword) Text("Confirmar Contraseña") else Text("Las contraseñas deben ser iguales") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
@@ -170,9 +191,6 @@ fun SignUpScreen(
                         val image = if (pswdConfirmVisible)
                             Icons.Default.VisibilityOff
                         else Icons.Default.Visibility
-
-
-
                         // Please provide localized description for accessibility services
                         val description = if (pswdConfirmVisible) "Hide password" else "Show password"
 
@@ -181,27 +199,28 @@ fun SignUpScreen(
                         }
                     },
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.dp),
+                    isError = !validConfirmationPassword
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row(
-                    modifier = modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Checkbox(
-                        checked = terms,
-                        onCheckedChange = { terms = it },
-                    )
-                    Text(
-                        text = "Acepto terminos y condiciones",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+//                Row(
+//                    modifier = modifier
+//                        .wrapContentHeight()
+//                        .fillMaxWidth(),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Checkbox(
+//                        checked = terms,
+//                        onCheckedChange = { terms = it },
+//                    )
+//                    Text(
+//                        text = "Acepto terminos y condiciones",
+//                        style = MaterialTheme.typography.bodySmall,
+//                        fontWeight = FontWeight.Bold
+//                    )
+//                }
 
                 Button(
                     onClick = {
@@ -210,7 +229,8 @@ fun SignUpScreen(
                     },
                     modifier = modifier
                         .widthIn(min = 250.dp)
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = 8.dp),
+                    enabled = validForm
                 ) {
                     Text("Crear cuenta")
                 }

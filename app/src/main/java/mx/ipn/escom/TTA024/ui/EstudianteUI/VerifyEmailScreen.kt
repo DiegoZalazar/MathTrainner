@@ -53,10 +53,14 @@ fun VerifyEmailScreen(
     modifier: Modifier = Modifier,
 ) {
     var code by remember { mutableStateOf("") }
+    val validCode = remember(code){
+        code.isEmpty() || Regex("^\\d{6}\$").matches(code)
+    }
 
     val context = LocalContext.current
 
     var loading by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -96,33 +100,34 @@ fun VerifyEmailScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Te enviamos un código a tu correo. Ingresa el código",
+                    text = "Te enviamos un código a tu correo. Ingresa el código de 6 digitos",
                     fontWeight = FontWeight.Normal
                 )
                 OutlinedTextField(
                     value = code,
                     onValueChange = { code = it },
-                    label = { Text("Código") },
+                    label = { if(validCode) Text("Código") else Text("Solo 6 digitos") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Next
                     ),
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.dp),
+                    isError = !validCode
                 )
 
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text("¿No has recibido ningun código?")
-                Text("Checa la carpeta de Spam o")
-                Text(
-                    text = "Reenvia el codigo",
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                )
+                Text("Checa la carpeta de Spam")
+//                Text(
+//                    text = "Reenvia el codigo",
+//                    style = TextStyle(
+//                        fontWeight = FontWeight.Bold,
+//                        color = MaterialTheme.colorScheme.primary
+//                    )
+//                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -133,7 +138,8 @@ fun VerifyEmailScreen(
                     },
                     modifier = modifier
                         .widthIn(min = 250.dp)
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = 8.dp),
+                    enabled = code.isNotEmpty() && validCode
                 ) {
                     Text("Confirmar correo")
                 }
@@ -156,33 +162,31 @@ fun VerifyEmailScreen(
         }
         LaunchedEffect(key1 = true) {
             if(confirmSignUp(email, code)){
-                Toast.makeText(context, "Inicio de sesion exitoso", Toast.LENGTH_SHORT).show()
-                navController.navigate("home"){
-                    popUpTo("login")
-                }
-            }else{
-                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Corecto, inicia sesion", Toast.LENGTH_SHORT).show()
                 navController.popBackStack(MathTrainerNavScreens.SignIn.name, true)
+            }else{
+                Toast.makeText(context, "Error, codigo incorrecto", Toast.LENGTH_SHORT).show()
             }
             loading = false
         }
-
     }
 }
 
 suspend fun confirmSignUp(email: String, code: String): Boolean {
-    return try {
+    var incorrectCode = false
+    try {
         val result = Amplify.Auth.confirmSignUp(email, code)
         if (result.isSignUpComplete) {
             Log.i("AuthQuickstart", "Signup confirmed")
         } else {
             Log.i("AuthQuickstart", "Signup confirmation not yet complete")
         }
-        result.isSignUpComplete
     } catch (error: AuthException) {
         Log.e("AuthQuickstart", "Failed to confirm signup", error)
-        return false
+        Log.i("AuthQuickstart", "Message: ${error.localizedMessage?:"no encontrado"}")
+        incorrectCode = error.localizedMessage?.equals("Confirmation code entered is not correct.")?:false
     }
+    return !incorrectCode
 }
 
 //var succeed = false
