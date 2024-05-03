@@ -1,6 +1,7 @@
 package mx.ipn.escom.TTA024.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,10 +21,9 @@ import mx.ipn.escom.TTA024.data.models.EjercicioModel
 import mx.ipn.escom.TTA024.data.models.EstudianteModel
 import mx.ipn.escom.TTA024.data.models.LeccionModel
 import mx.ipn.escom.TTA024.data.models.ModuloModel
-import mx.ipn.escom.TTA024.ui.viewmodels.ModuloViewModel
-
+import mx.ipn.escom.TTA024.ui.viewmodels.ModulosAdminViewModel
 @Composable
-fun AppNavigation(moduloViewModel: ModuloViewModel) {
+fun AppNavigation(moduloViewModel: ModulosAdminViewModel) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,

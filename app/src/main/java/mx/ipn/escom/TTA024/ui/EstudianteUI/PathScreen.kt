@@ -25,68 +25,68 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.domain.model.modules
+//import mx.ipn.escom.TTA024.domain.model.modules
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
-@Composable
-fun PathScreen(
-    modifier: Modifier = Modifier
-){
-    var pos = 0;
-    Scaffold(
-        topBar = {
-            TopBar()
-        },
-    ){
-            it -> LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth(),
-        contentPadding = it,
-        horizontalAlignment = Alignment.CenterHorizontally
-//            horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        items(modules){
-            ModuleItem(
-                m = it,
-                pos = pos++,
-                modifier = Modifier.padding(8.dp)
-            )
-        }
-    }
-    }
-}
-
-@Composable
-fun ModuleItem(
-    m: Module,
-    pos: Int,
-    modifier: Modifier = Modifier
-){
-    val values = arrayOf(0,1,2,1)
-    val posWidth = values[((pos%4))]*100.dp
-    val r = if (m.enable) painterResource(id = R.drawable.modulo_done) else painterResource(id = R.drawable.modulo_disable)
-    Row(
-        modifier = Modifier
-            .width(300.dp)
-            .padding(0.dp)
-    ){
-        Spacer(modifier = Modifier.width(posWidth))
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-        ){
-            Image(
-                painter = r,
-                contentDescription = "modulo",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-        }
-    }
-
-    Spacer(modifier = Modifier.height(30.dp))
-}
+//@Composable
+//fun PathScreen(
+//    modifier: Modifier = Modifier
+//){
+//    var pos = 0;
+//    Scaffold(
+//        topBar = {
+//            TopBar()
+//        },
+//    ){
+//            it -> LazyColumn(
+//        modifier = Modifier
+//            .fillMaxWidth(),
+//        contentPadding = it,
+//        horizontalAlignment = Alignment.CenterHorizontally
+////            horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        items(modules){
+//            ModuleItem(
+//                m = it,
+//                pos = pos++,
+//                modifier = Modifier.padding(8.dp)
+//            )
+//        }
+//    }
+//    }
+//}
+//
+//@Composable
+//fun ModuleItem(
+//    m: Module,
+//    pos: Int,
+//    modifier: Modifier = Modifier
+//){
+//    val values = arrayOf(0,1,2,1)
+//    val posWidth = values[((pos%4))]*100.dp
+//    val r = if (m.enable) painterResource(id = R.drawable.modulo_done) else painterResource(id = R.drawable.modulo_disable)
+//    Row(
+//        modifier = Modifier
+//            .width(300.dp)
+//            .padding(0.dp)
+//    ){
+//        Spacer(modifier = Modifier.width(posWidth))
+//        Box(
+//            modifier = Modifier
+//                .size(100.dp)
+//        ){
+//            Image(
+//                painter = r,
+//                contentDescription = "modulo",
+//                contentScale = ContentScale.Fit,
+//                modifier = Modifier
+//                    .fillMaxSize()
+//            )
+//        }
+//    }
+//
+//    Spacer(modifier = Modifier.height(30.dp))
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,10 +108,10 @@ fun TopBar(
     )
 }
 
-@Preview(showBackground = true, device = "id:pixel_5")
-@Composable
-fun PathScreenPreview(){
-    MathTrainerTheme(){
-        PathScreen()
-    }
-}
+//@Preview(showBackground = true, device = "id:pixel_5")
+//@Composable
+//fun PathScreenPreview(){
+//    MathTrainerTheme(){
+//        PathScreen()
+//    }
+//}

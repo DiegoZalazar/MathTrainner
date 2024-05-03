@@ -1,4 +1,3 @@
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -39,6 +38,8 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        allWarningsAsErrors = false
+        freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
     }
     buildFeatures {
         compose = true
@@ -62,41 +63,18 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation("androidx.compose.material3:material3:1.1.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation ("com.amplifyframework:aws-auth-cognito:2.14.10")
-    // Authenticator dependency
-    implementation ("com.amplifyframework.ui:authenticator:1.0.1")
-    // Support for Java 8 features
-    coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:1.1.5")
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -104,6 +82,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     //GSON
     implementation ("com.google.code.gson:gson:2.8.6")
+    // coroutines
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6")
     //dagger hilt
     implementation ("com.google.dagger:hilt-android:2.48")
@@ -121,5 +100,18 @@ dependencies {
     // LiveData
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.6")
+    // WebView
+    implementation("com.google.accompanist:accompanist-webview:0.31.3-beta")
+    // Extended icons
+    implementation("androidx.compose.material:material-icons-extended:1.6.6")
 
+    // Amplify core dependency
+    implementation ("com.amplifyframework:core:2.14.11")
+    // support for kotlin coroutines
+    implementation ("com.amplifyframework:core-kotlin:2.14.11")
+    // Amplify Auth
+    implementation ("com.amplifyframework:aws-auth-cognito:2.14.11")
+
+    // Support for Java 8 features
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }

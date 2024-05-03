@@ -6,8 +6,8 @@ import javax.inject.Inject
 
 class GetModulosUseCase @Inject constructor(private val repository: ModuloRepository) {
     suspend operator fun invoke():List<Modulo>{
-        val quotes = repository.getAllModulosFromAPI()
+        val modulos = repository.getAllModulosFromAPI()
 
-        return quotes
+        return modulos
     }
 }
