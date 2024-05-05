@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +21,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.kotlin.core.Amplify
 
@@ -47,7 +46,7 @@ import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 @Composable
-fun VerifyEmailScreen(
+fun VerifyCodeScreen(
     navController: NavController,
     email: String,
     modifier: Modifier = Modifier,
@@ -157,12 +156,12 @@ fun VerifyEmailScreen(
         }
     }
     if(loading){
-        Dialog(onDismissRequest = { /*TODO*/ }) {
+        Dialog(onDismissRequest = {}) {
             CircularProgressIndicator()
         }
         LaunchedEffect(key1 = true) {
             if(confirmSignUp(email, code)){
-                Toast.makeText(context, "Corecto, inicia sesion", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Correcto, inicia sesion", Toast.LENGTH_SHORT).show()
                 navController.popBackStack(MathTrainerNavScreens.SignIn.name, true)
             }else{
                 Toast.makeText(context, "Error, codigo incorrecto", Toast.LENGTH_SHORT).show()
@@ -204,10 +203,10 @@ suspend fun confirmSignUp(email: String, code: String): Boolean {
 //)
 //return succeed
 
-//@Preview(showBackground = true, device = "id:pixel_5")
-//@Composable
-//fun VerifyEmailScreenPreview(){
-//    MathTrainerTheme {
-//        VerifyEmailScreen()
-//    }
-//}
+@Preview(showBackground = true, device = "id:pixel_5")
+@Composable
+fun VerifyCodeScreenPreview(){
+    MathTrainerTheme {
+        VerifyCodeScreen(navController = rememberNavController(), email = "")
+    }
+}

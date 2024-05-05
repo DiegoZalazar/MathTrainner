@@ -29,23 +29,25 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.amplifyframework.auth.AuthException
-import com.amplifyframework.auth.AuthUser
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.kotlin.core.Amplify
-import kotlinx.coroutines.launch
+import mx.ipn.escom.TTA024.ui.EstudianteUI.ForgotPswdScreen
+import mx.ipn.escom.TTA024.ui.EstudianteUI.ResetPasswordScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.SignInScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.SignUpScreen
-import mx.ipn.escom.TTA024.ui.EstudianteUI.VerifyEmailScreen
+import mx.ipn.escom.TTA024.ui.EstudianteUI.VerifyCodeScreen
 
 enum class MathTrainerNavScreens{
     SplashScreen,
     SignIn,
     SignUp,
-    VerifyEmail,
+    VerifyCode,
     AppHome,
-    Exercises
+    ForgotPassword,
+    Exercises,
+    ResetPassword
 }
 
 @Composable
@@ -70,10 +72,20 @@ fun MathTrainer(
                 composable(route = MathTrainerNavScreens.SignUp.name){
                     SignUpScreen(navController)
                 }
-
-                composable(route = "${MathTrainerNavScreens.VerifyEmail.name}/{email}", arguments = listOf(navArgument(name = "email") {type = NavType.StringType})){
+                composable(route = "${MathTrainerNavScreens.VerifyCode.name}/{email}",
+                    arguments = listOf(navArgument(name = "email") {type = NavType.StringType})
+                ){
                     backStackEntry -> 
-                    VerifyEmailScreen(navController = navController, email = backStackEntry.arguments?.getString("email")?: "")
+                        VerifyCodeScreen(navController = navController, email = backStackEntry.arguments?.getString("email")?: "")
+                }
+                composable(route = MathTrainerNavScreens.ForgotPassword.name){
+                    ForgotPswdScreen(navController = navController)
+                }
+                composable(route = "${MathTrainerNavScreens.ResetPassword.name}/{email}",
+                    arguments = listOf(navArgument(name = "email") {type = NavType.StringType})
+                ){
+                    backStackEntry ->
+                        ResetPasswordScreen(navController = navController, email = backStackEntry.arguments?.getString("email")?: "")
                 }
             }
 
@@ -147,6 +159,7 @@ fun Home(
             val name = attributes.find { it.key == AuthUserAttributeKey.name() }
             Log.i("AuthDemo", "User attributes = $attributes")
             Log.i("AuthDemo", name?.value?:"no se pudo obtener el nombre")
+            user = name?.value?:"no se pudo obtener el nombre"
         } catch (error: AuthException) {
             Log.e("AuthDemo", "Failed to fetch user attributes", error)
         }
@@ -160,7 +173,7 @@ fun Home(
             } else if (id.type == AuthSessionResult.Type.FAILURE) {
                 Log.i("AuthQuickStart", "IdentityId not present: ${id.error}")
             }
-            Log.i("AuthQuickStart", token?.accessToken?: "no se pudo obtener el token")
+            Log.i("Token", token?.accessToken?: "no se pudo obtener el token")
         } catch (error: AuthException) {
             Log.e("AuthQuickStart", "Failed to fetch session", error)
         }

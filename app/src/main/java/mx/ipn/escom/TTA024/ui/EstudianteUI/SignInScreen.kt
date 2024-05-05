@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.amplifyframework.kotlin.core.Amplify
 import mx.ipn.escom.TTA024.ui.LoginViewModel
 import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
 import mx.ipn.escom.TTA024.ui.smallcomponents.SignInAlertState
@@ -142,8 +143,14 @@ fun SignInScreen(
                 LinearProgressIndicator()
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "¿Olvidaste tu contraseña?",
-                modifier = Modifier.clickable( onClick = { /*TODO: navigateToForgotPswd*/})
+            Text(text = "¿Olvidaste tu contraseña?")
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "Recupérala",
+                style = androidx.compose.ui.text.TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier.clickable( onClick = { navController.navigate(MathTrainerNavScreens.ForgotPassword.name) })
             )
         }
         Spacer(modifier = Modifier.height(24.dp))

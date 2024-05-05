@@ -1,12 +1,11 @@
 package mx.ipn.escom.TTA024.ui.EstudianteUI
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,13 +18,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,45 +36,39 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.amplifyframework.auth.AuthException
-import com.amplifyframework.auth.AuthUserAttributeKey
-import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.kotlin.core.Amplify
-
 import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
-import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 @Composable
-fun SignUpScreen(
+fun ResetPasswordScreen(
     navController: NavController,
+    email: String,
     modifier: Modifier = Modifier,
 ) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    var code by remember { mutableStateOf("") }
     var pswd by remember { mutableStateOf("") }
     var pswdConfirm by remember { mutableStateOf("") }
     var pswdVisible by remember { mutableStateOf(false) }
     var pswdConfirmVisible by remember { mutableStateOf(false) }
-    var terms by remember { mutableStateOf(false) }
 
-    var loading by remember { mutableStateOf(false) }
-    var isSignUpComplete = false
-    val validName = remember(name){
-        name.isEmpty() || Regex("^[a-zA-Z0-9_ -]{3,60}\$").matches(name)
-    }
-    val validEmail = remember(email){
-        email.isEmpty() || Regex("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+").matches(email)
+    var loadConfirmResetPassword by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+
+    val validCode = remember(code){
+        code.isEmpty() || Regex("^\\d{6}\$").matches(code)
     }
     val validPassword = remember(pswd){
         pswd.isEmpty() || Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).{8,}\$").matches(pswd)
@@ -87,8 +76,8 @@ fun SignUpScreen(
     val validConfirmationPassword = remember(pswd, pswdConfirm){
         pswdConfirm.isEmpty() || pswd == pswdConfirm
     }
-    val validForm = remember(name, email, pswd, pswdConfirm, validName, validEmail, validPassword, validConfirmationPassword){
-        name.isNotEmpty() && email.isNotEmpty() && pswd.isNotEmpty() && pswdConfirm.isNotEmpty() && validName && validEmail && validPassword && validConfirmationPassword
+    val validForm = remember(code, pswd, pswdConfirm, validCode, validPassword, validConfirmationPassword){
+        code.isNotEmpty() && pswd.isNotEmpty() && pswdConfirm.isNotEmpty() && validCode && validPassword && validConfirmationPassword
     }
 
     Column(
@@ -123,39 +112,32 @@ fun SignUpScreen(
                 verticalArrangement = Arrangement.Center
             ){
                 Text(
-                    text = "Registrate",
+                    text = "Crea tu nueva contraseña",
                     fontWeight = FontWeight.Bold
                 )
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { if(validName) Text("Nombre") else Text("Al menos 3 caracteres") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier
-                        .padding(vertical = 16.dp),
-                    isError = !validName
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Ingresa el codigo que te enviamos a tu email para crear una nueva contraseña",
+                    fontWeight = FontWeight.Normal
                 )
 
                 OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { if(validEmail) Text("Email") else Text("Ingresa un email valido")} ,
+                    value = code,
+                    onValueChange = { code = it },
+                    label = { if(validCode) Text("Código") else Text("Solo 6 digitos") },
                     keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Email,
+                        keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Next
                     ),
                     modifier = Modifier
                         .padding(vertical = 16.dp),
-                    isError = !validEmail
+                    isError = !validCode
                 )
 
                 OutlinedTextField(
                     value = pswd,
                     onValueChange = { pswd = it },
-                    label = { if(validPassword) Text("Contraseña") else Text("Debe contener al menos: 8 caracteres, mayúsculas, minúsculas y números.") },
+                    label = { if(validPassword) Text("Nueva contraseña") else Text("Debe contener al menos: 8 caracteres, mayúsculas, minúsculas y números.") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Next
@@ -205,80 +187,48 @@ fun SignUpScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-//                Row(
-//                    modifier = modifier
-//                        .wrapContentHeight()
-//                        .fillMaxWidth(),
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Checkbox(
-//                        checked = terms,
-//                        onCheckedChange = { terms = it },
-//                    )
-//                    Text(
-//                        text = "Acepto terminos y condiciones",
-//                        style = MaterialTheme.typography.bodySmall,
-//                        fontWeight = FontWeight.Bold
-//                    )
-//                }
 
                 Button(
                     onClick = {
-                        loading = true
-
+                        loadConfirmResetPassword = true
                     },
                     modifier = modifier
                         .widthIn(min = 250.dp)
                         .padding(vertical = 8.dp),
                     enabled = validForm
                 ) {
-                    Text("Crear cuenta")
+                    Text("Actualizar contraseña")
                 }
                 Spacer(modifier = Modifier.height(24.dp))
-                Text("¿Ya tienes una cuenta?")
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Inicia sesion",
-                    style = androidx.compose.ui.text.TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    ),
-                    modifier = Modifier.clickable( onClick = {
-                        navController.popBackStack(MathTrainerNavScreens.SignIn.name, false)
-                    } )
-                )
+
             }
         }
     }
-    if(loading){
-        Dialog(onDismissRequest = { /*TODO*/ }) {
+    if(loadConfirmResetPassword){
+        Dialog(onDismissRequest = {}) {
             CircularProgressIndicator()
         }
         LaunchedEffect(key1 = true) {
-            isSignUpComplete = signUp(email = email, nombre = name, password = pswdConfirm)
-            if(isSignUpComplete){
-                navController.navigate("home"){
-                    popUpTo("login")
-                }
+            val resetPassswordResult = confirmResetPassword(email, pswd, code)
+            if(resetPassswordResult){
+                Toast.makeText(context, "Correcto, inicia sesion", Toast.LENGTH_SHORT).show()
+                navController.popBackStack(MathTrainerNavScreens.SignIn.name, true)
             }else{
-                navController.navigate("${MathTrainerNavScreens.VerifyCode.name}/${email}")
+                Toast.makeText(context, "Error, codigo incorrecto", Toast.LENGTH_SHORT).show()
             }
-            loading = false
+
+            loadConfirmResetPassword = false
         }
     }
 }
 
-suspend fun signUp(email: String, nombre: String, password: String): Boolean{
-    val options = AuthSignUpOptions.builder()
-        .userAttribute(AuthUserAttributeKey.email(), email)
-        .userAttribute(AuthUserAttributeKey.name(), nombre)
-        .build()
+suspend fun confirmResetPassword(email: String, password: String, code: String): Boolean{
     return try {
-        val result = Amplify.Auth.signUp(email, password, options)
-        Log.i("AuthQuickStart", "Result: $result")
-        result.isSignUpComplete
+        Amplify.Auth.confirmResetPassword(email, password, code)
+        Log.i("AuthQuickstart", "New password confirmed")
+        true
     } catch (error: AuthException) {
-        Log.e("AuthQuickStart", "Sign up failed", error)
+        Log.e("AuthQuickstart", "Failed to confirm password reset", error)
         false
     }
 }
