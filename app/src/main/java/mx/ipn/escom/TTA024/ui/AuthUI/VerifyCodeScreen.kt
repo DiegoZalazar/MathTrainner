@@ -1,9 +1,8 @@
-package mx.ipn.escom.TTA024.ui.EstudianteUI
+package mx.ipn.escom.TTA024.ui.AuthUI
 
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,36 +41,25 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.kotlin.core.Amplify
+
 import mx.ipn.escom.TTA024.ui.LoginScreens
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 @Composable
-fun ForgotPswdScreen(
+fun VerifyCodeScreen(
     navController: NavController,
+    email: String,
     modifier: Modifier = Modifier,
 ) {
-    var email by remember { mutableStateOf("") }
-    var loadResetPassword by remember { mutableStateOf(false) }
+    var code by remember { mutableStateOf("") }
+    val validCode = remember(code){
+        code.isEmpty() || Regex("^\\d{6}\$").matches(code)
+    }
+
     val context = LocalContext.current
 
-    val validEmail = remember(email){
-        email.isEmpty() || Regex("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+").matches(email)
-    }
+    var loading by remember { mutableStateOf(false) }
 
-    if(loadResetPassword){
-        Dialog(onDismissRequest = {}){
-            CircularProgressIndicator()
-        }
-        LaunchedEffect(key1 = true) {
-            val result = resetPassword(email)
-            if(result){
-                navController.navigate("${LoginScreens.ResetPassword.name}/${email}")
-            }else{
-                Toast.makeText(context, "Error, usuario no registrado", Toast.LENGTH_SHORT).show()
-            }
-            loadResetPassword = false
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -106,37 +94,53 @@ fun ForgotPswdScreen(
                 verticalArrangement = Arrangement.Center
             ){
                 Text(
-                    text = "Recuperar contraseña",
+                    text = "Confirma tu correo",
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Ingresa el email de tu cuenta para recuperar tu contraseña",
+                    text = "Te enviamos un código a tu correo. Ingresa el código de 6 digitos",
                     fontWeight = FontWeight.Normal
                 )
                 OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { if(validEmail) Text("Email") else Text("Ingresa un email valido")},
+                    value = code,
+                    onValueChange = { code = it },
+                    label = { if(validCode) Text("Código") else Text("Solo 6 digitos") },
                     keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Done
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
                     ),
                     modifier = Modifier
                         .padding(vertical = 16.dp),
-                    isError = !validEmail
+                    isError = !validCode
                 )
 
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text("¿No has recibido ningun código?")
+                Text("Checa la carpeta de Spam")
+//                Text(
+//                    text = "Reenvia el codigo",
+//                    style = TextStyle(
+//                        fontWeight = FontWeight.Bold,
+//                        color = MaterialTheme.colorScheme.primary
+//                    )
+//                )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { loadResetPassword = true },
+                    onClick = {
+                        loading = true
+
+                    },
                     modifier = modifier
                         .widthIn(min = 250.dp)
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = 8.dp),
+                    enabled = code.isNotEmpty() && validCode
                 ) {
-                    Text("Recuperar contraseña")
+                    Text("Confirmar correo")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -146,29 +150,63 @@ fun ForgotPswdScreen(
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
-                    ),
-                    modifier = Modifier.clickable { navController.popBackStack(LoginScreens.SignIn.name, false) }
+                    )
                 )
             }
         }
     }
-}
-
-suspend fun resetPassword(email: String) : Boolean{
-    return try {
-        val result = Amplify.Auth.resetPassword(email)
-        Log.i("AuthQuickstart", "Password reset OK: $result")
-        true
-    } catch (error: AuthException) {
-        Log.e("AuthQuickstart", "Password reset failed", error)
-        false
+    if(loading){
+        Dialog(onDismissRequest = {}) {
+            CircularProgressIndicator()
+        }
+        LaunchedEffect(key1 = true) {
+            if(confirmSignUp(email, code)){
+                Toast.makeText(context, "Correcto, inicia sesion", Toast.LENGTH_SHORT).show()
+                navController.popBackStack(LoginScreens.SignIn.name, true)
+            }else{
+                Toast.makeText(context, "Error, codigo incorrecto", Toast.LENGTH_SHORT).show()
+            }
+            loading = false
+        }
     }
 }
 
+suspend fun confirmSignUp(email: String, code: String): Boolean {
+    var incorrectCode = false
+    try {
+        val result = Amplify.Auth.confirmSignUp(email, code)
+        if (result.isSignUpComplete) {
+            Log.i("AuthQuickstart", "Signup confirmed")
+        } else {
+            Log.i("AuthQuickstart", "Signup confirmation not yet complete")
+        }
+    } catch (error: AuthException) {
+        Log.e("AuthQuickstart", "Failed to confirm signup", error)
+        Log.i("AuthQuickstart", "Message: ${error.localizedMessage?:"no encontrado"}")
+        incorrectCode = error.localizedMessage?.equals("Confirmation code entered is not correct.")?:false
+    }
+    return !incorrectCode
+}
+
+//var succeed = false
+//Amplify.Auth.confirmSignUp(
+//email, code,
+//{ result ->
+//    if (result.isSignUpComplete) {
+//        Log.i("AuthQuickstart", "Confirm signUp succeeded")
+//        succeed = true
+//    } else {
+//        Log.i("AuthQuickstart","Confirm sign up not complete")
+//    }
+//},
+//{ Log.e("AuthQuickstart", "Failed to confirm sign up", it) }
+//)
+//return succeed
+
 @Preview(showBackground = true, device = "id:pixel_5")
 @Composable
-fun ForgotPswdScreenPreview(){
+fun VerifyCodeScreenPreview(){
     MathTrainerTheme {
-        ForgotPswdScreen(navController = rememberNavController())
+        VerifyCodeScreen(navController = rememberNavController(), email = "")
     }
 }

@@ -12,11 +12,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key.Companion.Home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
@@ -32,15 +30,14 @@ import androidx.navigation.navigation
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
-import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.kotlin.core.Amplify
 import io.github.nefilim.kjwt.JWSRSA256Algorithm
 import io.github.nefilim.kjwt.JWT
-import mx.ipn.escom.TTA024.ui.EstudianteUI.ForgotPswdScreen
-import mx.ipn.escom.TTA024.ui.EstudianteUI.ResetPasswordScreen
-import mx.ipn.escom.TTA024.ui.EstudianteUI.SignInScreen
-import mx.ipn.escom.TTA024.ui.EstudianteUI.SignUpScreen
-import mx.ipn.escom.TTA024.ui.EstudianteUI.VerifyCodeScreen
+import mx.ipn.escom.TTA024.ui.AuthUI.ForgotPswdScreen
+import mx.ipn.escom.TTA024.ui.AuthUI.ResetPasswordScreen
+import mx.ipn.escom.TTA024.ui.AuthUI.SignInScreen
+import mx.ipn.escom.TTA024.ui.AuthUI.SignUpScreen
+import mx.ipn.escom.TTA024.ui.AuthUI.VerifyCodeScreen
 
 enum class LoginScreens{
     SplashScreen,
