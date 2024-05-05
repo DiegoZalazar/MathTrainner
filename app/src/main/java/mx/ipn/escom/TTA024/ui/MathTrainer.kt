@@ -16,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key.Companion.Home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
@@ -33,21 +34,30 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.kotlin.core.Amplify
+import io.github.nefilim.kjwt.JWSRSA256Algorithm
+import io.github.nefilim.kjwt.JWT
 import mx.ipn.escom.TTA024.ui.EstudianteUI.ForgotPswdScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.ResetPasswordScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.SignInScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.SignUpScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.VerifyCodeScreen
 
-enum class MathTrainerNavScreens{
+enum class LoginScreens{
     SplashScreen,
     SignIn,
     SignUp,
     VerifyCode,
     AppHome,
     ForgotPassword,
-    Exercises,
     ResetPassword
+}
+
+enum class StudentScreens {
+    StudentHome
+}
+
+enum class AdminScreens {
+    AdminHome
 }
 
 @Composable
@@ -60,28 +70,45 @@ fun MathTrainer(
     Box(modifier = Modifier.fillMaxSize()){
         NavHost(
             navController = navController,
-            startDestination = MathTrainerNavScreens.SplashScreen.name
+            startDestination = LoginScreens.SplashScreen.name
         ) {
+            composable(LoginScreens.SplashScreen.name){
+                MathTrainerSplashScreen(
+                    navToHome = {
+                        Log.i("Amplify", "navigating to home")
+                        navController.navigate("home"){
+                            popUpTo(LoginScreens.SplashScreen.name)
+                        }
+                    },
+                    navToLogin = {
+                        Log.i("Amplify", "navigating to login")
+                        navController.navigate("login"){
+                            popUpTo(LoginScreens.SplashScreen.name)
+                        }
+                    }
+                )
+            }
+
             navigation(
                 route = "login",
-                startDestination = MathTrainerNavScreens.SignIn.name
+                startDestination = LoginScreens.SignIn.name
             ) {
-                composable(route = MathTrainerNavScreens.SignIn.name){
+                composable(route = LoginScreens.SignIn.name){
                     SignInScreen(navController, loginViewModel)
                 }
-                composable(route = MathTrainerNavScreens.SignUp.name){
+                composable(route = LoginScreens.SignUp.name){
                     SignUpScreen(navController)
                 }
-                composable(route = "${MathTrainerNavScreens.VerifyCode.name}/{email}",
+                composable(route = "${LoginScreens.VerifyCode.name}/{email}",
                     arguments = listOf(navArgument(name = "email") {type = NavType.StringType})
                 ){
                     backStackEntry -> 
                         VerifyCodeScreen(navController = navController, email = backStackEntry.arguments?.getString("email")?: "")
                 }
-                composable(route = MathTrainerNavScreens.ForgotPassword.name){
+                composable(route = LoginScreens.ForgotPassword.name){
                     ForgotPswdScreen(navController = navController)
                 }
-                composable(route = "${MathTrainerNavScreens.ResetPassword.name}/{email}",
+                composable(route = "${LoginScreens.ResetPassword.name}/{email}",
                     arguments = listOf(navArgument(name = "email") {type = NavType.StringType})
                 ){
                     backStackEntry ->
@@ -91,31 +118,74 @@ fun MathTrainer(
 
             navigation(
                 route = "home",
-                startDestination = MathTrainerNavScreens.AppHome.name
+                startDestination = LoginScreens.AppHome.name
             ) {
-                composable(route = MathTrainerNavScreens.AppHome.name){
+                composable(route = LoginScreens.AppHome.name){
                     Home(
                         navToLogin = {
                             navController.navigate("login"){
                                 popUpTo("home")
                             }
                         },
-                        isSignedIn = true
+                        isSignedIn = true,
+                        navToAdmin = {
+                            navController.navigate("admin"){
+                                popUpTo("home")
+                            }
+                        },
+                        navToStudent = {
+                            navController.navigate("student"){
+                                popUpTo("home")
+                            }
+                        }
                     )
                 }
             }
 
-            composable(MathTrainerNavScreens.SplashScreen.name){
-                MathTrainerSplashScreen(
-                    navToHome = {
-                        Log.i("Amplify", "navigating to home")
-                        navController.navigate("home")
-                    },
-                    navToLogin = {
-                        Log.i("Amplify", "navigating to login")
-                        navController.navigate("login")
+            navigation(
+                route = "student",
+                startDestination = StudentScreens.StudentHome.name
+            ){
+                composable(route = StudentScreens.StudentHome.name){
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+
+                        Text(text = "Sesion iniciada")
+                        Text("Bienvenido estudiante")
+
+                        Button(onClick = { navController.navigate("home"){
+                            popUpTo("student")
+                        } }) {
+                            Text("Cerrar Sesion")
+                        }
                     }
-                )
+                }
+            }
+
+            navigation(
+                route = "admin",
+                startDestination = AdminScreens.AdminHome.name
+            ){
+                composable(route = AdminScreens.AdminHome.name){
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+
+                        Text(text = "Sesion iniciada")
+                        Text("Bienvenido admin")
+
+                        Button(onClick = { navController.navigate("home"){
+                            popUpTo("admin")
+                        } }) {
+                            Text("Cerrar Sesion")
+                        }
+                    }
+                }
             }
         }
     }
@@ -133,16 +203,20 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navControll
 @Composable
 fun Home(
     navToLogin: () -> Unit,
+    navToAdmin: () -> Unit,
+    navToStudent: () -> Unit,
     isSignedIn: Boolean
 ) {
     val scope = rememberCoroutineScope()
     var user by remember {
         mutableStateOf("")
     }
+    var isAdmin by remember { mutableStateOf(false) }
     var closeSesionLoading by remember {
         mutableStateOf(false)
     }
     LaunchedEffect(key1 = true) {
+        // fetch sesion
         try {
             val session = Amplify.Auth.fetchAuthSession()
             Log.i("AmplifyQuickstart", "Auth session = $session")
@@ -154,6 +228,7 @@ fun Home(
             navToLogin()
         }
 
+        // attibutes y obtener el nombre
         try {
             val attributes = Amplify.Auth.fetchUserAttributes()
             val name = attributes.find { it.key == AuthUserAttributeKey.name() }
@@ -164,9 +239,14 @@ fun Home(
             Log.e("AuthDemo", "Failed to fetch user attributes", error)
         }
 
+        // tokens
         try {
             val session = Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession
             val token = session.tokensResult.value
+            val token2 = session.userPoolTokensResult.value.toString()
+            val x = JWT.decodeT(token2, JWSRSA256Algorithm).tap {
+                Log.i("JWT Test", it.signedData())
+            }
             val id = session.identityIdResult
             if (id.type == AuthSessionResult.Type.SUCCESS) {
                 Log.i("AuthQuickStart", "IdentityId: ${id.value}")
@@ -174,8 +254,33 @@ fun Home(
                 Log.i("AuthQuickStart", "IdentityId not present: ${id.error}")
             }
             Log.i("Token", token?.accessToken?: "no se pudo obtener el token")
+            Log.i("Token", token2)
+            var body = ""
+            var groups = listOf("")
+            JWT.decodeT(token?.accessToken?:"", JWSRSA256Algorithm).tap {
+                body = it.claimValue("scope").orNull()?: "no se pudo obtener el valor"
+                groups = it.claimValueAsList("cognito:groups")
+            }
+            Log.i("Token JWT", JWT.decodeT(token?.accessToken?:"", JWSRSA256Algorithm).toString())
+            Log.i("Token JWT", body)
+            if(groups.isEmpty()){
+                Log.i("Token JWT", "No hay groups para este usuario")
+            }else{
+                for(g in groups){
+                    if(g == "Admins"){
+                        isAdmin = true
+                        break
+                    }
+                    Log.i("Token JWT", g)
+                }
+            }
         } catch (error: AuthException) {
             Log.e("AuthQuickStart", "Failed to fetch session", error)
+        }
+        if(isAdmin){
+            navToAdmin()
+        }else{
+            navToStudent()
         }
     }
     if(closeSesionLoading){

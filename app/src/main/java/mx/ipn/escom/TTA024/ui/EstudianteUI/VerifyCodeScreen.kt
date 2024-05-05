@@ -42,7 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.kotlin.core.Amplify
 
-import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
+import mx.ipn.escom.TTA024.ui.LoginScreens
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 @Composable
@@ -162,7 +162,7 @@ fun VerifyCodeScreen(
         LaunchedEffect(key1 = true) {
             if(confirmSignUp(email, code)){
                 Toast.makeText(context, "Correcto, inicia sesion", Toast.LENGTH_SHORT).show()
-                navController.popBackStack(MathTrainerNavScreens.SignIn.name, true)
+                navController.popBackStack(LoginScreens.SignIn.name, true)
             }else{
                 Toast.makeText(context, "Error, codigo incorrecto", Toast.LENGTH_SHORT).show()
             }

@@ -49,7 +49,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.kotlin.core.Amplify
-import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
+import mx.ipn.escom.TTA024.ui.LoginScreens
 
 @Composable
 fun ResetPasswordScreen(
@@ -212,7 +212,7 @@ fun ResetPasswordScreen(
             val resetPassswordResult = confirmResetPassword(email, pswd, code)
             if(resetPassswordResult){
                 Toast.makeText(context, "Correcto, inicia sesion", Toast.LENGTH_SHORT).show()
-                navController.popBackStack(MathTrainerNavScreens.SignIn.name, true)
+                navController.popBackStack(LoginScreens.SignIn.name, true)
             }else{
                 Toast.makeText(context, "Error, codigo incorrecto", Toast.LENGTH_SHORT).show()
             }

@@ -114,4 +114,7 @@ dependencies {
 
     // Support for Java 8 features
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+
+    // JWT
+    implementation("io.github.nefilim.kjwt:kjwt-core:0.9.0")
 }

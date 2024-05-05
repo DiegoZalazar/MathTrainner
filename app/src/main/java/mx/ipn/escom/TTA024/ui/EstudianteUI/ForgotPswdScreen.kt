@@ -42,9 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.kotlin.core.Amplify
-import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
-import mx.ipn.escom.TTA024.ui.smallcomponents.SignInAlert
-import mx.ipn.escom.TTA024.ui.smallcomponents.SignInAlertState
+import mx.ipn.escom.TTA024.ui.LoginScreens
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 
 @Composable
@@ -67,7 +65,7 @@ fun ForgotPswdScreen(
         LaunchedEffect(key1 = true) {
             val result = resetPassword(email)
             if(result){
-                navController.navigate("${MathTrainerNavScreens.ResetPassword.name}/${email}")
+                navController.navigate("${LoginScreens.ResetPassword.name}/${email}")
             }else{
                 Toast.makeText(context, "Error, usuario no registrado", Toast.LENGTH_SHORT).show()
             }
@@ -149,7 +147,7 @@ fun ForgotPswdScreen(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     ),
-                    modifier = Modifier.clickable { navController.popBackStack(MathTrainerNavScreens.SignIn.name, false) }
+                    modifier = Modifier.clickable { navController.popBackStack(LoginScreens.SignIn.name, false) }
                 )
             }
         }

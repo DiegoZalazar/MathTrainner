@@ -40,9 +40,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.amplifyframework.kotlin.core.Amplify
 import mx.ipn.escom.TTA024.ui.LoginViewModel
-import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
+import mx.ipn.escom.TTA024.ui.LoginScreens
 import mx.ipn.escom.TTA024.ui.smallcomponents.SignInAlertState
 import mx.ipn.escom.TTA024.ui.smallcomponents.SignInAlert
 
@@ -150,7 +149,7 @@ fun SignInScreen(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 ),
-                modifier = Modifier.clickable( onClick = { navController.navigate(MathTrainerNavScreens.ForgotPassword.name) })
+                modifier = Modifier.clickable( onClick = { navController.navigate(LoginScreens.ForgotPassword.name) })
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
@@ -169,7 +168,7 @@ fun SignInScreen(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             ),
-            modifier = Modifier.clickable( onClick = { navController.navigate(MathTrainerNavScreens.SignUp.name) } )
+            modifier = Modifier.clickable( onClick = { navController.navigate(LoginScreens.SignUp.name) } )
         )
     }
     if(isLoading) {

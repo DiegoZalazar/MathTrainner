@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,13 +18,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,7 +42,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -57,8 +51,7 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.kotlin.core.Amplify
 
-import mx.ipn.escom.TTA024.ui.MathTrainerNavScreens
-import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
+import mx.ipn.escom.TTA024.ui.LoginScreens
 
 @Composable
 fun SignUpScreen(
@@ -244,7 +237,7 @@ fun SignUpScreen(
                         color = MaterialTheme.colorScheme.primary
                     ),
                     modifier = Modifier.clickable( onClick = {
-                        navController.popBackStack(MathTrainerNavScreens.SignIn.name, false)
+                        navController.popBackStack(LoginScreens.SignIn.name, false)
                     } )
                 )
             }
@@ -261,7 +254,7 @@ fun SignUpScreen(
                     popUpTo("login")
                 }
             }else{
-                navController.navigate("${MathTrainerNavScreens.VerifyCode.name}/${email}")
+                navController.navigate("${LoginScreens.VerifyCode.name}/${email}")
             }
             loading = false
         }
