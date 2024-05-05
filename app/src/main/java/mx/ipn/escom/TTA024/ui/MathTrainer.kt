@@ -121,24 +121,7 @@ fun MathTrainer(
                 startDestination = LoginScreens.AppHome.name
             ) {
                 composable(route = LoginScreens.AppHome.name){
-                    Home(
-                        navToLogin = {
-                            navController.navigate("login"){
-                                popUpTo("home")
-                            }
-                        },
-                        isSignedIn = true,
-                        navToAdmin = {
-                            navController.navigate("admin"){
-                                popUpTo("home")
-                            }
-                        },
-                        navToStudent = {
-                            navController.navigate("student"){
-                                popUpTo("home")
-                            }
-                        }
-                    )
+                    Home(navController)
                 }
             }
 
@@ -147,21 +130,7 @@ fun MathTrainer(
                 startDestination = StudentScreens.StudentHome.name
             ){
                 composable(route = StudentScreens.StudentHome.name){
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-
-                        Text(text = "Sesion iniciada")
-                        Text("Bienvenido estudiante")
-
-                        Button(onClick = { navController.navigate("home"){
-                            popUpTo("student")
-                        } }) {
-                            Text("Cerrar Sesion")
-                        }
-                    }
+                    StudentHome(navController = navController)
                 }
             }
 
@@ -170,21 +139,7 @@ fun MathTrainer(
                 startDestination = AdminScreens.AdminHome.name
             ){
                 composable(route = AdminScreens.AdminHome.name){
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-
-                        Text(text = "Sesion iniciada")
-                        Text("Bienvenido admin")
-
-                        Button(onClick = { navController.navigate("home"){
-                            popUpTo("admin")
-                        } }) {
-                            Text("Cerrar Sesion")
-                        }
-                    }
+                    AdminHome(navController = navController)
                 }
             }
         }
@@ -200,6 +155,151 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navControll
     return viewModel(parentEntry)
 }
 
+@Composable
+fun StudentHome(
+    navController: NavController
+) {
+    var userName by remember { mutableStateOf("") }
+    LaunchedEffect(key1 = true) {
+        try {
+            val attributes = Amplify.Auth.fetchUserAttributes()
+            val name = attributes.find { it.key == AuthUserAttributeKey.name() }
+            Log.i("AuthDemo", "User attributes = $attributes")
+            Log.i("AuthDemo", name?.value?:"no se pudo obtener el nombre")
+            userName = name?.value?:"no se pudo obtener el nombre"
+        } catch (error: AuthException) {
+            Log.e("AuthDemo", "Failed to fetch user attributes", error)
+        }
+    }
+    
+    var closeSesionLoading by remember { mutableStateOf(false) }
+    if(closeSesionLoading){
+        LaunchedEffect(key1 = true) {
+            try {
+                Amplify.Auth.signOut()
+            } catch (error: AuthException) {
+                Log.e("AmplifyQuickstart", "Failed to sign out auth session", error)
+            }
+            navController.navigate("login"){
+                popUpTo("student")
+            }
+            closeSesionLoading = false
+        }
+    }
+    
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        Text(text = "Sesion iniciada")
+        Text("Bienvenido estudiante")
+        Text("tu nombre: ${userName}")
+
+        Button(onClick = {
+            closeSesionLoading = true
+        }) {
+            Text("Cerrar Sesion")
+        }
+    }
+}
+
+@Composable
+fun AdminHome(
+    navController: NavController
+) {
+    var userName by remember { mutableStateOf("") }
+    LaunchedEffect(key1 = true) {
+        try {
+            val attributes = Amplify.Auth.fetchUserAttributes()
+            val name = attributes.find { it.key == AuthUserAttributeKey.name() }
+            Log.i("AuthDemo", "User attributes = $attributes")
+            Log.i("AuthDemo", name?.value?:"no se pudo obtener el nombre")
+            userName = name?.value?:"no se pudo obtener el nombre"
+        } catch (error: AuthException) {
+            Log.e("AuthDemo", "Failed to fetch user attributes", error)
+        }
+    }
+
+    var closeSesionLoading by remember { mutableStateOf(false) }
+    if(closeSesionLoading){
+        LaunchedEffect(key1 = true) {
+            try {
+                Amplify.Auth.signOut()
+            } catch (error: AuthException) {
+                Log.e("AmplifyQuickstart", "Failed to sign out auth session", error)
+            }
+            navController.navigate("login"){
+                popUpTo("admin")
+            }
+            closeSesionLoading = false
+        }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        Text(text = "Sesion iniciada")
+        Text("Bienvenido admin")
+        Text("tu nombre: ${userName}")
+
+        Button(onClick = {
+            closeSesionLoading = true
+        }) {
+            Text("Cerrar Sesion")
+        }
+    }
+}
+
+@Composable 
+fun Home(
+    navController: NavController
+){
+    LaunchedEffect(key1 = true) {
+        var isAdmin = false
+        try {
+            val session = Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession
+            val token = session.tokensResult.value
+            Log.i("Token JWT", token?.accessToken?: "no se pudo obtener el token")
+            var body = ""
+            var groups = listOf("")
+            JWT.decodeT(token?.accessToken?:"", JWSRSA256Algorithm).tap {
+                body = it.claimValue("scope").orNull()?: "no se pudo obtener el valor"
+                groups = it.claimValueAsList("cognito:groups")
+            }
+            Log.i("Token JWT", JWT.decodeT(token?.accessToken?:"", JWSRSA256Algorithm).toString())
+            Log.i("Token JWT", body)
+            if(groups.isEmpty()){
+                Log.i("Token JWT", "No hay groups para este usuario")
+            }else{
+                for(g in groups){
+                    if(g == "Admins"){
+                        isAdmin = true
+                        break
+                    }
+                    Log.i("Token JWT", g)
+                }
+            }
+        } catch (error: AuthException) {
+            Log.e("AuthQuickStart", "Failed to fetch session", error)
+        }
+        if(isAdmin){
+            navController.navigate("admin") {
+                popUpTo("home")
+            }
+        }else{
+            navController.navigate("student"){
+                popUpTo("home")
+            }
+        }
+    }
+}
+
+/*
 @Composable
 fun Home(
     navToLogin: () -> Unit,
@@ -310,7 +410,7 @@ fun Home(
         }
     }
 }
-
+*/
 
 
 @Composable
