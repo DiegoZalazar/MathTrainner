@@ -12,18 +12,19 @@ import javax.inject.Inject
 class LeccionRepository @Inject constructor(
     private val api: LeccionService, //private val quoteDao: QuoteDao
 ) {
-    suspend fun getAllLeccionesFromAPI(): List<Leccion> {
-        val response: List<LeccionModel> = api.getLecciones()
-        return response.map { it.toDomain() }
-    }
 
-    suspend fun insertLeccionFromAPI(leccionModel: LeccionModel): String {
-        val response: String = api.insertLeccion(leccionModel)
+    suspend fun insertLeccionByModuloFromAPI(id_modulo: Int,leccionModel: LeccionModel): String {
+        val response: String = api.insertLeccion(id_modulo,leccionModel)
         return response
     }
 
-    suspend fun deleteLeccionFromApi(id_leccion: Int): String {
-        val response: String = api.deleteLeccion(id_leccion)
+    suspend fun updateLeccionByModuloFromAPI(id_modulo: Int,id_leccion: Int,leccionModel: LeccionModel): String {
+        val response: String = api.updateLeccionByModulo(id_modulo,id_leccion,leccionModel)
+        return response
+    }
+
+    suspend fun deleteLeccionByModuloFromApi(id_modulo: Int,id_leccion: Int): String {
+        val response: String = api.deleteLeccionByModulo(id_modulo,id_leccion)
         return response
     }
 

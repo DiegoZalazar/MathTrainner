@@ -1,9 +1,11 @@
 package mx.ipn.escom.TTA024
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,12 +20,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -44,21 +51,32 @@ import com.google.gson.Gson
 import mx.ipn.escom.TTA024.ui.AdminUI.TableCell
 import mx.ipn.escom.TTA024.ui.AdminUI.TopBackAppBarAdministrador
 import mx.ipn.escom.TTA024.data.models.LeccionModel
-import mx.ipn.escom.TTA024.data.models.ModuloModel
+import mx.ipn.escom.TTA024.domain.model.Leccion
+import mx.ipn.escom.TTA024.domain.model.Modulo
+import mx.ipn.escom.TTA024.ui.AdminUI.DialogAddModulo
 import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
+import mx.ipn.escom.TTA024.ui.viewmodels.AdminLeccionesViewModel
+import mx.ipn.escom.TTA024.ui.viewmodels.ModulosAdminViewModel
 
 @Composable
-fun LeccionesAdminComposable(navController: NavHostController, modulo: ModuloModel){
+fun LeccionesAdminComposable(
+    navController: NavHostController,
+    modulo: Modulo,
+    adminLeccionesViewModel: AdminLeccionesViewModel
+){
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Titulo","Nivel","Eliminar","Editar")
-    val leccion1 = LeccionModel(1,"Integracion partes","Paso 1: integrar",3,1,"none")
-    val leccion2 = LeccionModel(1,"Integracion cambio variable","Paso 1: Cambiar variable",2,1,"none")
-    val leccion3 = LeccionModel(1,"Derivacion regla de cadena","Paso 1: Formular",1,1,"none")
+    /*val leccion1 = Leccion(1,"Integracion partes","Paso 1: integrar",3,1,"none")
+    val leccion2 = Leccion(1,"Integracion cambio variable","Paso 1: Cambiar variable",2,1,"none")
+    val leccion3 = Leccion(1,"Derivacion regla de cadena","Paso 1: Formular",1,1,"none")
+    val leccionesList = listOf<Leccion>(leccion1, leccion2, leccion3)*/
 
-    val leccionesList = listOf<LeccionModel>(leccion1, leccion2, leccion3)
+    adminLeccionesViewModel.onCreate(modulo)
+    val leccionesList by adminLeccionesViewModel.leccionModel.observeAsState(initial = arrayListOf())
+
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
@@ -80,7 +98,6 @@ fun LeccionesAdminComposable(navController: NavHostController, modulo: ModuloMod
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Here is the header
             item() {
 
                 Row(Modifier.background(Color.Gray)) {
@@ -101,28 +118,33 @@ fun LeccionesAdminComposable(navController: NavHostController, modulo: ModuloMod
                     TableCellDeleteImageLeccion(
                         image = R.drawable.deleteicon,
                         tamano = columsWeight,
-                        leccion = leccion
+                        leccion = leccion,
+                        adminLeccionesViewModel,
+                        modulo
                     )
                     TableCellEditImageLeccion(
                         image = R.drawable.editicon,
                         tamano = columsWeight,
                         navController = navController,
-                        leccion = leccion
+                        leccion = leccion,
+                        modulo = modulo
                     )
 
                 }
             }
         }
     }
+    buttonAddLeccion(navController,modulo)
 }
 
 @Composable
 fun RowScope.TableCellDeleteImageLeccion(
     image: Int,
     tamano: Float,
-    leccion: LeccionModel,
+    leccion: Leccion,
+    adminLeccionesViewModel: AdminLeccionesViewModel,
+    modulo: Modulo
 ) {
-    val context = LocalContext.current
     var showDelete by rememberSaveable {
         mutableStateOf(false)
     }
@@ -143,7 +165,7 @@ fun RowScope.TableCellDeleteImageLeccion(
                 .align(Alignment.Center)
         )
     }
-    DialogEliminarLeccion(showDelete, { showDelete = false }, { showDelete = false }, leccion)
+    DialogEliminarLeccion(showDelete, { showDelete = false }, { showDelete = false }, leccion,adminLeccionesViewModel,modulo)
 
 }
 @Composable
@@ -151,7 +173,8 @@ fun RowScope.TableCellEditImageLeccion(
     image: Int,
     tamano: Float,
     navController: NavController,
-    leccion: LeccionModel,
+    leccion: Leccion,
+    modulo: Modulo
 ) {
 
     Box(
@@ -166,7 +189,7 @@ fun RowScope.TableCellEditImageLeccion(
             contentDescription = "leccion",
             modifier = Modifier
                 .clickable {
-                    navigateToEditLeccion(navController,leccion)
+                    navigateToEditLeccion(navController,modulo,leccion)
                 }
                 .align(Alignment.Center)
         )
@@ -179,7 +202,9 @@ fun DialogEliminarLeccion(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    leccion: LeccionModel,
+    leccion: Leccion,
+    adminLeccionesViewModel: AdminLeccionesViewModel,
+    modulo: Modulo
 ) {
     val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {
@@ -241,7 +266,7 @@ fun DialogEliminarLeccion(
                 TextButton(
                     onClick = {
                         onConfirm()
-                        deleteLeccion()
+                        deleteLeccion(modulo,leccion,adminLeccionesViewModel)
                     },
                     modifier = Modifier
                         .width(300.dp)
@@ -286,11 +311,34 @@ fun DialogEliminarLeccion(
     }
 }
 
-fun deleteLeccion() {
-    TODO("Not yet implemented")
+@Composable
+fun buttonAddLeccion(navController: NavController, modulo: Modulo) {
+
+    Column( modifier = Modifier
+        .fillMaxSize()
+        .padding(bottom = 15.dp, end = 15.dp),horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.Bottom) {
+        FloatingActionButton(onClick =
+        {
+            var leccion: Leccion? = Leccion(0,"none","none",0,0,"none")
+            val leccionJson = Gson().toJson(leccion)
+            val moduloJson = Gson().toJson(modulo)
+            navController.navigate(route = AppScreens.AdminFormLeccActivity.route+"/$moduloJson/$leccionJson")
+        }
+        )
+        {
+            Icon(Icons.Default.Add, contentDescription = "Add")
+        }
+    }
 }
 
-fun navigateToEditLeccion(navController: NavController, leccion: LeccionModel?){
+fun deleteLeccion(modulo: Modulo,leccion: Leccion, adminLeccionesViewModel: AdminLeccionesViewModel) {
+    adminLeccionesViewModel.onDeleteLeccionByModulo(modulo,leccion)
+}
+
+fun navigateToEditLeccion(navController: NavController,modulo: Modulo ,leccion: Leccion? ){
+    Log.i("leccion pantalla lecciones",leccion.toString())
     val leccionJson = Gson().toJson(leccion)
-    navController.navigate(route = AppScreens.AdminEditLeccActivity.route+"/$leccionJson")
+    val moduloJson = Gson().toJson(modulo)
+    navController.navigate(route = AppScreens.AdminFormLeccActivity.route+"/$moduloJson/$leccionJson")
 }

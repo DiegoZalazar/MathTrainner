@@ -77,23 +77,19 @@ fun ModulosAdminComposable(
 ) {
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Titulo", "Eliminar", "Editar")
-    val modulo1 = Modulo(1, "Regla cadena")
+    /*val modulo1 = Modulo(1, "Regla cadena")
     val modulo2 = Modulo(2, "Integral definida")
     val modulo3 = Modulo(3, "Integral indefinida")
-    val moduloList = listOf<Modulo>(modulo1, modulo2, modulo3)
+    val moduloList = listOf<Modulo>(modulo1, modulo2, modulo3)*/
 
-    /*moduloViewModel.onCreate()
-    val moduloList by moduloViewModel.modulosModel.observeAsState(initial = arrayListOf())*/
+    moduloViewModel.onCreate()
+    val moduloList by moduloViewModel.modulosModel.observeAsState(initial = arrayListOf())
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
     // The LazyColumn will be our table. Notice the use of the weights below
 
-
-    val context = LocalContext.current
     TopBackAppBarAdministrador(navController = navController, texto = "Módulos")
-
-
 
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
@@ -151,7 +147,9 @@ fun buttonAddModulo(moduloViewModel: ModulosAdminViewModel) {
     var showAdd by rememberSaveable {
         mutableStateOf(false)
     }
-    Column( modifier = Modifier.fillMaxSize().padding(bottom = 4.dp , end = 4.dp),horizontalAlignment = Alignment.End,
+    Column( modifier = Modifier
+        .fillMaxSize()
+        .padding(bottom = 15.dp, end = 15.dp),horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.Bottom) {
         FloatingActionButton(onClick =
         {
@@ -162,8 +160,6 @@ fun buttonAddModulo(moduloViewModel: ModulosAdminViewModel) {
             Icon(Icons.Default.Add, contentDescription = "Add")
         }
     }
-
-
     DialogAddModulo(showAdd, { showAdd = false }, { showAdd = false }, viewModel = moduloViewModel)
 }
 
@@ -196,6 +192,16 @@ fun DialogAddModulo(
                     .background(Color.White)
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "Agregar módulo",
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    fontFamily = fontMonserrat,
+                    textAlign = TextAlign.Center,
+                    modifier= Modifier.align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
                 OutlinedTextField(
                     value = titulo,
                     onValueChange = { titulo = it },
@@ -206,6 +212,7 @@ fun DialogAddModulo(
                     ),
                     modifier = Modifier
                         .padding(vertical = 16.dp)
+                        .align(Alignment.CenterHorizontally)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 TextButton(

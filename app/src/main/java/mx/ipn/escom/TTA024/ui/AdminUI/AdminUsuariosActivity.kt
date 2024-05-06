@@ -49,10 +49,70 @@ import com.google.gson.Gson
 import kotlinx.coroutines.currentCoroutineContext
 import mx.ipn.escom.TTA024.R
 import mx.ipn.escom.TTA024.data.models.EstudianteModel
+import mx.ipn.escom.TTA024.domain.model.Estudiante
 import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UsuariosComposable(navController: NavHostController) {
+    // Just a fake data... a Pair of Int and String
+    val headers = arrayOf("Id", "Nombre", "Eliminar", "Editar")
+    val estudiante1 = Estudiante(1, "adal", "danidc", "halo_chif@hotmail.com", "activo","asd")
+    val estudiante2 = Estudiante(2, "adal2", "danidc2", "halo_chif@hotmail.com2", "activo2","123")
+    val estudiante3 = Estudiante(3, "adal3", "danidc3", "halo_chif@hotmail.com3", "activo3","asd123")
+    val estudianteList = listOf<Estudiante>(estudiante1, estudiante2, estudiante3)
+    // Each cell of a column must have the same weight.
+    val ancho = 300
+    val columsWeight = (ancho / headers.size).toFloat()
+    // The LazyColumn will be our table. Notice the use of the weights below
+
+    TopBackAppBarAdministrador(navController = navController, texto = "Estudiantes")
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
+        Spacer(modifier = Modifier.height(60.dp))
+        LazyColumn(
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // Here is the header
+            item() {
+
+                Row(Modifier.background(Color.Gray)) {
+                    for (header in headers) {
+                        TableCell(text = header, weight = columsWeight)
+                    }
+                }
+
+            }
+            // Here are all the lines of your table.
+            items(estudianteList) {
+                val estudiante = it
+
+                Row(Modifier.fillMaxWidth()) {
+                    TableCell(text = estudiante.idEstudiante.toString(), weight = columsWeight)
+                    TableCell(text = estudiante.nombreUsuario, weight = columsWeight)
+                    TableCellDeleteImageEstudiante(
+                        image = R.drawable.deleteicon,
+                        tamano = columsWeight,
+                        estudiante = estudiante
+                    )
+                    TableCellEditImageEstudiante(
+                        image = R.drawable.editicon,
+                        tamano = columsWeight,
+                        navController = navController,
+                        estudiante = estudiante
+                    )
+
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun RowScope.TableCell(
@@ -70,8 +130,6 @@ fun RowScope.TableCell(
         if(text.length>=10){
             texto=text.substring(0,10)+".."
         }
-
-        var enabled by remember { mutableStateOf(true)}
 
         ClickableText(
             text = AnnotatedString(texto) ,
@@ -93,7 +151,7 @@ fun DialogEliminarUsuario(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    estudiante: EstudianteModel
+    estudiante: Estudiante
 ) {
     val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {
@@ -215,7 +273,7 @@ fun deleteUsuario() {
 fun RowScope.TableCellDeleteImageEstudiante(
     image: Int,
     tamano: Float,
-    estudiante: EstudianteModel,
+    estudiante: Estudiante,
 ) {
     val context = LocalContext.current
     var showDelete by rememberSaveable {
@@ -243,7 +301,7 @@ fun RowScope.TableCellDeleteImageEstudiante(
 }
 
 
-fun navigateToEstudiante(navController: NavController,estudiante: EstudianteModel){
+fun navigateToEstudiante(navController: NavController,estudiante: Estudiante){
     val estudianteJson = Gson().toJson(estudiante)
     navController.navigate(route = AppScreens.AdminEditUserActivity.route+"/$estudianteJson")
 }
@@ -252,7 +310,7 @@ fun RowScope.TableCellEditImageEstudiante(
     image: Int,
     tamano: Float,
     navController: NavController,
-    estudiante: EstudianteModel
+    estudiante: Estudiante
 ) {
 
     Box(
@@ -275,60 +333,3 @@ fun RowScope.TableCellEditImageEstudiante(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun UsuariosComposable(navController: NavHostController) {
-    // Just a fake data... a Pair of Int and String
-    val headers = arrayOf("Id", "Nombre", "Eliminar", "Editar")
-    val estudiante1 = EstudianteModel(1, "adal", "danidc", "halo_chif@hotmail.com", "activo","asd")
-    val estudiante2 = EstudianteModel(2, "adal2", "danidc2", "halo_chif@hotmail.com2", "activo2","123")
-    val estudiante3 = EstudianteModel(3, "adal3", "danidc3", "halo_chif@hotmail.com3", "activo3","asd123")
-    val estudianteList = listOf<EstudianteModel>(estudiante1, estudiante2, estudiante3)
-    // Each cell of a column must have the same weight.
-    val ancho = 300
-    val columsWeight = (ancho / headers.size).toFloat()
-    // The LazyColumn will be our table. Notice the use of the weights below
-
-    TopBackAppBarAdministrador(navController = navController, texto = "Estudiantes")
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(60.dp))
-        LazyColumn(
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            // Here is the header
-            item() {
-
-                Row(Modifier.background(Color.Gray)) {
-                    for (header in headers) {
-                        TableCell(text = header, weight = columsWeight)
-                    }
-                }
-
-            }
-            // Here are all the lines of your table.
-            items(estudianteList) {
-                val estudiante = it
-
-                Row(Modifier.fillMaxWidth()) {
-                    TableCell(text = estudiante.idEstudiante.toString(), weight = columsWeight)
-                    TableCell(text = estudiante.nombreUsuario, weight = columsWeight)
-                    TableCellDeleteImageEstudiante(
-                        image = R.drawable.deleteicon,
-                        tamano = columsWeight,
-                        estudiante = estudiante
-                    )
-                    TableCellEditImageEstudiante(
-                        image = R.drawable.editicon,
-                        tamano = columsWeight,
-                        navController = navController,
-                        estudiante = estudiante
-                    )
-
-                }
-            }
-        }
-    }
-}

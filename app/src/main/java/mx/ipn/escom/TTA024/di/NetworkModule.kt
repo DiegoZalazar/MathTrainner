@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import mx.ipn.escom.TTA024.data.network.LeccionApiClient
 import mx.ipn.escom.TTA024.data.network.ModuloApiClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,7 +18,7 @@ object NetworkModule {
     @Provides
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://h9t4frgp83.execute-api.us-east-1.amazonaws.com/")
+            .baseUrl("https://w8b6as9g2h.execute-api.us-east-1.amazonaws.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -27,4 +28,11 @@ object NetworkModule {
     fun provideModuloApiClient(retrofit: Retrofit): ModuloApiClient {
         return retrofit.create(ModuloApiClient::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun provideLeccionApiClient(retrofit: Retrofit): LeccionApiClient {
+        return retrofit.create(LeccionApiClient::class.java)
+    }
+
 }

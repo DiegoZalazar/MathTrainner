@@ -10,16 +10,22 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface LeccionApiClient {
-    @GET("/Prod/lecciones")
-    suspend fun getAllLecciones(): Response<List<LeccionModel>>
-    @POST("/Prod/lecciones")
-    suspend fun insertLeccion(@Body leccionModel: LeccionModel): Response<String>
+    @PUT("/Prod/modulos/{idm}/lecciones")
+    suspend fun updateLeccionByModulo(@Path("idm") id_modulo: Int,
+                                      @Body leccionModel: LeccionModel): Response<String>
+    @PUT("/Prod/modulos/{idm}/lecciones/{idl}")
+    suspend fun updateLeccionByModulo(@Path("idm") id_modulo: Int,
+                                      @Path("idl") id_leccion: Int,
+                                      @Body leccionModel: LeccionModel): Response<String>
 
-    @PUT("/Prod/lecciones/{id}")
-    suspend fun updateLeccion(@Path("id") id_leccion: Int, @Body leccionModel: LeccionModel): Response<List<LeccionModel>>
 
-    @DELETE("/Prod/lecciones/{id}")
-    suspend fun deleteLeccion(@Path("id") id_leccion: Int): Response<String>
+    @POST("/Prod/modulos/{idm}/lecciones")
+    suspend fun insertLeccionByModulo(@Path("idm") id_modulo: Int,
+                                      @Body leccionModel: LeccionModel): Response<String>
+    @DELETE("/Prod/modulos/{idm}/lecciones/{idl}")
+    suspend fun deleteLeccionByModulo(
+        @Path("idm") id_modulo: Int,
+        @Path("idl") id_leccion: Int,): Response<String>
 
     @GET("/Prod/modulos/{id}/lecciones") //Modificar endPoint
     suspend fun getLeccionesByModulo(@Path("id") id_modulo: Int): Response<List<LeccionModel>>
