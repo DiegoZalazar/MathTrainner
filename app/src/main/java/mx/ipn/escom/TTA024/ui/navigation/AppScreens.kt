@@ -8,6 +8,6 @@ sealed class AppScreens(val route: String){
     object AdminModulosActivity: AppScreens("modulos_admin")
     object AdminPrincipalActivity: AppScreens("principal_admin")
     object AdminUsuariosActivity: AppScreens("usuarios_admin")
-    object AdminEditEjerActivity: AppScreens("editejercicio_admin")
-    object AdminFormLeccActivity: AppScreens("editleccion_admin")
+    object AdminFormEjercicioActivity: AppScreens("formejercicio_admin")
+    object AdminFormLeccActivity: AppScreens("formleccion_admin")
 }

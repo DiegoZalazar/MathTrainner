@@ -7,7 +7,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
-import mx.ipn.escom.TTA024.ui.AdminUI.AdminEditEjercicioComposable
 import mx.ipn.escom.TTA024.ui.AdminUI.EditModulo
 import mx.ipn.escom.TTA024.ui.AdminUI.EditUserComposable
 import mx.ipn.escom.TTA024.ui.AdminUI.ModulosAdminComposable
@@ -19,14 +18,18 @@ import mx.ipn.escom.TTA024.data.models.EjercicioModel
 import mx.ipn.escom.TTA024.data.models.EstudianteModel
 import mx.ipn.escom.TTA024.data.models.LeccionModel
 import mx.ipn.escom.TTA024.data.models.ModuloModel
+import mx.ipn.escom.TTA024.domain.model.Ejercicio
 import mx.ipn.escom.TTA024.domain.model.Leccion
 import mx.ipn.escom.TTA024.domain.model.Modulo
+import mx.ipn.escom.TTA024.ui.AdminUI.AdminFormEjercicioComposable
 import mx.ipn.escom.TTA024.ui.AdminUI.AdminFormLeccionComposable
+import mx.ipn.escom.TTA024.ui.viewmodels.AdminEjerciciosViewModel
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminLeccionesViewModel
 import mx.ipn.escom.TTA024.ui.viewmodels.ModulosAdminViewModel
 @Composable
 fun AppNavigation(modulosAdminViewModel: ModulosAdminViewModel,
-                  adminLeccionesViewModel: AdminLeccionesViewModel) {
+                  adminLeccionesViewModel: AdminLeccionesViewModel,
+                  adminEjerciciosViewModel: AdminEjerciciosViewModel) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -70,18 +73,23 @@ fun AppNavigation(modulosAdminViewModel: ModulosAdminViewModel,
         })) {
                 backStackEntry ->
             backStackEntry?.arguments?.getString("modulo")?.let { json ->
-                val modulo = Gson().fromJson(json, ModuloModel::class.java)
-                EjerciciosAdminComposable(navController,modulo)
+                val modulo = Gson().fromJson(json, Modulo::class.java)
+                EjerciciosAdminComposable(navController,modulo,adminEjerciciosViewModel)
             }
         }
 
-        composable(route = AppScreens.AdminEditEjerActivity.route+"/{ejercicio}",arguments = listOf(navArgument(name = "ejercicio") { type = NavType.StringType })
+        composable(route = AppScreens.AdminFormEjercicioActivity.route+"/{modulo}/{ejercicio}",arguments = listOf(
+            navArgument(name = "ejercicio"){ type = NavType.StringType },
+            navArgument(name="modulo"){type = NavType.StringType}
+        )
         ) {
                 backStackEntry ->
-            backStackEntry?.arguments?.getString("ejercicio")?.let { json ->
-                val ejercicio = Gson().fromJson(json, EjercicioModel::class.java)
-                AdminEditEjercicioComposable(navController,ejercicio)
-            }
+
+            val ejercicio = Gson().fromJson(backStackEntry.arguments?.getString("ejercicio"), Ejercicio::class.java)
+            val modulo = Gson().fromJson(backStackEntry.arguments?.getString("modulo"), Modulo::class.java)
+
+            AdminFormEjercicioComposable(navController = navController,modulo=modulo , ejercicio = ejercicio,adminEjerciciosViewModel)
+
         }
 
         composable(route = AppScreens.AdminFormLeccActivity.route+"/{modulo}/{leccion}",arguments = listOf(

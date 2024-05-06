@@ -53,10 +53,10 @@ fun EditUserComposable(navController: NavController, estudiante: EstudianteModel
         var name by remember { mutableStateOf(estudiante.nombreUsuario) }
         var email by remember { mutableStateOf(estudiante.correoEstudiante) }
         var pswd by remember { mutableStateOf(estudiante.contrasenaEstudiante) }
-        var pswdConfirm by remember { mutableStateOf("") }
+        var pswdConfirm by remember { mutableStateOf(pswd) }
         var pswdVisible by remember { mutableStateOf(false) }
         var pswdConfirmVisible by remember { mutableStateOf(false) }
-        var isErrorPassword by rememberSaveable { mutableStateOf(true) }
+        var isErrorPassword by rememberSaveable { mutableStateOf(false) }
         var isErrorName by rememberSaveable { mutableStateOf(false) }
         var isErrorCorreo by rememberSaveable { mutableStateOf(false) }
 
@@ -147,25 +147,15 @@ fun EditUserComposable(navController: NavController, estudiante: EstudianteModel
 
                     OutlinedTextField(
                         value = pswd,
-                        onValueChange = { pswd = it },
+                        onValueChange = { pswd = it
+                                        validatePasswords()
+                                        },
                         label = { Text("Contraseña") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Done
                         ),
-                        visualTransformation = if (pswdVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                        trailingIcon = {
-                            val image = if (pswdVisible)
-                                Icons.Default.Check
-                            else Icons.Default.Clear
-
-                            // Please provide localized description for accessibility services
-                            val description = if (pswdVisible) "Hide password" else "Show password"
-
-                            IconButton(onClick = {pswdVisible = !pswdVisible}){
-                                Icon(imageVector  = image, description)
-                            }
-                        }
+                        visualTransformation = PasswordVisualTransformation(),
                     )
 
                     OutlinedTextField(
@@ -178,19 +168,7 @@ fun EditUserComposable(navController: NavController, estudiante: EstudianteModel
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Done
                         ),
-                        visualTransformation = if (pswdConfirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                        trailingIcon = {
-                            val image = if (pswdConfirmVisible)
-                                Icons.Default.Check
-                            else Icons.Default.Clear
-
-                            // Please provide localized description for accessibility services
-                            val description = if (pswdConfirmVisible) "Hide password" else "Show password"
-
-                            IconButton(onClick = {pswdConfirmVisible = !pswdConfirmVisible}){
-                                Icon(imageVector  = image, description)
-                            }
-                        },
+                        visualTransformation = PasswordVisualTransformation(),
                         modifier = Modifier
                             .padding(vertical = 16.dp),
                         isError = isErrorPassword,

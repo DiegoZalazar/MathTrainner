@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import mx.ipn.escom.TTA024.data.network.EjercicioApiClient
 import mx.ipn.escom.TTA024.data.network.LeccionApiClient
 import mx.ipn.escom.TTA024.data.network.ModuloApiClient
 import retrofit2.Retrofit
@@ -33,6 +34,12 @@ object NetworkModule {
     @Provides
     fun provideLeccionApiClient(retrofit: Retrofit): LeccionApiClient {
         return retrofit.create(LeccionApiClient::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideEjercicioApiClient(retrofit: Retrofit): EjercicioApiClient {
+        return retrofit.create(EjercicioApiClient::class.java)
     }
 
 }

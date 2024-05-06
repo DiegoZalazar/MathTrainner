@@ -55,8 +55,6 @@ import mx.ipn.escom.TTA024.ui.viewmodels.AdminLeccionesViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,leccion: Leccion,adminLeccionesViewModel: AdminLeccionesViewModel){
-    Log.i("modulo",modulo.toString())
-    Log.i("leccion",leccion.toString())
 
     var editLeccion=true
     if (leccion?.idLeccion==0 && leccion?.tituloLeccion.equals("none")){
@@ -162,13 +160,12 @@ fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,lecc
         }
     }
     }) {
-        Spacer(modifier = Modifier.height(20.dp))
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
         ){
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(80.dp))
             Box(
                 modifier = Modifier
                     .width(330.dp)
