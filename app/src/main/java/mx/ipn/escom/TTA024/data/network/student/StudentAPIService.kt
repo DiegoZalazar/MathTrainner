@@ -15,7 +15,7 @@ private val retrofit = Retrofit.Builder()
 
 interface StudentAPIService {
     @GET("estudiante/modulos")
-    suspend fun getModulos() : String
+    suspend fun getModulos() : List<Modulo>
 }
 
 object  StudentAPI {

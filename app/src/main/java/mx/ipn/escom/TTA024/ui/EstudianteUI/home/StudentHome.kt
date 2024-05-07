@@ -1,7 +1,9 @@
 package mx.ipn.escom.TTA024.ui.EstudianteUI.home
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +16,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
@@ -30,9 +34,13 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -44,9 +52,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.amplifyframework.auth.AuthException
@@ -56,6 +67,8 @@ import com.amplifyframework.kotlin.core.Amplify
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import mx.ipn.escom.TTA024.R
+import mx.ipn.escom.TTA024.data.network.student.Modulo
 import mx.ipn.escom.TTA024.data.network.student.StudentAPI
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExerciseNavScreens
 
@@ -151,10 +164,104 @@ fun StudentHome(
                 when(studentHomeUIState){
                     is StudentHomeUIState.Error -> Text("Error")
                     is StudentHomeUIState.Loading -> CircularProgressIndicator()
-                    is StudentHomeUIState.Success -> Text(studentHomeUIState.modulos)
+                    is StudentHomeUIState.Success -> ListModulos(modulos = studentHomeUIState.modulos,scope)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ListModulos(
+    modulos: List<ModuloUI>,
+    scope: CoroutineScope
+){
+    Column {
+        for (modulo in modulos){
+            ModuloItem(moduloUi = modulo, scope)
+            Spacer(Modifier.height(12.dp))
+        }
+    }
+}
+
+@Composable
+fun ModuloItem (
+    moduloUi: ModuloUI,
+    scope: CoroutineScope
+) {
+    val pos = moduloUi.pos
+    val values = arrayOf(0,1,2,1)
+    val posWidth = values[((pos%4))] * 100.dp
+    val r = painterResource(id = R.drawable.modulodumbell)
+    val tooltipState = rememberTooltipState(isPersistent = true)
+    Row(
+        modifier = Modifier
+            .width(300.dp)
+            .padding(0.dp)
+    ){
+        Spacer(modifier = Modifier.width(posWidth))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                tooltip = {
+                    RichTooltip(){
+                        ModuloTooltipContent(
+                            title = moduloUi.modulo.nombreModulo, 
+                            toLeccion = { scope.launch { tooltipState.dismiss() }},
+                            toExercises = { scope.launch { tooltipState.dismiss() }}
+                        )
+                    }
+                },
+                state = tooltipState
+            ){
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clickable { scope.launch { tooltipState.show() } },
+                    contentAlignment = Alignment.Center,
+                ){
+                    CircularProgressIndicator(
+                        progress = {moduloUi.modulo.avance},
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    Image(
+                        painter = r,
+                        contentDescription = "modulo",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .padding(top = 1.dp)
+                            .padding(8.dp)
+                            .fillMaxSize()
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ModuloTooltipContent(
+    title: String,
+    toLeccion: () -> Unit,
+    toExercises: () -> Unit
+){
+    Column(
+        modifier = Modifier.padding(12.dp).fillMaxWidth(0.8f),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OutlinedButton(onClick = toLeccion, modifier = Modifier.fillMaxWidth(0.8f)) {
+            Text(text = "Ver leccion")
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Button(onClick = toExercises, modifier = Modifier.fillMaxWidth(0.8f)) {
+            Text(text = "Iniciar ejercicios")
+        }
+
     }
 }
 

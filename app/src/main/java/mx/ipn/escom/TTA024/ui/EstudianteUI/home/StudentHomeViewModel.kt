@@ -3,20 +3,28 @@ package mx.ipn.escom.TTA024.ui.EstudianteUI.home
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import mx.ipn.escom.TTA024.data.network.student.Modulo
 import mx.ipn.escom.TTA024.data.network.student.StudentAPIService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.IOException
 
 private const val BASE_URL = "https://w8b6as9g2h.execute-api.us-east-1.amazonaws.com/Prod/"
 
+data class ModuloUI(
+    val pos: Int = 0,
+    val modulo: Modulo
+)
+
 sealed interface StudentHomeUIState {
-    data class Success(val modulos : String) : StudentHomeUIState
+    data class Success(val modulos : List<ModuloUI>) : StudentHomeUIState
     object Error : StudentHomeUIState
     object Loading : StudentHomeUIState
 }
@@ -31,7 +39,13 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
         viewModelScope.launch {
             try{
                 val resp = retrofitService.getModulos()
-                studentHomeUIState = StudentHomeUIState.Success(modulos = resp)
+                val values = arrayOf(0,1,2,1)
+                val n = resp.size
+                var aux: MutableList<ModuloUI> = mutableListOf()
+                for(i in 0..<n){
+                    aux.add(ModuloUI(values[((i%4))],resp[i]))
+                }
+                studentHomeUIState = StudentHomeUIState.Success(modulos = aux)
             }catch (e: IOException){
                 studentHomeUIState = StudentHomeUIState.Error
             }
@@ -50,7 +64,7 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
             .build()
         val retrofit = Retrofit.Builder()
             .client(client)
-            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)
             .build()
 
@@ -69,7 +83,7 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
             .build()
         val retrofit = Retrofit.Builder()
             .client(client)
-            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)
             .build()
 
