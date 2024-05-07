@@ -3,20 +3,17 @@ package mx.ipn.escom.TTA024.ui.viewmodels;
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import mx.ipn.escom.TTA024.domain.usecases.GetModulosUseCase
 import mx.ipn.escom.TTA024.domain.model.Modulo
 import mx.ipn.escom.TTA024.domain.usecases.DeleteModuloUseCase
 import mx.ipn.escom.TTA024.domain.usecases.InsertModuloUseCase
-import javax.inject.Inject
 
-@HiltViewModel
-class ModulosAdminViewModel @Inject constructor(
-    private val getModulosUseCase: GetModulosUseCase,
-    private val deleteModuloUseCase: DeleteModuloUseCase,
-    private val insertModuloUseCase: InsertModuloUseCase,
-) : ViewModel() {
+class ModulosAdminViewModel: ViewModel() {
+
+    private val getModulosUseCase: GetModulosUseCase = GetModulosUseCase()
+    private val deleteModuloUseCase: DeleteModuloUseCase = DeleteModuloUseCase()
+    private val insertModuloUseCase: InsertModuloUseCase = InsertModuloUseCase()
 
     val modulosModel = MutableLiveData<List<Modulo>>()
     val isLoading = MutableLiveData<Boolean>()

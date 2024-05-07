@@ -5,12 +5,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mx.ipn.escom.TTA024.data.models.EstudianteModel
 import mx.ipn.escom.TTA024.data.models.ModuloModel
-import javax.inject.Inject
+import mx.ipn.escom.TTA024.di.RetrofitHelper
 
-class EstudianteService @Inject constructor(private val api: EstudianteApiClient) {
+class EstudianteService{
+
+    private val retrofit = RetrofitHelper.getRetrofit()
     suspend fun getEstudiantes(): List<EstudianteModel> {
         return withContext(Dispatchers.IO) {
-            val response = api.getAllEstudiantes()
+            val response = retrofit.create(EstudianteApiClient::class.java).getAllEstudiantes()
             Log.i("ResultAPI",response.toString())
             response.body() ?: emptyList()
         }
@@ -18,7 +20,7 @@ class EstudianteService @Inject constructor(private val api: EstudianteApiClient
 
     suspend fun insertEstudiante(estudianteModel: EstudianteModel): String{
         return withContext(Dispatchers.IO) {
-            var response = api.insertEstudiante(estudianteModel)
+            var response = retrofit.create(EstudianteApiClient::class.java).insertEstudiante(estudianteModel)
             Log.i("ResultAPI",response.toString())
             if(response.code()==200) response.body()?:"Estudiante registrado correctamente" else "error"
         }
@@ -26,7 +28,7 @@ class EstudianteService @Inject constructor(private val api: EstudianteApiClient
 
     suspend fun deleteEstudiante(id_estudiante: Int): String{
         return withContext(Dispatchers.IO) {
-            var response = api.deleteEstudiante(id_estudiante)
+            var response = retrofit.create(EstudianteApiClient::class.java).deleteEstudiante(id_estudiante)
             Log.i("ResultAPI",response.toString())
             if(response.code()==200) response.body()?:"Estudiante registrado correctamente" else "error"
         }

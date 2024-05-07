@@ -2,20 +2,15 @@ package mx.ipn.escom.TTA024
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.runtime.rememberCoroutineScope
 import com.amplifyframework.AmplifyException
-import com.amplifyframework.api.rest.RestOptions
 import com.amplifyframework.auth.AuthException
-import dagger.hilt.android.HiltAndroidApp
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.kotlin.core.Amplify
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 
 
-@HiltAndroidApp
 class principalAmplify: Application() {
     override fun onCreate() {
         super.onCreate()

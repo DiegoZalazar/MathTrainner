@@ -3,9 +3,9 @@ package mx.ipn.escom.TTA024.domain.usecases
 import mx.ipn.escom.TTA024.data.LeccionRepository
 import mx.ipn.escom.TTA024.data.models.LeccionModel
 import mx.ipn.escom.TTA024.domain.model.Leccion
-import javax.inject.Inject
 
-class UpdateLeccionByModuloUseCase @Inject constructor(private val repository: LeccionRepository) {
+class UpdateLeccionByModuloUseCase{
+    private val repository: LeccionRepository = LeccionRepository()
     suspend operator fun invoke(leccion: Leccion): String {
         val leccionModel: LeccionModel = LeccionModel(
             leccion.idLeccion,
