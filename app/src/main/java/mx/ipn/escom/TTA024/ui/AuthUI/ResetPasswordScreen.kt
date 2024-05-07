@@ -229,6 +229,10 @@ suspend fun confirmResetPassword(email: String, password: String, code: String):
         true
     } catch (error: AuthException) {
         Log.e("AuthQuickstart", "Failed to confirm password reset", error)
-        false
+        if((error.message ?: "") == "Confirmation code entered is not correct."){
+            Log.e("AuthQuickstart", "Confirmation code entered is not correct.", error)
+            return false
+        }
+        true
     }
 }
