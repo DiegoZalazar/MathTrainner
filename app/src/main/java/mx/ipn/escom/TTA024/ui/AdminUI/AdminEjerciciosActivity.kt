@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,8 +19,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,20 +50,23 @@ import mx.ipn.escom.TTA024.ui.AdminUI.TableCell
 import mx.ipn.escom.TTA024.ui.AdminUI.TopBackAppBarAdministrador
 import mx.ipn.escom.TTA024.data.models.EjercicioModel
 import mx.ipn.escom.TTA024.data.models.ModuloModel
+import mx.ipn.escom.TTA024.domain.model.Ejercicio
+import mx.ipn.escom.TTA024.domain.model.Leccion
+import mx.ipn.escom.TTA024.domain.model.Modulo
 import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
+import mx.ipn.escom.TTA024.ui.viewmodels.AdminEjerciciosViewModel
 
 @Composable
-fun EjerciciosAdminComposable(navController: NavHostController, modulo: ModuloModel){
+fun EjerciciosAdminComposable(navController: NavHostController, modulo: Modulo, adminEjerciciosViewModel: AdminEjerciciosViewModel){
     // Just a fake data... a Pair of Int and String
-    val headers = arrayOf("Id", "Tipo","Nivel","Eliminar","Editar")
-    val ejercicio1 = EjercicioModel(1, "Completa la siguiente integral","2x",3,"Abierta",3)
-    val ejercicio2 = EjercicioModel(2, "Completa la siguiente derivada","2x",3,"Abierta",3)
-    val ejercicio3 = EjercicioModel(3, "Selecciona la opcion correcta a la respuesta de la integral:","2x , 4x",1,"Opcion multiple",2)
-
-    val ejercicioList = listOf<EjercicioModel>(ejercicio1, ejercicio2, ejercicio3)
+    val headers = arrayOf("Id", "Planteamiento","Nivel","Eliminar","Editar")
+    val ejercicio1 = Ejercicio(1,40,2,"selecciona","","","",1,1)
+    val ejercicio2 = Ejercicio(2,90,3,"Une las columnas","","","a:A;b:B;c:C;d:D",1,1)
+    val ejercicio3 = Ejercicio(3,20,1,"Completa","","","",1,1)
+    val ejercicioList = listOf<Ejercicio>(ejercicio1, ejercicio2, ejercicio3)
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
@@ -96,31 +104,38 @@ fun EjerciciosAdminComposable(navController: NavHostController, modulo: ModuloMo
 
                 Row(Modifier.fillMaxWidth()) {
                     TableCell(text = ejercicio.idEjercicio.toString(), weight = columsWeight)
-                    TableCell(text = ejercicio.tipoEjercicio, weight = columsWeight)
+                    TableCell(text = ejercicio.planteamientoEjercicio, weight = columsWeight)
                     TableCell(text = ejercicio.nivelEjercicio.toString(), weight = columsWeight)
                     TableCellDeleteImageEjercicio(
                         image = R.drawable.deleteicon,
                         tamano = columsWeight,
-                        ejercicio = ejercicio
+                        ejercicio = ejercicio,
+                        modulo,
+                        adminEjerciciosViewModel
                     )
                     TableCellEditImageEjercicio(
                         image = R.drawable.editicon,
                         tamano = columsWeight,
                         navController = navController,
-                        ejercicio = ejercicio
+                        ejercicio = ejercicio,
+                        modulo = modulo
                     )
 
                 }
             }
         }
     }
+    buttonAddEjercicio(navController, modulo)
 }
 
 @Composable
 fun RowScope.TableCellDeleteImageEjercicio(
     image: Int,
     tamano: Float,
-    ejercicio: EjercicioModel,
+    ejercicio: Ejercicio,
+    modulo: Modulo,
+    adminEjerciciosViewModel: AdminEjerciciosViewModel
+
 ) {
     val context = LocalContext.current
     var showDelete by rememberSaveable {
@@ -143,7 +158,7 @@ fun RowScope.TableCellDeleteImageEjercicio(
                 .align(Alignment.Center)
         )
     }
-    DialogEliminarEjercicio(showDelete, { showDelete = false }, { showDelete = false }, ejercicio)
+    DialogEliminarEjercicio(showDelete, { showDelete = false }, { showDelete = false }, ejercicio,modulo ,adminEjerciciosViewModel)
 
 }
 @Composable
@@ -151,7 +166,8 @@ fun RowScope.TableCellEditImageEjercicio(
     image: Int,
     tamano: Float,
     navController: NavController,
-    ejercicio: EjercicioModel,
+    ejercicio: Ejercicio,
+    modulo: Modulo,
 ) {
 
     Box(
@@ -166,7 +182,7 @@ fun RowScope.TableCellEditImageEjercicio(
             contentDescription = "ejercicio",
             modifier = Modifier
                 .clickable {
-                    navigateToEditEjercicio(navController,ejercicio)
+                    navigateToEditEjercicio(navController,ejercicio,modulo)
                 }
                 .align(Alignment.Center)
         )
@@ -179,7 +195,9 @@ fun DialogEliminarEjercicio(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    ejercicio: EjercicioModel,
+    ejercicio: Ejercicio,
+    modulo: Modulo,
+    adminEjerciciosViewModel: AdminEjerciciosViewModel
 ) {
     val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {
@@ -224,13 +242,13 @@ fun DialogEliminarEjercicio(
                         modifier = textoModifier
                     )
                     Text(
-                        text = "Tiempo: " + ejercicio.tipoEjercicio,
+                        text = "Planteamiento: " + ejercicio.planteamientoEjercicio,
                         fontSize = 20.sp,
                         fontFamily = fontMonserrat,
                         modifier = textoModifier
                     )
                     Text(
-                        text = "Tipo: " + ejercicio.tipoEjercicio,
+                        text = "Tiempo: " + ejercicio.tiempoEjercicio,
                         fontSize = 20.sp,
                         fontFamily = fontMonserrat,
                         modifier = textoModifier
@@ -247,7 +265,7 @@ fun DialogEliminarEjercicio(
                 TextButton(
                     onClick = {
                         onConfirm()
-                        deleteEjercicio()
+                        deleteEjercicio(modulo,ejercicio, adminEjerciciosViewModel)
                     },
                     modifier = Modifier
                         .width(300.dp)
@@ -292,11 +310,32 @@ fun DialogEliminarEjercicio(
     }
 }
 
-fun deleteEjercicio() {
-    TODO("Not yet implemented")
+@Composable
+fun buttonAddEjercicio(navController: NavController, modulo: Modulo) {
+
+    Column( modifier = Modifier
+        .fillMaxSize()
+        .padding(bottom = 15.dp, end = 15.dp),horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.Bottom) {
+        FloatingActionButton(onClick =
+        {
+            var ejercicio = Ejercicio(0,0,0,"none","none","none","none",0,0)
+            val ejercicioJson = Gson().toJson(ejercicio)
+            val moduloJson = Gson().toJson(modulo)
+            navController.navigate(route = AppScreens.AdminFormEjercicioActivity.route+"/$moduloJson/$ejercicioJson")
+        }
+        )
+        {
+            Icon(Icons.Default.Add, contentDescription = "Add")
+        }
+    }
+}
+fun deleteEjercicio(modulo: Modulo,ejercicio: Ejercicio,adminEjerciciosViewModel: AdminEjerciciosViewModel) {
+    adminEjerciciosViewModel.onDeleteEjercicioByModulo(modulo,ejercicio)
 }
 
-fun navigateToEditEjercicio(navController: NavController,ejercicio: EjercicioModel?){
+fun navigateToEditEjercicio(navController: NavController,ejercicio: Ejercicio?,modulo: Modulo){
     val ejercicioJson = Gson().toJson(ejercicio)
-    navController.navigate(route = AppScreens.AdminEditEjerActivity.route+"/$ejercicioJson")
+    val moduloJson = Gson().toJson(modulo)
+    navController.navigate(route = AppScreens.AdminFormLeccActivity.route+"/$moduloJson/$ejercicioJson")
 }

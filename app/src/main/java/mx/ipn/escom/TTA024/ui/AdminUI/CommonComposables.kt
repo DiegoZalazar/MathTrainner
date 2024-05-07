@@ -52,7 +52,7 @@ import mx.ipn.escom.TTA024.ui.theme.greenButton
 
 @Composable
 fun BotonNavegacion(imagen: Int, textoDesplegable: String, navController: NavController, modulo: ModuloModel?=null) {
-    val context = LocalContext.current
+
     Card(
         modifier = Modifier
             .background(Color.White)

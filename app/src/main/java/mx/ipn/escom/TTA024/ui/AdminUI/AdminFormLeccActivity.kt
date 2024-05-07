@@ -1,6 +1,7 @@
 package mx.ipn.escom.TTA024.ui.AdminUI
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,41 +38,58 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import mx.ipn.escom.TTA024.data.models.LeccionModel
+import mx.ipn.escom.TTA024.domain.model.Leccion
+import mx.ipn.escom.TTA024.domain.model.Modulo
+import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
+import mx.ipn.escom.TTA024.ui.viewmodels.AdminLeccionesViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AdminEditLeccionComposable(navController: NavController, leccion: LeccionModel?){
+fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,leccion: Leccion,adminLeccionesViewModel: AdminLeccionesViewModel){
+
+    var editLeccion=true
+    if (leccion?.idLeccion==0 && leccion?.tituloLeccion.equals("none")){
+        editLeccion=false
+    }
+    Log.i("editleccion",editLeccion.toString())
     var titulo by remember {
         var titTemp:String=""
-        if(leccion!=null){
-            titTemp=leccion.tituloLeccion
+        if(editLeccion){
+            titTemp= leccion.tituloLeccion
         }
         mutableStateOf(titTemp)
     }
+
     var descripcion by remember {
         var desTemp:String=""
-        if(leccion!=null){
+        if(editLeccion){
             desTemp=leccion.descripcionLeccion
         }
-        mutableStateOf(desTemp) }
+        mutableStateOf(desTemp)
+    }
     var nivel by remember {
         var nivelTempo:String=""
-        if(leccion!=null){
-            nivelTempo=leccion.tituloLeccion
+        if(editLeccion){
+            nivelTempo=leccion.nivelLeccion.toString()
         }
         mutableStateOf(nivelTempo)
     }
-
+    var recursoMultimedia by remember {
+        var recursoMultimedia:String=""
+        if(editLeccion){
+            recursoMultimedia=leccion.recursoMultimedia
+        }
+        mutableStateOf(recursoMultimedia)
+    }
 
 
     Scaffold(topBar = {
@@ -87,7 +105,12 @@ fun AdminEditLeccionComposable(navController: NavController, leccion: LeccionMod
                             navController.popBackStack()
                         }
                         .padding(2.dp))
-                Text(text = "Editar lección", modifier= Modifier.padding(start = 30.dp))
+                if(editLeccion){
+                    Text(text = "Editar lección", modifier= Modifier.padding(start = 30.dp))
+                }else{
+                    Text(text = "Agregar lección", modifier= Modifier.padding(start = 30.dp))
+                }
+
             })
     },bottomBar = {BottomAppBar {
         Row(modifier = Modifier.fillMaxSize(),
@@ -108,7 +131,19 @@ fun AdminEditLeccionComposable(navController: NavController, leccion: LeccionMod
                 )
             }
             TextButton(
-                onClick = {  },
+                onClick = {
+                    var id=-3
+                    if(editLeccion){
+                        id=leccion.idLeccion
+                    }
+                      val leccionNueva: Leccion = Leccion(id,titulo,descripcion,nivel.toInt(),modulo.idModulo,recursoMultimedia)
+                    if(editLeccion){
+                        adminLeccionesViewModel.onUpdateLeccion(leccion,leccionNueva)
+                    }else{
+                        adminLeccionesViewModel.onCreateLeccion(leccionNueva)
+                    }
+                    navController.popBackStack()
+                },
                 modifier = Modifier
                     .width(150.dp)
                     .height(58.dp)
@@ -125,13 +160,12 @@ fun AdminEditLeccionComposable(navController: NavController, leccion: LeccionMod
         }
     }
     }) {
-        Spacer(modifier = Modifier.height(20.dp))
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
         ){
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(80.dp))
             Box(
                 modifier = Modifier
                     .width(330.dp)
@@ -147,6 +181,18 @@ fun AdminEditLeccionComposable(navController: NavController, leccion: LeccionMod
                     modifier = Modifier
                         .padding(16.dp),
                 ) {
+                    OutlinedTextField(
+                        value = recursoMultimedia,
+                        onValueChange = { recursoMultimedia = it },
+                        label = { Text("Link de video") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                    )
+
                     OutlinedTextField(
                         value = titulo,
                         onValueChange = { titulo = it },
@@ -169,6 +215,7 @@ fun AdminEditLeccionComposable(navController: NavController, leccion: LeccionMod
                         modifier = Modifier
                             .padding(vertical = 16.dp)
                     )
+
                     OutlinedTextField(
                         value = nivel,
                         onValueChange = { nivel = it },
