@@ -1,31 +1,21 @@
 package mx.ipn.escom.TTA024.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import mx.ipn.escom.TTA024.domain.model.Ejercicio
-import mx.ipn.escom.TTA024.domain.model.Leccion
 import mx.ipn.escom.TTA024.domain.model.Modulo
 import mx.ipn.escom.TTA024.domain.usecases.DeleteEjercicioByModuloUseCase
-import mx.ipn.escom.TTA024.domain.usecases.DeleteLeccionByModuloUseCase
 import mx.ipn.escom.TTA024.domain.usecases.GetEjerciciosByModuloUseCase
 import mx.ipn.escom.TTA024.domain.usecases.InsertEjercicioByModuloUseCase
-import mx.ipn.escom.TTA024.domain.usecases.InsertLeccionByModuloUseCase
 import mx.ipn.escom.TTA024.domain.usecases.UpdateEjercicioByModuloUseCase
-import mx.ipn.escom.TTA024.domain.usecases.UpdateLeccionByModuloUseCase
-import javax.inject.Inject
 
-@HiltViewModel
-class AdminEjerciciosViewModel @Inject constructor(
-    private val getEjerciciosByModuloUseCase: GetEjerciciosByModuloUseCase,
-    private val deleteEjercicioByModuloUseCase: DeleteEjercicioByModuloUseCase,
-    private val insertEjercicioByModuloUseCase: InsertEjercicioByModuloUseCase,
-    private val updateEjercicioByModuloUseCase: UpdateEjercicioByModuloUseCase
-
-) : ViewModel() {
+class AdminEjerciciosViewModel : ViewModel() {
+    private val getEjerciciosByModuloUseCase: GetEjerciciosByModuloUseCase = GetEjerciciosByModuloUseCase()
+    private val deleteEjercicioByModuloUseCase: DeleteEjercicioByModuloUseCase = DeleteEjercicioByModuloUseCase()
+    private val insertEjercicioByModuloUseCase: InsertEjercicioByModuloUseCase = InsertEjercicioByModuloUseCase()
+    private val updateEjercicioByModuloUseCase: UpdateEjercicioByModuloUseCase = UpdateEjercicioByModuloUseCase()
 
     val leccionModel = MutableLiveData<List<Ejercicio>>()
     val isLoading = MutableLiveData<Boolean>()

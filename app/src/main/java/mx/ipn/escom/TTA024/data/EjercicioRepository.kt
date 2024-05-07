@@ -4,12 +4,9 @@ import mx.ipn.escom.TTA024.data.models.EjercicioModel
 import mx.ipn.escom.TTA024.data.network.EjercicioService
 import mx.ipn.escom.TTA024.domain.model.Ejercicio
 import mx.ipn.escom.TTA024.domain.model.toDomain
-import javax.inject.Inject
 
-class EjercicioRepository @Inject constructor(
-    private val api: EjercicioService, //private val quoteDao: QuoteDao
-) {
-
+class EjercicioRepository {
+    private val api: EjercicioService = EjercicioService()
     suspend fun insertEjercicioByModuloFromAPI(id_modulo: Int,ejercicioModel: EjercicioModel): String {
         val response: String = api.insertEjercicio(id_modulo,ejercicioModel)
         return response

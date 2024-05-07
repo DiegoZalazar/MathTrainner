@@ -1,17 +1,12 @@
 package mx.ipn.escom.TTA024.data
 
 import mx.ipn.escom.TTA024.data.models.EstudianteModel
-import mx.ipn.escom.TTA024.data.models.ModuloModel
 import mx.ipn.escom.TTA024.data.network.EstudianteService
-import mx.ipn.escom.TTA024.data.network.ModuloService
 import mx.ipn.escom.TTA024.domain.model.Estudiante
-import mx.ipn.escom.TTA024.domain.model.Modulo
 import mx.ipn.escom.TTA024.domain.model.toDomain
 
-class EstudianteRepository (private val api: EstudianteService,
-//private val quoteDao: QuoteDao
-) {
-
+class EstudianteRepository  {
+    private val api: EstudianteService = EstudianteService()
     suspend fun getAllEstudiantesFromAPI(): List<Estudiante> {
         val response: List<EstudianteModel> = api.getEstudiantes()
         return response.map { it.toDomain() }

@@ -4,28 +4,19 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import mx.ipn.escom.TTA024.domain.model.Leccion
 import mx.ipn.escom.TTA024.domain.model.Modulo
 import mx.ipn.escom.TTA024.domain.usecases.DeleteLeccionByModuloUseCase
-import mx.ipn.escom.TTA024.domain.usecases.DeleteModuloUseCase
 import mx.ipn.escom.TTA024.domain.usecases.GetLeccionesByModuloUseCase
-import mx.ipn.escom.TTA024.domain.usecases.GetModulosUseCase
 import mx.ipn.escom.TTA024.domain.usecases.InsertLeccionByModuloUseCase
-import mx.ipn.escom.TTA024.domain.usecases.InsertModuloUseCase
 import mx.ipn.escom.TTA024.domain.usecases.UpdateLeccionByModuloUseCase
-import javax.inject.Inject
 
-@HiltViewModel
-class AdminLeccionesViewModel @Inject constructor(
-    private val getLeccionesByModuloUseCase: GetLeccionesByModuloUseCase,
-    private val deleteLeccionByModuloUseCase: DeleteLeccionByModuloUseCase,
-    private val insertLeccionByModuloUseCase: InsertLeccionByModuloUseCase,
-    private val updateLeccionByModuloUseCase: UpdateLeccionByModuloUseCase
-
-) : ViewModel() {
-
+class AdminLeccionesViewModel: ViewModel() {
+    private val getLeccionesByModuloUseCase: GetLeccionesByModuloUseCase = GetLeccionesByModuloUseCase()
+    private val deleteLeccionByModuloUseCase: DeleteLeccionByModuloUseCase = DeleteLeccionByModuloUseCase()
+    private val insertLeccionByModuloUseCase: InsertLeccionByModuloUseCase = InsertLeccionByModuloUseCase()
+    private val updateLeccionByModuloUseCase: UpdateLeccionByModuloUseCase = UpdateLeccionByModuloUseCase()
     val leccionModel = MutableLiveData<List<Leccion>>()
     val isLoading = MutableLiveData<Boolean>()
 

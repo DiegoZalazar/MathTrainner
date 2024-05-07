@@ -1,18 +1,12 @@
 package mx.ipn.escom.TTA024.data
 
 import mx.ipn.escom.TTA024.data.models.LeccionModel
-import mx.ipn.escom.TTA024.data.models.ModuloModel
 import mx.ipn.escom.TTA024.data.network.LeccionService
-import mx.ipn.escom.TTA024.data.network.ModuloService
 import mx.ipn.escom.TTA024.domain.model.Leccion
-import mx.ipn.escom.TTA024.domain.model.Modulo
 import mx.ipn.escom.TTA024.domain.model.toDomain
-import javax.inject.Inject
 
-class LeccionRepository @Inject constructor(
-    private val api: LeccionService, //private val quoteDao: QuoteDao
-) {
-
+class LeccionRepository{
+    private val api: LeccionService = LeccionService()
     suspend fun insertLeccionByModuloFromAPI(id_modulo: Int,leccionModel: LeccionModel): String {
         val response: String = api.insertLeccion(id_modulo,leccionModel)
         return response
