@@ -162,9 +162,11 @@ fun StudentHome(
                     .verticalScroll(rememberScrollState())
             ) {
                 when(studentHomeUIState){
-                    is StudentHomeUIState.Error -> Text("Error")
+                    is StudentHomeUIState.Error -> ErrorScreen {
+                        studentVM.getModulos()
+                    }
                     is StudentHomeUIState.Loading -> CircularProgressIndicator()
-                    is StudentHomeUIState.Success -> ListModulos(modulos = studentHomeUIState.modulos,scope)
+                    is StudentHomeUIState.Success -> ListModulos(modulos = studentHomeUIState.modulos,scope, {navController.navigate(ExerciseNavScreens.Exercises.name)})
                 }
             }
         }
@@ -172,13 +174,27 @@ fun StudentHome(
 }
 
 @Composable
+fun ErrorScreen(
+    retry: () -> Unit
+){
+    Column(){
+        Text("ocurrio un error, vuelve a intentar o cierra la sesion")
+        Spacer(Modifier.height(12.dp))
+        Button(onClick = retry) {
+            Text("Reintentar")
+        }
+    }
+}
+
+@Composable
 fun ListModulos(
     modulos: List<ModuloUI>,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    navToExercises: () -> Unit
 ){
     Column {
         for (modulo in modulos){
-            ModuloItem(moduloUi = modulo, scope)
+            ModuloItem(moduloUi = modulo, scope, navToExercises)
             Spacer(Modifier.height(12.dp))
         }
     }
@@ -187,7 +203,8 @@ fun ListModulos(
 @Composable
 fun ModuloItem (
     moduloUi: ModuloUI,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    navToExercises: () -> Unit
 ) {
     val pos = moduloUi.pos
     val values = arrayOf(0,1,2,1)
@@ -210,7 +227,10 @@ fun ModuloItem (
                         ModuloTooltipContent(
                             title = moduloUi.modulo.nombreModulo, 
                             toLeccion = { scope.launch { tooltipState.dismiss() }},
-                            toExercises = { scope.launch { tooltipState.dismiss() }}
+                            toExercises = {
+                                scope.launch { tooltipState.dismiss() }
+                                navToExercises()
+                            }
                         )
                     }
                 },
@@ -248,7 +268,9 @@ fun ModuloTooltipContent(
     toExercises: () -> Unit
 ){
     Column(
-        modifier = Modifier.padding(12.dp).fillMaxWidth(0.8f),
+        modifier = Modifier
+            .padding(12.dp)
+            .fillMaxWidth(0.8f),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
