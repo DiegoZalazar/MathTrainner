@@ -6,7 +6,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Header
 
-private const val BASE_URL = "https://w8b6as9g2h.execute-api.us-east-1.amazonaws.com/Prod"
+private const val BASE_URL = "https://w8b6as9g2h.execute-api.us-east-1.amazonaws.com/Prod/"
 
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(ScalarsConverterFactory.create())
@@ -15,7 +15,7 @@ private val retrofit = Retrofit.Builder()
 
 interface StudentAPIService {
     @GET("estudiante/modulos")
-    suspend fun getModulos(@Header("Authorization")auth: String) : String
+    suspend fun getModulos() : String
 }
 
 object  StudentAPI {

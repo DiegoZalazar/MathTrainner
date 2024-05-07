@@ -1,0 +1,229 @@
+package mx.ipn.escom.TTA024.ui.EstudianteUI.home
+
+import android.util.Log
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.amplifyframework.auth.AuthException
+import com.amplifyframework.auth.AuthUserAttributeKey
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
+import com.amplifyframework.kotlin.core.Amplify
+import com.google.android.material.progressindicator.CircularProgressIndicator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import mx.ipn.escom.TTA024.data.network.student.StudentAPI
+import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExerciseNavScreens
+
+@Composable
+fun StudentHome(
+    navController: NavController
+) {
+    val studentVM: StudentHomeViewModel = viewModel()
+    var studentHomeUIState = studentVM.studentHomeUIState
+    var token by remember { mutableStateOf("") }
+
+    var userName by remember { mutableStateOf("") }
+    LaunchedEffect(key1 = true) {
+        try {
+            val attributes = Amplify.Auth.fetchUserAttributes()
+            val name = attributes.find { it.key == AuthUserAttributeKey.name() }
+            Log.i("AuthDemo", "User attributes = $attributes")
+            Log.i("AuthDemo", name?.value?:"no se pudo obtener el nombre")
+            userName = name?.value?:"no se pudo obtener el nombre"
+
+            val session = Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession
+            token = session.tokensResult.value?.idToken?: "no hay token"
+            studentVM.updateToken(token)
+            studentVM.getModulos()
+        } catch (error: AuthException) {
+            Log.e("AuthDemo", "Failed to fetch user attributes", error)
+        }
+    }
+
+    var closeSesionLoading by remember { mutableStateOf(false) }
+    if(closeSesionLoading){
+        LaunchedEffect(key1 = true) {
+            try {
+                Amplify.Auth.signOut()
+            } catch (error: AuthException) {
+                Log.e("AmplifyQuickstart", "Failed to sign out auth session", error)
+            }
+            navController.navigate("login"){
+                popUpTo("student")
+            }
+            closeSesionLoading = false
+        }
+    }
+
+    val items = listOf(
+        "Calculo diferencial", 
+        "Calculo Integral",
+    )
+
+
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    val selectedItem = remember { mutableStateOf(items[0]) }
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet { StudentModalDrawer(
+                items = items,
+                selected = selectedItem.value,
+                onClicItem = {
+                    scope.launch { drawerState.close() }
+                    selectedItem.value = it
+                },
+                userName = userName,
+                onClicCloseSession = { closeSesionLoading = true }
+            )
+            }
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.09f)
+                    .clickable { scope.launch { drawerState.open() } },
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Icon(imageVector = Icons.Default.Menu, contentDescription = "")
+                Spacer(Modifier.width(12.dp))
+                Text(text = selectedItem.value, style = MaterialTheme.typography.headlineSmall)
+            }
+            Column(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                when(studentHomeUIState){
+                    is StudentHomeUIState.Error -> Text("Error")
+                    is StudentHomeUIState.Loading -> CircularProgressIndicator()
+                    is StudentHomeUIState.Success -> Text(studentHomeUIState.modulos)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun StudentModalDrawer(
+    items : List<String>,
+    selected: String,
+    onClicItem: (String) -> Unit,
+    userName: String,
+    onClicCloseSession: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.8f),
+            contentAlignment = Alignment.BottomStart
+        ){
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                for (item in items) {
+                    NavigationDrawerItem(
+                        label = { Text(text = item) },
+                        selected = item == selected,
+                        onClick = { onClicItem(item) },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
+            }
+        }
+        Divider()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ){
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.Start
+            ){
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Icon(imageVector = Icons.Default.Person, "person", modifier = Modifier.size(40.dp))
+                    Column(Modifier.padding(12.dp)) {
+                        Text(text = "Bienvenido")
+                        Text(text = userName, fontWeight = FontWeight.Bold)
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ){
+                    Button(onClick = { /*TODO*/ }) {
+                        Text("Configuracion")
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    OutlinedButton(onClick = { onClicCloseSession() }) {
+                        Text("Cerrar Sesion")
+                    }
+                }
+            }
+        }
+    }
+}
