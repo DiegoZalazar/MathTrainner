@@ -12,7 +12,7 @@ class EjercicioService {
     suspend fun insertEjercicio(id_modulo: Int,ejercicioModel: EjercicioModel): String{
         return withContext(Dispatchers.IO) {
             var response = retrofit.create(EjercicioApiClient::class.java).insertEjercicioByModulo(id_modulo,ejercicioModel)
-            Log.i("Created Ejercicio Result",response.toString())
+            Log.i("Response Created Ejercicio",response.toString() + response.message())
             if(response.code()==200) response.body()?:"Ejercicio registrado correctamente" else "error"
 
         }
@@ -29,7 +29,7 @@ class EjercicioService {
     suspend fun deleteEjercicioByModulo(id_modulo: Int,id_ejercicio: Int): String{
         return withContext(Dispatchers.IO) {
             var response = retrofit.create(EjercicioApiClient::class.java).deleteEjercicioByModulo(id_modulo,id_ejercicio)
-            Log.i("ResultAPI",response.toString())
+            Log.i("ResultAPI Deleted Ejercicio",response.toString())
             if(response.code()==200) response.body()?:"Ejercicio eliminada correctamente" else "error"
         }
     }

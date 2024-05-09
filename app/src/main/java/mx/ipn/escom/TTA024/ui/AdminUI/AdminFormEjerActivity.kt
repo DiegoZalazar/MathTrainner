@@ -10,17 +10,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -35,6 +40,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,9 +51,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import mx.ipn.escom.TTA024.data.models.EjercicioModel
 import mx.ipn.escom.TTA024.domain.model.Ejercicio
-import mx.ipn.escom.TTA024.domain.model.Leccion
 import mx.ipn.escom.TTA024.domain.model.Modulo
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
@@ -58,16 +62,24 @@ import mx.ipn.escom.TTA024.ui.viewmodels.AdminEjerciciosViewModel
 @Composable
 fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ejercicio: Ejercicio,adminEjerciciosViewModel: AdminEjerciciosViewModel){
     var editEjercicio=true
-    if (ejercicio?.idEjercicio==0 && ejercicio?.planteamientoEjercicio.equals("none")){
+    if (ejercicio?.idEjercicio==0 && (ejercicio?.planteamientoEjercicio.equals("") || ejercicio?.tipo.equals("none"))){
         editEjercicio=false
     }
-    Log.i("editEjercicio",editEjercicio.toString())
+    Log.i("Ejercicio pares", ejercicio.paresCorrectosEjercicio)
     var tiempoEjercicio by remember {
         var titTemp:String=""
         if(editEjercicio){
             titTemp= ejercicio.tiempoEjercicio.toString()
         }
         mutableStateOf(titTemp)
+    }
+
+    var incisos = remember {
+        mutableStateListOf<String>()
+    }
+
+    var listaIncorrectas = remember {
+        mutableStateListOf<String>()
     }
 
     var nivelEjercicio by remember {
@@ -97,25 +109,25 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
     var tipoEjercicio by remember {
         var tipoEjercicio:String="Opción multiple"
         if (editEjercicio){
-            if((ejercicio.respCorrectaEjercicio!="" && ejercicio.respCorrectaEjercicio!="none") && (ejercicio.respIncorrectasEjercicio!="" && ejercicio.respIncorrectasEjercicio!="none")){
-                tipoEjercicio="Opción multiple"
-            }
-            if((ejercicio.respCorrectaEjercicio!="" && ejercicio.respCorrectaEjercicio!="none") && (ejercicio.respIncorrectasEjercicio=="" && ejercicio.respIncorrectasEjercicio=="none")){
-                tipoEjercicio="Completar respuesta"
-            }
-            if(ejercicio.paresCorrectosEjercicio!="" && ejercicio.paresCorrectosEjercicio!="none"){
-                tipoEjercicio="Relacionar columnas"
-            }
+            tipoEjercicio=ejercicio.tipo
         }
         mutableStateOf(tipoEjercicio)
     }
 
+    var cuerpo by remember {
+        var cuerpoString:String=""
+        if (editEjercicio){
+            cuerpoString=ejercicio.cuerpo
+        }
+        mutableStateOf(cuerpoString)
+    }
+
     var respCorrecta by remember {
         var respTemp:String=""
-        if(tipoEjercicio=="opcionMultiple"){
+        if(tipoEjercicio=="Opción multiple"){
             respTemp=ejercicio.respCorrectaEjercicio
         }
-        if(tipoEjercicio=="completarRespuesta"){
+        if(tipoEjercicio=="Completar respuesta"){
             respTemp=ejercicio.respCorrectaEjercicio
         }
         mutableStateOf(respTemp)
@@ -123,7 +135,7 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
 
     var respIncorrectas by remember {
         var respTemp:String=""
-        if(tipoEjercicio=="opcionMultiple"){
+        if(tipoEjercicio=="Opción multiple"){
             respTemp=ejercicio.respIncorrectasEjercicio
         }
         mutableStateOf(respTemp)
@@ -131,7 +143,7 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
 
     var paresCorrectos by remember {
         var respTemp:String=""
-        if(tipoEjercicio=="relacionarColumnas"){
+        if(tipoEjercicio=="Relacionar columnas"){
             respTemp=ejercicio.paresCorrectosEjercicio
         }
         mutableStateOf(respTemp)
@@ -139,7 +151,10 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
 
     val niveles = listOf("Facil","Intermedio","Dificil")
     val tiposEjercicios = listOf("Opción multiple","Relacionar columnas","Completar respuesta")
-    var expanded by remember {
+    var expandedNiveles by remember {
+        mutableStateOf(false)
+    }
+    var expandedTiposEjercicios by remember {
         mutableStateOf(false)
     }
 
@@ -190,14 +205,25 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                         id=ejercicio.idEjercicio
                     }
                     var ejercicioNuevo: Ejercicio? = null
-                    if(tipoEjercicio=="opcionMultiple"){
-                        ejercicioNuevo=Ejercicio(id,tiempoEjercicio.toInt(),nivelEjercicio.toInt(),planteamiento,respCorrecta,respIncorrectas,"",1, modulo.idModulo)
+                    if(nivelEjercicio=="Facil"){
+                        nivelEjercicio="1"
                     }
-                    if(tipoEjercicio=="completarRespuesta"){
-                        ejercicioNuevo=Ejercicio(id,tiempoEjercicio.toInt(),nivelEjercicio.toInt(),planteamiento,respCorrecta,"","",1, modulo.idModulo)
+                    if(nivelEjercicio=="Intermedio"){
+                        nivelEjercicio="2"
                     }
-                    if(tipoEjercicio=="relacionarColumnas"){
-                        ejercicioNuevo=Ejercicio(id,tiempoEjercicio.toInt(),nivelEjercicio.toInt(),planteamiento,"","",paresCorrectos,1, modulo.idModulo)
+                    if(nivelEjercicio=="Dificil"){
+                        nivelEjercicio="3"
+                    }
+                    if(tipoEjercicio=="Opción multiple"){
+                        respIncorrectas=listaIncorrectas[0]+";"+listaIncorrectas[1]+";"+listaIncorrectas[2]
+                        ejercicioNuevo=Ejercicio(id,cuerpo,tipoEjercicio,tiempoEjercicio.toInt(),nivelEjercicio.toInt(),planteamiento,respCorrecta,respIncorrectas,"",1, modulo.idModulo)
+                    }
+                    if(tipoEjercicio=="Completar respuesta"){
+                        ejercicioNuevo=Ejercicio(id,cuerpo,tipoEjercicio,tiempoEjercicio.toInt(),nivelEjercicio.toInt(),planteamiento,respCorrecta,"","",1, modulo.idModulo)
+                    }
+                    if(tipoEjercicio=="Relacionar columnas"){
+                        paresCorrectos=incisos[0]+":"+incisos[1]+";"+incisos[2]+":"+incisos[3]+";"+incisos[4]+":"+incisos[5]+";"+incisos[6]+":"+incisos[7]
+                        ejercicioNuevo=Ejercicio(id,cuerpo,tipoEjercicio,tiempoEjercicio.toInt(),nivelEjercicio.toInt(),planteamiento,"","",paresCorrectos,1, modulo.idModulo)
                     }
 
                     if(editEjercicio){
@@ -226,7 +252,8 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
         ){
             Spacer(modifier = Modifier.height(80.dp))
             Box(
@@ -244,78 +271,6 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                     modifier = Modifier
                         .padding(16.dp),
                 ) {
-                    OutlinedTextField(
-                        value = tiempoEjercicio,
-                        onValueChange = { tiempoEjercicio = it },
-                        label = { Text("Tiempo estimado para la realización del ejercicio (en segundos)") },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        modifier = Modifier
-                            .padding(vertical = 16.dp)
-                    )
-                    ////MENU NIVEL///////
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = {
-                            expanded = !expanded
-                        }
-                    ) {
-                        TextField(
-                            value = nivelEjercicio ,
-                            onValueChange = {},
-                            readOnly = true,
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                            modifier = Modifier.menuAnchor()
-                        )
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            niveles.forEach { item ->
-                                DropdownMenuItem(
-                                    text = { Text(text = item) },
-                                    onClick = {
-                                        nivelEjercicio = item
-                                        expanded = false
-                                        //Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
-                                    }
-                                )
-                            }
-                        }
-                    }
-                    ///////////////////
-                    ////MENU TIPO DE EJERCICIO///////
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = {
-                            expanded = !expanded
-                        }
-                    ) {
-                        TextField(
-                            value = tipoEjercicio ,
-                            onValueChange = {},
-                            readOnly = true,
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                            modifier = Modifier.menuAnchor()
-                        )
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            tiposEjercicios.forEach { item ->
-                                DropdownMenuItem(
-                                    text = { Text(text = item) },
-                                    onClick = {
-                                        tipoEjercicio = item
-                                        expanded = false
-                                        //Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
-                                    }
-                                )
-                            }
-                        }
-                    }
                     ///////////////////
                     OutlinedTextField(
                         value = planteamiento,
@@ -328,48 +283,203 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                         modifier = Modifier
                             .padding(vertical = 16.dp)
                     )
-                    if(tipoEjercicio=="Relacionar columnas"){
-                        var pares: List<String> =paresCorrectos.split(";")
-                        var incisos by remember {
-                            mutableStateOf(mutableListOf<String>())
-                        }
-                        pares.forEach{
-                            val preguntaRespuesta= it.split(":")
-                            preguntaRespuesta.forEach{
-                                incisos.add(it)
-                            }
-                        }
-                        for(i in 0..4){
-                            Row(modifier=Modifier.fillMaxWidth()){
-                                OutlinedTextField(
-                                    value = incisos[i*2],
-                                    onValueChange = {  incisos[i*2]=it },
-                                    label = { Text("Nivel") },
-                                    keyboardOptions = KeyboardOptions.Default.copy(
-                                        keyboardType = KeyboardType.Text,
-                                        imeAction = ImeAction.Next
-                                    ),
-                                    modifier = Modifier
-                                        .padding(vertical = 16.dp)
-                                )
 
-                                OutlinedTextField(
-                                    value = incisos[i*2-1],
-                                    onValueChange = {  incisos[i*2+1]=it },
-                                    label = { Text("Nivel") },
-                                    keyboardOptions = KeyboardOptions.Default.copy(
-                                        keyboardType = KeyboardType.Text,
-                                        imeAction = ImeAction.Next
-                                    ),
-                                    modifier = Modifier
-                                        .padding(vertical = 16.dp)
+                    OutlinedTextField(
+                        value = cuerpo,
+                        onValueChange = { cuerpo = it },
+                        label = { Text("Cuerpo ejercicio (Integral)") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                    )
+
+
+                    OutlinedTextField(
+                        value = tiempoEjercicio,
+                        onValueChange = { tiempoEjercicio = it },
+                        label = { Text("Tiempo promedio para resolver (en segundos)") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                    )
+
+                    ////MENU NIVEL///////
+                    ExposedDropdownMenuBox(
+                        expanded = expandedNiveles,
+                        onExpandedChange = {
+                            expandedNiveles = !expandedNiveles
+                        }
+                    ) {
+                        TextField(
+                            value = nivelEjercicio,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedNiveles) },
+                            modifier = Modifier.menuAnchor()
+                        )
+                        ExposedDropdownMenu(
+                            expanded = expandedNiveles,
+                            onDismissRequest = { expandedNiveles = false }
+                        ) {
+                            niveles.forEach { item ->
+                                DropdownMenuItem(
+                                    text = { Text(text = item) },
+                                    onClick = {
+                                        nivelEjercicio = item
+                                        expandedNiveles = false
+                                        //Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
+                                    }
                                 )
                             }
                         }
                     }
+                    ///////////////////
+                    Spacer(modifier = Modifier.height(10.dp))
+                    ////MENU TIPO DE EJERCICIO///////
+                    /*MaterialTheme(
+                        color = MaterialTheme.colorScheme.background
+                    ){*/
+                    ExposedDropdownMenuBox(
 
+                        expanded = expandedTiposEjercicios,
+                        onExpandedChange = {
+                            expandedTiposEjercicios = !expandedTiposEjercicios
+                        },
+
+                    ) {
+                        TextField(
+                            value = tipoEjercicio,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTiposEjercicios) },
+                            modifier = Modifier.menuAnchor()
+                        )
+                        ExposedDropdownMenu(
+
+                            expanded = expandedTiposEjercicios,
+                            onDismissRequest = { expandedTiposEjercicios = false },
+
+                        ) {
+                            tiposEjercicios.forEach { item ->
+                                DropdownMenuItem(
+                                    text = { Text(text = item) },
+                                    onClick = {
+                                        tipoEjercicio = item
+                                        expandedTiposEjercicios = false
+                                        //Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
+                                    },
+
+                                )
+                            }
+                        }
+                    }
+                    //}
+
+                    /////////////RELACIONAR COLUMNAS ///////////////////
+                    if (tipoEjercicio == "Relacionar columnas") {
+                        if(ejercicio.paresCorrectosEjercicio=="" || ejercicio.paresCorrectosEjercicio=="none"){
+                            for(i in 0..7){
+                                incisos.add("")
+                            }
+                        }else{
+                            var pares: List<String> = paresCorrectos.split(";")
+                            pares.forEach {
+                                val preguntaRespuesta = it.split(":")
+                                preguntaRespuesta.forEach {
+                                    incisos.add(it)
+                                }
+                            }
+                        }
+
+                        for (i in 0..3) {
+                            Row(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+                                OutlinedTextField(
+                                    value = incisos[i * 2],
+                                    onValueChange = { incisos[i * 2] = it },
+                                    label = { Text("Par " + (i+1)) },
+                                    keyboardOptions = KeyboardOptions.Default.copy(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Next
+                                    ),
+                                    modifier = Modifier.width(115.dp)
+                                )
+                                Spacer(modifier = Modifier.width(20.dp))
+                                OutlinedTextField(
+                                    value = incisos[i * 2 + 1],
+                                    onValueChange = { incisos[i * 2 + 1] = it
+                                                    Log.i("incisos[]",incisos[i * 2 + 1])
+                                                    },
+                                    label = { Text("Par" + (i+1)) },
+                                    keyboardOptions = KeyboardOptions.Default.copy(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Next
+                                    ),
+                                    modifier = Modifier.width(115.dp)
+                                )
+                            }
+                        }
+                    }
+                    ////////////////////////////////OPCIÓN MULTIPLE////////////////////
+                    if (tipoEjercicio == "Opción multiple") {
+                        if((ejercicio.respCorrectaEjercicio=="" || ejercicio.respCorrectaEjercicio=="none") && (ejercicio.respIncorrectasEjercicio=="" || ejercicio.respIncorrectasEjercicio=="none")){
+                            for(i in 0..2){
+                                listaIncorrectas.add("")
+                            }
+                        }else{
+                            var incorrectas: List<String> = respIncorrectas.split(";")
+                            incorrectas.forEach {
+                                listaIncorrectas.add(it)
+                            }
+                        }
+                        OutlinedTextField(
+                            value = respCorrecta,
+                            onValueChange = { respCorrecta = it },
+                            label = { Text("Respuesta Correcta") },
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Next
+                            ),
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
+                        )
+                        for(i in 0..2){
+                            OutlinedTextField(
+                                value = listaIncorrectas[i],
+                                onValueChange = { listaIncorrectas[i] = it },
+                                label = { Text("Respuesta incorrecta "+(i+1)) },
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardType = KeyboardType.Text,
+                                    imeAction = ImeAction.Next
+                                ),
+                                modifier = Modifier
+                                    .padding(vertical = 16.dp)
+                            )
+                        }
+                    }
+                    /////////////////////RESPUESTA CORRECTA /////////////////////
+                    if (tipoEjercicio == "Completar respuesta") {
+                        OutlinedTextField(
+                            value = respCorrecta,
+                            onValueChange = { respCorrecta = it },
+                            label = { Text("Respuesta Correcta") },
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Next
+                            ),
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
+                        )
+                    }
                 }
             }
+            Spacer(modifier = Modifier.height(50.dp))
         }
+
     }
 }

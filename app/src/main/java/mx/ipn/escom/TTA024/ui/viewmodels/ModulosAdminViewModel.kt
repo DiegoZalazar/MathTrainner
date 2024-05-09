@@ -1,5 +1,6 @@
 package mx.ipn.escom.TTA024.ui.viewmodels;
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,9 +20,10 @@ class ModulosAdminViewModel: ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
 
 
-    fun onCreate() {
+    fun onGetModulos() {
         viewModelScope.launch {
             isLoading.postValue(true)
+            Log.i("ModulosViewModel", "Getting modulos VM")
             val result = getModulosUseCase()
             modulosModel.postValue(result)
             isLoading.postValue(false)

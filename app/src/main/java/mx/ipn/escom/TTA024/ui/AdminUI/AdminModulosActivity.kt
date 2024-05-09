@@ -77,12 +77,12 @@ fun ModulosAdminComposable(
 ) {
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Titulo", "Eliminar", "Editar")
-    /*val modulo1 = Modulo(1, "Regla cadena")
-    val modulo2 = Modulo(2, "Integral definida")
-    val modulo3 = Modulo(3, "Integral indefinida")
+    /*val modulo1 = Modulo(1, "Regla cadena",1)
+    val modulo2 = Modulo(2, "Integral definida",1)
+    val modulo3 = Modulo(3, "Integral indefinida",1)
     val moduloList = listOf<Modulo>(modulo1, modulo2, modulo3)*/
 
-    moduloViewModel.onCreate()
+    moduloViewModel.onGetModulos()
     val moduloList by moduloViewModel.modulosModel.observeAsState(initial = arrayListOf())
     // Each cell of a column must have the same weight.
     val ancho = 300
@@ -218,7 +218,7 @@ fun DialogAddModulo(
                 TextButton(
                     onClick = {
                         onConfirm()
-                        addModulo(viewModel, modulo = Modulo(0, titulo))
+                        addModulo(viewModel, modulo = Modulo(0, titulo,1))
                     },
                     modifier = Modifier
                         .width(300.dp)
