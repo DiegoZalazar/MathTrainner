@@ -120,4 +120,7 @@ dependencies {
 
     // JWT
     implementation("io.github.nefilim.kjwt:kjwt-core:0.9.0")
+
+    // Youtube video player
+    implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28")
 }

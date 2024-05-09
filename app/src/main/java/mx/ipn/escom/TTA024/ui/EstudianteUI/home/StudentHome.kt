@@ -71,6 +71,7 @@ import mx.ipn.escom.TTA024.R
 import mx.ipn.escom.TTA024.data.network.student.Modulo
 import mx.ipn.escom.TTA024.data.network.student.StudentAPI
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExerciseNavScreens
+import mx.ipn.escom.TTA024.ui.StudentScreens
 
 @Composable
 fun StudentHome(
@@ -107,7 +108,7 @@ fun StudentHome(
                 Log.e("AmplifyQuickstart", "Failed to sign out auth session", error)
             }
             navController.navigate("login"){
-                popUpTo("student")
+                popUpTo("student") { inclusive = true }
             }
             closeSesionLoading = false
         }
@@ -166,7 +167,7 @@ fun StudentHome(
                         studentVM.getModulos()
                     }
                     is StudentHomeUIState.Loading -> CircularProgressIndicator()
-                    is StudentHomeUIState.Success -> ListModulos(modulos = studentHomeUIState.modulos,scope, {navController.navigate(ExerciseNavScreens.Exercises.name)})
+                    is StudentHomeUIState.Success -> ListModulos(modulos = studentHomeUIState.modulos,scope, {navController.navigate(ExerciseNavScreens.Exercises.name)}, {navController.navigate(StudentScreens.Leccion.name)})
                 }
             }
         }
@@ -190,11 +191,12 @@ fun ErrorScreen(
 fun ListModulos(
     modulos: List<ModuloUI>,
     scope: CoroutineScope,
-    navToExercises: () -> Unit
+    navToExercises: () -> Unit,
+    navToLeccion: () -> Unit
 ){
     Column {
         for (modulo in modulos){
-            ModuloItem(moduloUi = modulo, scope, navToExercises)
+            ModuloItem(moduloUi = modulo, scope, navToExercises, navToLeccion)
             Spacer(Modifier.height(12.dp))
         }
     }
@@ -204,7 +206,8 @@ fun ListModulos(
 fun ModuloItem (
     moduloUi: ModuloUI,
     scope: CoroutineScope,
-    navToExercises: () -> Unit
+    navToExercises: () -> Unit,
+    navToLeccion: () -> Unit
 ) {
     val pos = moduloUi.pos
     val values = arrayOf(0,1,2,1)
@@ -226,7 +229,10 @@ fun ModuloItem (
                     RichTooltip(){
                         ModuloTooltipContent(
                             title = moduloUi.modulo.nombreModulo, 
-                            toLeccion = { scope.launch { tooltipState.dismiss() }},
+                            toLeccion = {
+                                scope.launch { tooltipState.dismiss() }
+                                navToLeccion()
+                            },
                             toExercises = {
                                 scope.launch { tooltipState.dismiss() }
                                 navToExercises()

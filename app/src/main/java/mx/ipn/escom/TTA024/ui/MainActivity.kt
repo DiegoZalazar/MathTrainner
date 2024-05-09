@@ -21,7 +21,7 @@ import mx.ipn.escom.TTA024.ui.viewmodels.ModulosAdminViewModel
 // hollaaa
 //import org.json.JSONObject
 class MainActivity : ComponentActivity() {
-    private val moduloViewModel: ModulosAdminViewModel by viewModels()
+    private val adminModuloViewModel: ModulosAdminViewModel by viewModels()
     private val adminLeccionesViewModel: AdminLeccionesViewModel by viewModels()
     private val adminEjerciciosViewModel: AdminEjerciciosViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,9 +32,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigation(moduloViewModel,
-                        adminLeccionesViewModel,
-                        adminEjerciciosViewModel
+//                    AppNavigation(moduloViewModel,
+//                        adminLeccionesViewModel,
+//                        adminEjerciciosViewModel
+//                    )
+                    MathTrainer(
+                        modulosAdminViewModel = adminModuloViewModel,
+                        adminLeccionesViewModel = adminLeccionesViewModel,
+                        adminEjerciciosViewModel = adminEjerciciosViewModel
                     )
                 }
             }

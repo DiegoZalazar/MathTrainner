@@ -175,7 +175,9 @@ fun SignInScreen(
         LaunchedEffect(key1 = true) {
             msgAlert = viewModel.signIn(email = usr, pswrd = pswd, home = {
                 Log.i("Amplify", "navigating to home")
-                navController.navigate("home")
+                navController.navigate("home") {
+                    popUpTo("login") { inclusive = true }
+                }
             })
             isLoading = false
         }
