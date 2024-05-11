@@ -7,7 +7,7 @@ import mx.ipn.escom.TTA024.domain.model.Modulo
 class InsertModuloUseCase{
     private val repository: ModuloRepository = ModuloRepository()
     suspend operator fun invoke(modulo: Modulo):String{
-        val moduloModel = ModuloModel(modulo.idModulo, modulo.nombreModulo)
+        val moduloModel = ModuloModel(modulo.idModulo, modulo.nombreModulo,modulo.idModulo)
         val response = repository.insertModuloFromAPI(moduloModel)
 
         return response

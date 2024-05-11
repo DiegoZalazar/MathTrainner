@@ -7,7 +7,7 @@ import mx.ipn.escom.TTA024.domain.model.Ejercicio
 class UpdateEjercicioByModuloUseCase{
     private val repository: EjercicioRepository = EjercicioRepository()
     suspend operator fun invoke(ejercicio: Ejercicio): String {
-        val ejercicioModel: EjercicioModel = EjercicioModel(ejercicio.idEjercicio, ejercicio.tiempoEjercicio, ejercicio.nivelEjercicio, ejercicio.planteamientoEjercicio, ejercicio.respCorrectaEjercicio, ejercicio.respIncorrectasEjercicio, ejercicio.paresCorrectosEjercicio, ejercicio.idExamen, ejercicio.idModulo)
+        val ejercicioModel: EjercicioModel = EjercicioModel(ejercicio.idEjercicio,ejercicio.cuerpo,ejercicio.tipo, ejercicio.tiempoEjercicio, ejercicio.nivelEjercicio, ejercicio.planteamientoEjercicio, ejercicio.respCorrectaEjercicio, ejercicio.respIncorrectasEjercicio, ejercicio.paresCorrectosEjercicio, ejercicio.idExamen, ejercicio.idModulo)
         val response = repository.updateEjercicioByModuloFromAPI(
             ejercicioModel.idModulo,
             ejercicioModel.idEjercicio,

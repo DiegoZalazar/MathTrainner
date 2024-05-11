@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -63,11 +64,14 @@ import mx.ipn.escom.TTA024.ui.viewmodels.AdminEjerciciosViewModel
 fun EjerciciosAdminComposable(navController: NavHostController, modulo: Modulo, adminEjerciciosViewModel: AdminEjerciciosViewModel){
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Planteamiento","Nivel","Eliminar","Editar")
-    val ejercicio1 = Ejercicio(1,40,2,"selecciona","","","",1,1)
+    /*val ejercicio1 = Ejercicio(1,40,2,"selecciona","u=x-1","u=x;u=1;u=x*x","",1,1)
     val ejercicio2 = Ejercicio(2,90,3,"Une las columnas","","","a:A;b:B;c:C;d:D",1,1)
-    val ejercicio3 = Ejercicio(3,20,1,"Completa","","","",1,1)
-    val ejercicioList = listOf<Ejercicio>(ejercicio1, ejercicio2, ejercicio3)
+    val ejercicio3 = Ejercicio(3,20,1,"Completa","u=x-4","","",1,1)
+    val ejercicioList = listOf<Ejercicio>(ejercicio1, ejercicio2, ejercicio3)*/
     // Each cell of a column must have the same weight.
+    adminEjerciciosViewModel.onCreate(modulo)
+    val ejercicioList by adminEjerciciosViewModel.ejercicioModel.observeAsState(initial = arrayListOf())
+
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
     // The LazyColumn will be our table. Notice the use of the weights below
@@ -248,6 +252,18 @@ fun DialogEliminarEjercicio(
                         modifier = textoModifier
                     )
                     Text(
+                        text = "Cuerpo (Integral): " + ejercicio.cuerpo,
+                        fontSize = 20.sp,
+                        fontFamily = fontMonserrat,
+                        modifier = textoModifier
+                    )
+                    Text(
+                        text = "Tipo: " + ejercicio.tipo,
+                        fontSize = 20.sp,
+                        fontFamily = fontMonserrat,
+                        modifier = textoModifier
+                    )
+                    Text(
                         text = "Tiempo: " + ejercicio.tiempoEjercicio,
                         fontSize = 20.sp,
                         fontFamily = fontMonserrat,
@@ -319,7 +335,7 @@ fun buttonAddEjercicio(navController: NavController, modulo: Modulo) {
         verticalArrangement = Arrangement.Bottom) {
         FloatingActionButton(onClick =
         {
-            var ejercicio = Ejercicio(0,0,0,"none","none","none","none",0,0)
+            var ejercicio = Ejercicio(0,"","",0,0,"","","","",0,0)
             val ejercicioJson = Gson().toJson(ejercicio)
             val moduloJson = Gson().toJson(modulo)
             navController.navigate(route = AppScreens.AdminFormEjercicioActivity.route+"/$moduloJson/$ejercicioJson")
@@ -337,5 +353,5 @@ fun deleteEjercicio(modulo: Modulo,ejercicio: Ejercicio,adminEjerciciosViewModel
 fun navigateToEditEjercicio(navController: NavController,ejercicio: Ejercicio?,modulo: Modulo){
     val ejercicioJson = Gson().toJson(ejercicio)
     val moduloJson = Gson().toJson(modulo)
-    navController.navigate(route = AppScreens.AdminFormLeccActivity.route+"/$moduloJson/$ejercicioJson")
+    navController.navigate(route = AppScreens.AdminFormEjercicioActivity.route+"/$moduloJson/$ejercicioJson")
 }

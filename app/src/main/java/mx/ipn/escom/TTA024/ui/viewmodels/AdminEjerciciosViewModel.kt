@@ -17,7 +17,7 @@ class AdminEjerciciosViewModel : ViewModel() {
     private val insertEjercicioByModuloUseCase: InsertEjercicioByModuloUseCase = InsertEjercicioByModuloUseCase()
     private val updateEjercicioByModuloUseCase: UpdateEjercicioByModuloUseCase = UpdateEjercicioByModuloUseCase()
 
-    val leccionModel = MutableLiveData<List<Ejercicio>>()
+    val ejercicioModel = MutableLiveData<List<Ejercicio>>()
     val isLoading = MutableLiveData<Boolean>()
 
 
@@ -25,7 +25,7 @@ class AdminEjerciciosViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading.postValue(true)
             val result = getEjerciciosByModuloUseCase(modulo.idModulo)
-            leccionModel.postValue(result)
+            ejercicioModel.postValue(result)
             isLoading.postValue(false)
         }
     }
@@ -34,7 +34,7 @@ class AdminEjerciciosViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading.postValue(true)
             deleteEjercicioByModuloUseCase(modulo.idModulo,ejercicio.idEjercicio)
-            leccionModel.value = leccionModel.value?.toMutableList()?.apply {
+            ejercicioModel.value = ejercicioModel.value?.toMutableList()?.apply {
                 remove(ejercicio)
             }?.toList()
             isLoading.postValue(false)
