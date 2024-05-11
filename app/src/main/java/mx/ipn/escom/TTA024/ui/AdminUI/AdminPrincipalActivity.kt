@@ -34,7 +34,6 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.kotlin.core.Amplify
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.ui.navigation.AppNavigation
 
 
 

@@ -12,7 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import mx.ipn.escom.TTA024.ui.navigation.AppNavigation
+import mx.ipn.escom.TTA024.ui.EstudianteUI.home.StudentHomeViewModel
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminEjerciciosViewModel
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminLeccionesViewModel
@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
     private val adminModuloViewModel: ModulosAdminViewModel by viewModels()
     private val adminLeccionesViewModel: AdminLeccionesViewModel by viewModels()
     private val adminEjerciciosViewModel: AdminEjerciciosViewModel by viewModels()
+    private val studentHomeViewModel: StudentHomeViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -32,14 +33,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    AppNavigation(moduloViewModel,
-//                        adminLeccionesViewModel,
-//                        adminEjerciciosViewModel
-//                    )
                     MathTrainer(
                         modulosAdminViewModel = adminModuloViewModel,
                         adminLeccionesViewModel = adminLeccionesViewModel,
-                        adminEjerciciosViewModel = adminEjerciciosViewModel
+                        adminEjerciciosViewModel = adminEjerciciosViewModel,
+                        studentHomeViewModel = studentHomeViewModel
                     )
                 }
             }

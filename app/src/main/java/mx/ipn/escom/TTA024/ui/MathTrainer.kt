@@ -59,6 +59,7 @@ import mx.ipn.escom.TTA024.ui.EstudianteUI.home.StudentHome
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExerciseNavScreens
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExercisesScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExercisesScreenViewModel
+import mx.ipn.escom.TTA024.ui.EstudianteUI.home.StudentHomeViewModel
 import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminEjerciciosViewModel
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminLeccionesViewModel
@@ -79,16 +80,13 @@ enum class StudentScreens {
     Leccion
 }
 
-enum class AdminScreens {
-    AdminHome
-}
-
 @Composable
 fun MathTrainer(
     navController: NavHostController = rememberNavController(),
     modulosAdminViewModel: ModulosAdminViewModel,
     adminLeccionesViewModel: AdminLeccionesViewModel,
-    adminEjerciciosViewModel: AdminEjerciciosViewModel
+    adminEjerciciosViewModel: AdminEjerciciosViewModel,
+    studentHomeViewModel: StudentHomeViewModel
 ){
     val backStackEntry by navController.currentBackStackEntryAsState()
     val loginViewModel: LoginViewModel = viewModel()
@@ -158,7 +156,10 @@ fun MathTrainer(
                 startDestination = StudentScreens.StudentHome.name
             ){
                 composable(route = StudentScreens.StudentHome.name){
-                    StudentHome(navController = navController)
+                    StudentHome(
+                        studentVM = studentHomeViewModel,
+                        navController = navController
+                    )
                 }
                 composable(route = ExerciseNavScreens.Exercises.name){
                     ExercisesScreen(
@@ -171,7 +172,10 @@ fun MathTrainer(
                 }
 
                 composable(route = StudentScreens.Leccion.name){
-                    Lesson()
+                    Lesson(
+                        studentHomeViewModel = studentHomeViewModel,
+                        navController = navController
+                    )
                 }
             }
 
@@ -179,10 +183,6 @@ fun MathTrainer(
                 route = "admin",
                 startDestination = AppScreens.AdminPrincipalActivity.route
             ){
-                composable(route = AdminScreens.AdminHome.name){
-                    AdminHome(navController = navController)
-                }
-
                 composable(route = AppScreens.AdminPrincipalActivity.route) {
                     PrincipalAdministrador(navController)
                 }
@@ -272,58 +272,6 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navControll
         navController.getBackStackEntry(navGraphRoute)
     }
     return viewModel(parentEntry)
-}
-
-
-
-@Composable
-fun AdminHome(
-    navController: NavController
-) {
-    var userName by remember { mutableStateOf("") }
-    LaunchedEffect(key1 = true) {
-        try {
-            val attributes = Amplify.Auth.fetchUserAttributes()
-            val name = attributes.find { it.key == AuthUserAttributeKey.name() }
-            Log.i("AuthDemo", "User attributes = $attributes")
-            Log.i("AuthDemo", name?.value?:"no se pudo obtener el nombre")
-            userName = name?.value?:"no se pudo obtener el nombre"
-        } catch (error: AuthException) {
-            Log.e("AuthDemo", "Failed to fetch user attributes", error)
-        }
-    }
-
-    var closeSesionLoading by remember { mutableStateOf(false) }
-    if(closeSesionLoading){
-        LaunchedEffect(key1 = true) {
-            try {
-                Amplify.Auth.signOut()
-            } catch (error: AuthException) {
-                Log.e("AmplifyQuickstart", "Failed to sign out auth session", error)
-            }
-            navController.navigate("login"){
-                popUpTo("admin")
-            }
-            closeSesionLoading = false
-        }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-
-        Text(text = "Sesion iniciada")
-        Text("Bienvenido admin")
-        Text("tu nombre: ${userName}")
-
-        Button(onClick = {
-            closeSesionLoading = true
-        }) {
-            Text("Cerrar Sesion")
-        }
-    }
 }
 
 @Composable 

@@ -27,6 +27,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -75,9 +76,9 @@ import mx.ipn.escom.TTA024.ui.StudentScreens
 
 @Composable
 fun StudentHome(
+    studentVM: StudentHomeViewModel = viewModel(),
     navController: NavController
 ) {
-    val studentVM: StudentHomeViewModel = viewModel()
     var studentHomeUIState = studentVM.studentHomeUIState
     var token by remember { mutableStateOf("") }
 
@@ -167,7 +168,15 @@ fun StudentHome(
                         studentVM.getModulos()
                     }
                     is StudentHomeUIState.Loading -> CircularProgressIndicator()
-                    is StudentHomeUIState.Success -> ListModulos(modulos = studentHomeUIState.modulos,scope, {navController.navigate(ExerciseNavScreens.Exercises.name)}, {navController.navigate(StudentScreens.Leccion.name)})
+                    is StudentHomeUIState.Success -> ListModulos(
+                        modulos = studentHomeUIState.modulos,
+                        scope = scope,
+                        navToExercises = {navController.navigate(ExerciseNavScreens.Exercises.name)},
+                        navToLeccion = {
+                            studentVM.getLeccion(it)
+                            navController.navigate(StudentScreens.Leccion.name)
+                        }
+                    )
                 }
             }
         }
@@ -192,11 +201,16 @@ fun ListModulos(
     modulos: List<ModuloUI>,
     scope: CoroutineScope,
     navToExercises: () -> Unit,
-    navToLeccion: () -> Unit
+    navToLeccion: (Int) -> Unit
 ){
     Column {
         for (modulo in modulos){
-            ModuloItem(moduloUi = modulo, scope, navToExercises, navToLeccion)
+            ModuloItem(
+                moduloUi = modulo,
+                scope = scope,
+                navToExercises = navToExercises,
+                navToLeccion = navToLeccion
+            )
             Spacer(Modifier.height(12.dp))
         }
     }
@@ -207,7 +221,7 @@ fun ModuloItem (
     moduloUi: ModuloUI,
     scope: CoroutineScope,
     navToExercises: () -> Unit,
-    navToLeccion: () -> Unit
+    navToLeccion: (Int) -> Unit
 ) {
     val pos = moduloUi.pos
     val values = arrayOf(0,1,2,1)
@@ -231,7 +245,7 @@ fun ModuloItem (
                             title = moduloUi.modulo.nombreModulo, 
                             toLeccion = {
                                 scope.launch { tooltipState.dismiss() }
-                                navToLeccion()
+                                navToLeccion(moduloUi.modulo.idModulo)
                             },
                             toExercises = {
                                 scope.launch { tooltipState.dismiss() }
@@ -324,7 +338,7 @@ fun StudentModalDrawer(
                 Spacer(Modifier.height(12.dp))
             }
         }
-        Divider()
+        HorizontalDivider()
         Box(
             modifier = Modifier
                 .fillMaxWidth()

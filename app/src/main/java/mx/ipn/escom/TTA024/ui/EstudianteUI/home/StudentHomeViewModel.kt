@@ -1,5 +1,6 @@
 package mx.ipn.escom.TTA024.ui.EstudianteUI.home
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import mx.ipn.escom.TTA024.data.network.student.Leccion
 import mx.ipn.escom.TTA024.data.network.student.Modulo
 import mx.ipn.escom.TTA024.data.network.student.StudentAPIService
 import okhttp3.Interceptor
@@ -29,10 +31,19 @@ sealed interface StudentHomeUIState {
     object Loading : StudentHomeUIState
 }
 
+sealed interface LeccionUIState {
+    data class Success(val leccion: Leccion): LeccionUIState
+    object Error: LeccionUIState
+    object Loading: LeccionUIState
+    object NoContent: LeccionUIState
+}
+
 class StudentHomeViewModel(token: String = "") : ViewModel() {
     private var retrofitService : StudentAPIService
 
     var studentHomeUIState: StudentHomeUIState by mutableStateOf(StudentHomeUIState.Loading)
+        private set
+    var leccionUIState: LeccionUIState by mutableStateOf(LeccionUIState.Loading)
         private set
 
     fun getModulos() {
@@ -47,7 +58,26 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                 }
                 studentHomeUIState = StudentHomeUIState.Success(modulos = aux)
             }catch (e: IOException){
+                Log.i("StudentHome", e.toString())
                 studentHomeUIState = StudentHomeUIState.Error
+            }
+        }
+    }
+
+    fun getLeccion(idModulo: Int){
+        viewModelScope.launch {
+            leccionUIState = LeccionUIState.Loading
+            try{
+                val resp = retrofitService.getLeccion(idModulo)
+                if(resp.isEmpty()){
+                    leccionUIState = LeccionUIState.NoContent
+                } else {
+                    Log.i("StudentHome", resp.toString())
+                    leccionUIState = LeccionUIState.Success(resp[0])
+                }
+            } catch (e: Exception){
+                Log.i("StudentHome", "Error al obtener la leccion: $e")
+                leccionUIState = LeccionUIState.Error
             }
         }
     }

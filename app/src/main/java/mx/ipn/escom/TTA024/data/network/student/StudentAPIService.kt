@@ -5,6 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Path
 
 private const val BASE_URL = "https://w8b6as9g2h.execute-api.us-east-1.amazonaws.com/Prod/"
 
@@ -16,6 +17,9 @@ private val retrofit = Retrofit.Builder()
 interface StudentAPIService {
     @GET("estudiante/modulos")
     suspend fun getModulos() : List<Modulo>
+
+    @GET("modulos/{idMod}/lecciones")
+    suspend fun getLeccion(@Path("idMod") idModulo: Int) : List<Leccion>
 }
 
 object  StudentAPI {
