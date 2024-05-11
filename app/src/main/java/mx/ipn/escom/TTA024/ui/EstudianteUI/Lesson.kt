@@ -1,9 +1,11 @@
 package mx.ipn.escom.TTA024.ui.EstudianteUI
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -57,7 +59,11 @@ fun LessonError(
     modifier: Modifier = Modifier,
     regresar: () -> Unit = {}
 ) {
-    Column(modifier = modifier){
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ){
         Text("Error al obtener la leccion")
         Button(onClick = regresar) {
             Text("Regresar")
@@ -127,7 +133,9 @@ fun LessonNoContent(
     regresar: () -> Unit = {}
 ){
     Column(
-        modifier = modifier
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Text("Aun no hay lecciones para este modulo")
         Button(onClick = regresar) {

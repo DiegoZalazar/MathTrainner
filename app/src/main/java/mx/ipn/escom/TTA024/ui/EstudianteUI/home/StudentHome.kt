@@ -171,7 +171,10 @@ fun StudentHome(
                     is StudentHomeUIState.Success -> ListModulos(
                         modulos = studentHomeUIState.modulos,
                         scope = scope,
-                        navToExercises = {navController.navigate(ExerciseNavScreens.Exercises.name)},
+                        navToExercises = {
+                            studentVM.getEjercicios(it)
+                            navController.navigate(ExerciseNavScreens.Exercises.name)
+                        },
                         navToLeccion = {
                             studentVM.getLeccion(it)
                             navController.navigate(StudentScreens.Leccion.name)
@@ -200,7 +203,7 @@ fun ErrorScreen(
 fun ListModulos(
     modulos: List<ModuloUI>,
     scope: CoroutineScope,
-    navToExercises: () -> Unit,
+    navToExercises: (Int) -> Unit,
     navToLeccion: (Int) -> Unit
 ){
     Column {
@@ -220,7 +223,7 @@ fun ListModulos(
 fun ModuloItem (
     moduloUi: ModuloUI,
     scope: CoroutineScope,
-    navToExercises: () -> Unit,
+    navToExercises: (Int) -> Unit,
     navToLeccion: (Int) -> Unit
 ) {
     val pos = moduloUi.pos
@@ -249,7 +252,7 @@ fun ModuloItem (
                             },
                             toExercises = {
                                 scope.launch { tooltipState.dismiss() }
-                                navToExercises()
+                                navToExercises(moduloUi.modulo.idModulo)
                             }
                         )
                     }

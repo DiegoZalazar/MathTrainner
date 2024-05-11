@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import mx.ipn.escom.TTA024.data.network.student.EjercicioGeneral
 import mx.ipn.escom.TTA024.data.network.student.Leccion
 import mx.ipn.escom.TTA024.data.network.student.Modulo
 import mx.ipn.escom.TTA024.data.network.student.StudentAPIService
@@ -38,12 +39,21 @@ sealed interface LeccionUIState {
     object NoContent: LeccionUIState
 }
 
+sealed interface EjerciciosUIState {
+    data class Success(val ejercicios: List<EjercicioGeneral>): EjerciciosUIState
+    object Error: EjerciciosUIState
+    object Loading: EjerciciosUIState
+    object NoContent: EjerciciosUIState
+}
+
 class StudentHomeViewModel(token: String = "") : ViewModel() {
     private var retrofitService : StudentAPIService
 
     var studentHomeUIState: StudentHomeUIState by mutableStateOf(StudentHomeUIState.Loading)
         private set
     var leccionUIState: LeccionUIState by mutableStateOf(LeccionUIState.Loading)
+        private set
+    var ejerciciosUIState: EjerciciosUIState by mutableStateOf(EjerciciosUIState.Loading)
         private set
 
     fun getModulos() {
@@ -78,6 +88,25 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
             } catch (e: Exception){
                 Log.i("StudentHome", "Error al obtener la leccion: $e")
                 leccionUIState = LeccionUIState.Error
+            }
+        }
+    }
+
+    fun getEjercicios(idModulo: Int){
+        viewModelScope.launch {
+            ejerciciosUIState = EjerciciosUIState.Loading
+            try {
+                val resp = retrofitService.getEjerciciosModulo(idModulo)
+                if (resp.isEmpty()){
+                    Log.i("StudentHome", "no hay ejercicios")
+                    ejerciciosUIState = EjerciciosUIState.NoContent
+                } else {
+                    Log.i("StudentHome", resp.toString())
+                    ejerciciosUIState = EjerciciosUIState.Success(resp)
+                }
+            } catch(e: Exception){
+                Log.i("StudentHome", "Error al obtener los ejercicios: $e")
+                ejerciciosUIState = EjerciciosUIState.Error
             }
         }
     }

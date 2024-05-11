@@ -20,6 +20,9 @@ interface StudentAPIService {
 
     @GET("modulos/{idMod}/lecciones")
     suspend fun getLeccion(@Path("idMod") idModulo: Int) : List<Leccion>
+
+    @GET("estudiante/sesion/ejercicios/{idMod}")
+    suspend fun getEjerciciosModulo(@Path("idMod") idModulo: Int) : List<EjercicioGeneral>
 }
 
 object  StudentAPI {
