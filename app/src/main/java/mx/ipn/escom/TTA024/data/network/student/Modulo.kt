@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class Modulo (
     val idModulo: Int,
     val nombreModulo: String,
-    val idTema: Int?,
+    val tema: String,
     val avance: Float
 )
