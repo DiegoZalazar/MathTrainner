@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import mx.ipn.escom.TTA024.data.network.student.EjercicioGeneral
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.columns.Columns
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.fillblank.FillBlank
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.multopc.MultOpc
@@ -17,7 +18,7 @@ sealed interface ExerciseUIState {
     object FinishedExercises: ExerciseUIState
 }
 
-private val ejercicios: List<ExerciseUIState> = listOf(
+private val ejerciciosTest: List<ExerciseUIState> = listOf(
     ExerciseUIState.ExerciseUIStateColumns(
         Columns(
             instrucciones = "Relaciona las integrales con su resultado:",
@@ -106,7 +107,65 @@ class ExercisesScreenViewModel() : ViewModel() {
         }
     }
 
-    fun reset() {
+    fun updateExercisesAndReset(ejercicios: List<EjercicioGeneral>) {
+        var newEjercicios: MutableList<ExerciseUIState> = mutableListOf()
+        Log.i("ExercisesVM", "Parsing exercises")
+        for(ejercicio in ejercicios){
+            when (ejercicio.tipoEjercicio) {
+                "relateColumns" -> {
+                    newEjercicios.add(
+                        ExerciseUIState.ExerciseUIStateColumns(
+                            Columns(
+                                instrucciones = ejercicio.planteamientoEjercicio,
+                                pares = paresCorrectosToList(ejercicio.paresCorrectos?:"error"),
+                                tiempo = ejercicio.tiempoEjercicio
+                            )
+                        )
+                    )
+                }
+                "fillBlank" -> {
+                    newEjercicios.add(
+                        ExerciseUIState.ExerciseUIStateFillBlank(
+                            FillBlank(
+                                instrucciones = ejercicio.planteamientoEjercicio,
+                                latex = ejercicio.cuerpo?:"Error",
+                                respuesta = ejercicio.respCorrectaEjercicio?:"Error",
+                                tiempo = ejercicio.tiempoEjercicio
+                            )
+                        )
+                    )
+                }
+                "multChoice" -> {
+                    newEjercicios.add(
+                        ExerciseUIState.ExerciseUIStateMultOpc(
+                            MultOpc(
+                                instrucciones = ejercicio.planteamientoEjercicio,
+                                cuerpo = ejercicio.cuerpo?:"error",
+                                respCorrecta = ejercicio.respCorrectaEjercicio?:"error",
+                                opciones = (ejercicio.respIncorrectasEjercicio?:"error").split(";"),
+                                tiempo = ejercicio.tiempoEjercicio
+                            )
+                        )
+                    )
+                }
+            }
+        }
+
+        reset(newEjercicios)
+    }
+
+    private fun paresCorrectosToList(paresJson: String): List<Pair<String, String>> {
+        val pares = paresJson.split(";")
+        var result: MutableList<Pair<String,String>> = mutableListOf()
+        for(par in pares){
+            val aux = par.split(":")
+            result.add(Pair(aux[0],aux[1]))
+        }
+        return result
+    }
+
+    fun reset(ejercicios: List<ExerciseUIState>) {
+        Log.i("ExercisesVM", "Resetting vm")
         _uiState.value = ExercisesUIState()
         _uiState.update { currExerciseUIState ->
             currExerciseUIState.copy(
@@ -118,7 +177,13 @@ class ExercisesScreenViewModel() : ViewModel() {
         currTiempo = 0
     }
 
-    init {
-        reset()
+    fun reset(){
+        _uiState.value = ExercisesUIState()
+        tiempos = MutableList(0) { 0 }
+        currTiempo = 0
     }
+
+//    init {
+//        reset()
+//    }
 }

@@ -135,28 +135,34 @@ fun ExercisesScreen(
             } // /Barra superior
         }
     ) {innerPadding ->
-        when(val exerciseUIState = exercisesUIState.currExerciseUIState){
-            is ExerciseUIState.ExerciseUIStateColumns -> ExerciseColumns(
-                nextAction = { nextAction(it, seconds) },
-                exerciseColumnsViewModel = ExerciseColumnsViewModel(exerciseUIState.exerciseColumns),
-                modifier = Modifier.padding(innerPadding)
+        if(exercisesUIState.exercises.isEmpty()){
+            NoExercicesScreen(
+                cancelAction = cancelAction
             )
-            is ExerciseUIState.ExerciseUIStateFillBlank -> ExerciseFillBlank(
-                nextAction = { nextAction(it, seconds)  },
-                exerciseFillBlankViewModel = ExerciseFillBlankViewModel(exerciseUIState.exerciseFillBlank),
-                modifier = Modifier.padding(innerPadding)
-            )
-            is ExerciseUIState.ExerciseUIStateMultOpc -> ExerciseMultOpc(
-                nextAction = { nextAction(it, seconds)  },
-                exerciseMultOpcViewModel = ExerciseMultOpcViewModel(exerciseUIState.exerciseOptions),
-                modifier = Modifier.padding(innerPadding)
-            )
-            is ExerciseUIState.FinishedExercises -> FinishedExercisesScreen(
-                correctExercises = exercisesUIState.correctExercises,
-                totalExercises = exercisesUIState.exercises.size,
-                finishAction = cancelAction,
-                modifier = Modifier.padding(innerPadding)
-            )
+        } else {
+            when(val exerciseUIState = exercisesUIState.currExerciseUIState){
+                is ExerciseUIState.ExerciseUIStateColumns -> ExerciseColumns(
+                    nextAction = { nextAction(it, seconds) },
+                    exerciseColumnsViewModel = ExerciseColumnsViewModel(exerciseUIState.exerciseColumns),
+                    modifier = Modifier.padding(innerPadding)
+                )
+                is ExerciseUIState.ExerciseUIStateFillBlank -> ExerciseFillBlank(
+                    nextAction = { nextAction(it, seconds)  },
+                    exerciseFillBlankViewModel = ExerciseFillBlankViewModel(exerciseUIState.exerciseFillBlank),
+                    modifier = Modifier.padding(innerPadding)
+                )
+                is ExerciseUIState.ExerciseUIStateMultOpc -> ExerciseMultOpc(
+                    nextAction = { nextAction(it, seconds)  },
+                    exerciseMultOpcViewModel = ExerciseMultOpcViewModel(exerciseUIState.exerciseOptions),
+                    modifier = Modifier.padding(innerPadding)
+                )
+                is ExerciseUIState.FinishedExercises -> FinishedExercisesScreen(
+                    correctExercises = exercisesUIState.correctExercises,
+                    totalExercises = exercisesUIState.exercises.size,
+                    finishAction = cancelAction,
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
         }
     }
     if(alert){
@@ -192,6 +198,29 @@ fun ExercisesScreen(
         )
     }
 
+}
+
+@Composable
+fun NoExercicesScreen(
+    cancelAction: () -> Unit
+){
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(
+            text = "Ups, aun no hay ejercicios",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold
+        )
+        Button(
+            onClick = cancelAction
+        ) {
+            Text("Regresar")
+        }
+    }
 }
 
 @Composable

@@ -160,6 +160,7 @@ fun MathTrainer(
                 composable(route = StudentScreens.StudentHome.name){
                     StudentHome(
                         studentVM = studentHomeViewModel,
+                        exercisesScreenViewModel = viewModelExercises,
                         navController = navController
                     )
                 }

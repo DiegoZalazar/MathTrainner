@@ -12,6 +12,7 @@ import mx.ipn.escom.TTA024.data.network.student.EjercicioGeneral
 import mx.ipn.escom.TTA024.data.network.student.Leccion
 import mx.ipn.escom.TTA024.data.network.student.Modulo
 import mx.ipn.escom.TTA024.data.network.student.StudentAPIService
+import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExercisesScreenViewModel
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -92,7 +93,7 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
         }
     }
 
-    fun getEjercicios(idModulo: Int){
+    fun getEjerciciosAndUpdateExercisesVM(idModulo: Int, exercisesVM: ExercisesScreenViewModel){
         viewModelScope.launch {
             ejerciciosUIState = EjerciciosUIState.Loading
             try {
@@ -103,6 +104,7 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                 } else {
                     Log.i("StudentHome", resp.toString())
                     ejerciciosUIState = EjerciciosUIState.Success(resp)
+                    exercisesVM.updateExercisesAndReset(resp)
                 }
             } catch(e: Exception){
                 Log.i("StudentHome", "Error al obtener los ejercicios: $e")

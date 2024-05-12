@@ -72,11 +72,13 @@ import mx.ipn.escom.TTA024.R
 import mx.ipn.escom.TTA024.data.network.student.Modulo
 import mx.ipn.escom.TTA024.data.network.student.StudentAPI
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExerciseNavScreens
+import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExercisesScreenViewModel
 import mx.ipn.escom.TTA024.ui.StudentScreens
 
 @Composable
 fun StudentHome(
     studentVM: StudentHomeViewModel = viewModel(),
+    exercisesScreenViewModel: ExercisesScreenViewModel,
     navController: NavController
 ) {
     var studentHomeUIState = studentVM.studentHomeUIState
@@ -172,8 +174,10 @@ fun StudentHome(
                         modulos = studentHomeUIState.modulos,
                         scope = scope,
                         navToExercises = {
-                            studentVM.getEjercicios(it)
-                            navController.navigate(ExerciseNavScreens.Exercises.name)
+                            scope.launch {
+                                studentVM.getEjerciciosAndUpdateExercisesVM(it, exercisesScreenViewModel)
+                                navController.navigate(ExerciseNavScreens.Exercises.name)
+                            }
                         },
                         navToLeccion = {
                             studentVM.getLeccion(it)
