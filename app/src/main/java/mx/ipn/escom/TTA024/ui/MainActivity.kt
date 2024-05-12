@@ -16,6 +16,7 @@ import mx.ipn.escom.TTA024.ui.EstudianteUI.home.StudentHomeViewModel
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminEjerciciosViewModel
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminLeccionesViewModel
+import mx.ipn.escom.TTA024.ui.viewmodels.AdminUsuariosViewModel
 import mx.ipn.escom.TTA024.ui.viewmodels.ModulosAdminViewModel
 
 // hollaaa
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity() {
     private val adminModuloViewModel: ModulosAdminViewModel by viewModels()
     private val adminLeccionesViewModel: AdminLeccionesViewModel by viewModels()
     private val adminEjerciciosViewModel: AdminEjerciciosViewModel by viewModels()
+    private val adminUsuariosViewModel: AdminUsuariosViewModel by viewModels()
     private val studentHomeViewModel: StudentHomeViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +39,8 @@ class MainActivity : ComponentActivity() {
                         modulosAdminViewModel = adminModuloViewModel,
                         adminLeccionesViewModel = adminLeccionesViewModel,
                         adminEjerciciosViewModel = adminEjerciciosViewModel,
-                        studentHomeViewModel = studentHomeViewModel
+                        studentHomeViewModel = studentHomeViewModel,
+                        adminUsuariosViewModel = adminUsuariosViewModel
                     )
                 }
             }

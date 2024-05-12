@@ -1,5 +1,6 @@
 package mx.ipn.escom.TTA024
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -53,6 +55,7 @@ import mx.ipn.escom.TTA024.ui.AdminUI.TopBackAppBarAdministrador
 import mx.ipn.escom.TTA024.data.models.LeccionModel
 import mx.ipn.escom.TTA024.domain.model.Leccion
 import mx.ipn.escom.TTA024.domain.model.Modulo
+import mx.ipn.escom.TTA024.ui.AdminUI.AdminFormLeccionComposable
 import mx.ipn.escom.TTA024.ui.AdminUI.DialogAddModulo
 import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
@@ -60,6 +63,8 @@ import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminLeccionesViewModel
 import mx.ipn.escom.TTA024.ui.viewmodels.ModulosAdminViewModel
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun LeccionesAdminComposable(
@@ -68,7 +73,7 @@ fun LeccionesAdminComposable(
     adminLeccionesViewModel: AdminLeccionesViewModel
 ){
     // Just a fake data... a Pair of Int and String
-    val headers = arrayOf("Id", "Titulo","Nivel","Eliminar","Editar")
+    val headers = arrayOf("Id", "Titulo","Eliminar","Editar")
     /*val leccion1 = Leccion(1,"Integracion partes","Paso 1: integrar",3,1,"none")
     val leccion2 = Leccion(1,"Integracion cambio variable","Paso 1: Cambiar variable",2,1,"none")
     val leccion3 = Leccion(1,"Derivacion regla de cadena","Paso 1: Formular",1,1,"none")
@@ -87,7 +92,14 @@ fun LeccionesAdminComposable(
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(60.dp))
         Text(
-            text = "Tema: "+ modulo.nombreModulo,
+            text = "Tema: "+ modulo.tema,
+            fontStyle = FontStyle.Italic,
+            fontSize = 16.sp, modifier = Modifier
+                .align(alignment = Alignment.Start)
+                .padding(top = 30.dp, start = 10.dp)
+        )
+        Text(
+            text = "Título modulo: "+ modulo.nombreModulo,
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp, modifier = Modifier
                 .align(alignment = Alignment.Start)
@@ -114,7 +126,6 @@ fun LeccionesAdminComposable(
                 Row(Modifier.fillMaxWidth()) {
                     TableCell(text = leccion.idLeccion.toString(), weight = columsWeight)
                     TableCell(text = leccion.tituloLeccion, weight = columsWeight)
-                    TableCell(text = leccion.nivelLeccion.toString(), weight = columsWeight)
                     TableCellDeleteImageLeccion(
                         image = R.drawable.deleteicon,
                         tamano = columsWeight,
@@ -127,7 +138,8 @@ fun LeccionesAdminComposable(
                         tamano = columsWeight,
                         navController = navController,
                         leccion = leccion,
-                        modulo = modulo
+                        modulo = modulo,
+                        adminLeccionesViewModel
                     )
 
                 }
@@ -174,8 +186,12 @@ fun RowScope.TableCellEditImageLeccion(
     tamano: Float,
     navController: NavController,
     leccion: Leccion,
-    modulo: Modulo
+    modulo: Modulo,
+    adminLeccionesViewModel: AdminLeccionesViewModel
 ) {
+    var showEditLeccion by remember {
+        mutableStateOf(false)
+    }
 
     Box(
         modifier = Modifier
@@ -189,11 +205,21 @@ fun RowScope.TableCellEditImageLeccion(
             contentDescription = "leccion",
             modifier = Modifier
                 .clickable {
+                    //showEditLeccion = true
                     navigateToEditLeccion(navController,modulo,leccion)
+
                 }
                 .align(Alignment.Center)
         )
     }
+    /*if(showEditLeccion){
+        AdminFormLeccionComposable(
+            navController = navController,
+            modulo = modulo,
+            leccion = leccion,
+            adminLeccionesViewModel = adminLeccionesViewModel
+        )
+    }*/
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -255,7 +281,13 @@ fun DialogEliminarLeccion(
                         modifier = textoModifier
                     )
                     Text(
-                        text = "Nivel: " + leccion.nivelLeccion,
+                        text = "Descripción: " + leccion.descripcionLeccion,
+                        fontSize = 20.sp,
+                        fontFamily = fontMonserrat,
+                        modifier = textoModifier
+                    )
+                    Text(
+                        text = "Recurso Multimedia: " + leccion.recursoMultimedia,
                         fontSize = 20.sp,
                         fontFamily = fontMonserrat,
                         modifier = textoModifier
@@ -336,8 +368,8 @@ fun deleteLeccion(modulo: Modulo,leccion: Leccion, adminLeccionesViewModel: Admi
     adminLeccionesViewModel.onDeleteLeccionByModulo(modulo,leccion)
 }
 
-fun navigateToEditLeccion(navController: NavController,modulo: Modulo ,leccion: Leccion? ){
-    Log.i("leccion pantalla lecciones",leccion.toString())
+fun navigateToEditLeccion(navController: NavController,modulo: Modulo ,leccion: Leccion){
+    leccion.recursoMultimedia= URLEncoder.encode(leccion.recursoMultimedia, StandardCharsets.UTF_8.toString())
     val leccionJson = Gson().toJson(leccion)
     val moduloJson = Gson().toJson(modulo)
     navController.navigate(route = AppScreens.AdminFormLeccActivity.route+"/$moduloJson/$leccionJson")

@@ -81,7 +81,14 @@ fun EjerciciosAdminComposable(navController: NavHostController, modulo: Modulo, 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(60.dp))
         Text(
-            text = "Tema: "+ modulo.nombreModulo,
+            text = "Tema: "+ modulo.tema,
+            fontStyle = FontStyle.Italic,
+            fontSize = 16.sp, modifier = Modifier
+                .align(alignment = Alignment.Start)
+                .padding(top = 30.dp, start = 10.dp)
+        )
+        Text(
+            text = "Título modulo: "+ modulo.nombreModulo,
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp, modifier = Modifier
                 .align(alignment = Alignment.Start)

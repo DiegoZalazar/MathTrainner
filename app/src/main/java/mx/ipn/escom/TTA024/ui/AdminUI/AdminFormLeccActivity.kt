@@ -136,7 +136,7 @@ fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,lecc
                     if(editLeccion){
                         id=leccion.idLeccion
                     }
-                      val leccionNueva: Leccion = Leccion(id,titulo,descripcion,nivel.toInt(),modulo.idModulo,recursoMultimedia)
+                      val leccionNueva: Leccion = Leccion(id,titulo,descripcion,0,modulo.idModulo,recursoMultimedia)
                     if(editLeccion){
                         adminLeccionesViewModel.onUpdateLeccion(leccion,leccionNueva)
                     }else{
@@ -216,17 +216,6 @@ fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,lecc
                             .padding(vertical = 16.dp)
                     )
 
-                    OutlinedTextField(
-                        value = nivel,
-                        onValueChange = { nivel = it },
-                        label = { Text("Nivel") },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        modifier = Modifier
-                            .padding(vertical = 16.dp)
-                    )
                 }
             }
         }

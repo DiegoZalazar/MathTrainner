@@ -37,11 +37,11 @@ import io.github.nefilim.kjwt.JWSRSA256Algorithm
 import io.github.nefilim.kjwt.JWT
 import mx.ipn.escom.TTA024.EjerciciosAdminComposable
 import mx.ipn.escom.TTA024.LeccionesAdminComposable
-import mx.ipn.escom.TTA024.data.models.EstudianteModel
 import mx.ipn.escom.TTA024.data.models.ModuloModel
 import mx.ipn.escom.TTA024.domain.model.Ejercicio
 import mx.ipn.escom.TTA024.domain.model.Leccion
 import mx.ipn.escom.TTA024.domain.model.Modulo
+import mx.ipn.escom.TTA024.domain.model.Usuario
 import mx.ipn.escom.TTA024.ui.AdminUI.AdminFormEjercicioComposable
 import mx.ipn.escom.TTA024.ui.AdminUI.AdminFormLeccionComposable
 import mx.ipn.escom.TTA024.ui.AdminUI.EditModulo
@@ -63,6 +63,7 @@ import mx.ipn.escom.TTA024.ui.EstudianteUI.home.StudentHomeViewModel
 import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminEjerciciosViewModel
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminLeccionesViewModel
+import mx.ipn.escom.TTA024.ui.viewmodels.AdminUsuariosViewModel
 import mx.ipn.escom.TTA024.ui.viewmodels.ModulosAdminViewModel
 
 enum class LoginScreens{
@@ -86,7 +87,8 @@ fun MathTrainer(
     modulosAdminViewModel: ModulosAdminViewModel,
     adminLeccionesViewModel: AdminLeccionesViewModel,
     adminEjerciciosViewModel: AdminEjerciciosViewModel,
-    studentHomeViewModel: StudentHomeViewModel
+    studentHomeViewModel: StudentHomeViewModel,
+    adminUsuariosViewModel: AdminUsuariosViewModel
 ){
     val backStackEntry by navController.currentBackStackEntryAsState()
     val loginViewModel: LoginViewModel = viewModel()
@@ -128,8 +130,8 @@ fun MathTrainer(
                 composable(route = "${LoginScreens.VerifyCode.name}/{email}",
                     arguments = listOf(navArgument(name = "email") {type = NavType.StringType})
                 ){
-                    backStackEntry -> 
-                        VerifyCodeScreen(navController = navController, email = backStackEntry.arguments?.getString("email")?: "")
+                        backStackEntry ->
+                    VerifyCodeScreen(navController = navController, email = backStackEntry.arguments?.getString("email")?: "")
                 }
                 composable(route = LoginScreens.ForgotPassword.name){
                     ForgotPswdScreen(navController = navController)
@@ -137,8 +139,8 @@ fun MathTrainer(
                 composable(route = "${LoginScreens.ResetPassword.name}/{email}",
                     arguments = listOf(navArgument(name = "email") {type = NavType.StringType})
                 ){
-                    backStackEntry ->
-                        ResetPasswordScreen(navController = navController, email = backStackEntry.arguments?.getString("email")?: "")
+                        backStackEntry ->
+                    ResetPasswordScreen(navController = navController, email = backStackEntry.arguments?.getString("email")?: "")
                 }
             }
 
@@ -203,8 +205,8 @@ fun MathTrainer(
                     })
                 ) { backStackEntry ->
                     backStackEntry?.arguments?.getString("user")?.let { json ->
-                        val user = Gson().fromJson(json, EstudianteModel::class.java)
-                        EditUserComposable(navController, user)
+                        val user = Gson().fromJson(json, Usuario::class.java)
+                        EditUserComposable(navController, user,adminUsuariosViewModel)
                     }
                 }
                 composable(route = AppScreens.AdminLeccionesActivity.route+"/{modulo}",arguments = listOf(navArgument(name = "modulo") {
@@ -258,7 +260,7 @@ fun MathTrainer(
                     ModulosAdminComposable(navController,modulosAdminViewModel)
                 }
                 composable(route = AppScreens.AdminUsuariosActivity.route) {
-                    UsuariosComposable(navController)
+                    UsuariosComposable(navController,adminUsuariosViewModel)
                 }
             }
         }
@@ -274,7 +276,7 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navControll
     return viewModel(parentEntry)
 }
 
-@Composable 
+@Composable
 fun Home(
     navController: NavController
 ){

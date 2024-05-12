@@ -17,12 +17,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -42,21 +37,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavController
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.data.models.EstudianteModel
+import mx.ipn.escom.TTA024.data.models.UsuarioModel
+import mx.ipn.escom.TTA024.domain.model.Usuario
+import mx.ipn.escom.TTA024.ui.viewmodels.AdminUsuariosViewModel
 
 
 @Composable
-fun EditUserComposable(navController: NavController, estudiante: EstudianteModel) {
-        var name by remember { mutableStateOf(estudiante.nombreUsuario) }
-        var email by remember { mutableStateOf(estudiante.correoEstudiante) }
-        var pswd by remember { mutableStateOf(estudiante.contrasenaEstudiante) }
-        var pswdConfirm by remember { mutableStateOf(pswd) }
-        var pswdVisible by remember { mutableStateOf(false) }
-        var pswdConfirmVisible by remember { mutableStateOf(false) }
-        var isErrorPassword by rememberSaveable { mutableStateOf(false) }
+fun EditUserComposable(
+    navController: NavController,
+    estudiante: Usuario,
+    adminUsuariosViewModel: AdminUsuariosViewModel
+) {
+        var name by remember { mutableStateOf(estudiante.name) }
+        var email by remember { mutableStateOf(estudiante.email) }
         var isErrorName by rememberSaveable { mutableStateOf(false) }
         var isErrorCorreo by rememberSaveable { mutableStateOf(false) }
 
@@ -64,10 +59,6 @@ fun EditUserComposable(navController: NavController, estudiante: EstudianteModel
     var showSuccess by rememberSaveable {
         mutableStateOf(false)
     }
-
-        fun validatePasswords(){
-            isErrorPassword = !pswd.equals(pswdConfirm)
-        }
 
 
     TopBackAppBarAdministrador(navController = navController, texto = "Editar usuario")
@@ -145,52 +136,15 @@ fun EditUserComposable(navController: NavController, estudiante: EstudianteModel
                             .padding(vertical = 16.dp)
                     )
 
-                    OutlinedTextField(
-                        value = pswd,
-                        onValueChange = { pswd = it
-                                        validatePasswords()
-                                        },
-                        label = { Text("Contraseña") },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Password,
-                            imeAction = ImeAction.Done
-                        ),
-                        visualTransformation = PasswordVisualTransformation(),
-                    )
 
-                    OutlinedTextField(
-                        value = pswdConfirm,
-                        onValueChange = { pswdConfirm = it
-                                        validatePasswords()
-                                        },
-                        label = { Text("Confirmar Contraseña") },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Password,
-                            imeAction = ImeAction.Done
-                        ),
-                        visualTransformation = PasswordVisualTransformation(),
-                        modifier = Modifier
-                            .padding(vertical = 16.dp),
-                        isError = isErrorPassword,
-                        supportingText = {
-                            if (isErrorPassword) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    text = "Las contraseñas deben ser iguales",
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            }
-                        },
-                    )
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
                         onClick = {
-                            if(!isErrorPassword){
-                                estudiante.nombreEstudiante = name
-                                estudiante.contrasenaEstudiante= pswd
-                                estudiante.correoEstudiante= email
-                                EditarUsuario(estudiante)
+                            if(!isErrorCorreo || !isErrorName){
+                                estudiante.name = name
+                                estudiante.email= email
+                                adminUsuariosViewModel.onUpdateUsuario(estudiante)
                                 showSuccess=true
                             }
 
@@ -201,11 +155,11 @@ fun EditUserComposable(navController: NavController, estudiante: EstudianteModel
                     ) {
                         Text("Editar cuenta")
                     }
-                    DialogConfirmarAccion(
+                    /*DialogConfirmarAccion(
                         showSuccess, { showSuccess = false }, { showSuccess = false },
                         texto="Estudiante eliminado",
                         navController = navController
-                    )
+                    )*/
                 }
             }
         }
@@ -213,6 +167,6 @@ fun EditUserComposable(navController: NavController, estudiante: EstudianteModel
 
 
 
-fun EditarUsuario(estudiante: EstudianteModel, ){
+fun EditarUsuario(estudiante: Usuario){
 
 }

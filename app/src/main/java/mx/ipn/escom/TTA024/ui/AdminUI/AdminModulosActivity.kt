@@ -27,13 +27,17 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -77,9 +81,9 @@ fun ModulosAdminComposable(
 ) {
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Titulo", "Eliminar", "Editar")
-    /*val modulo1 = Modulo(1, "Regla cadena",1)
-    val modulo2 = Modulo(2, "Integral definida",1)
-    val modulo3 = Modulo(3, "Integral indefinida",1)
+    /*val modulo1 = Modulo(1, "Regla cadena","Cálculo Diferencial")
+    val modulo2 = Modulo(2, "Integral definida","Cálculo Integral")
+    val modulo3 = Modulo(3, "Integral indefinida","Cálculo Diferencial")
     val moduloList = listOf<Modulo>(modulo1, modulo2, modulo3)*/
 
     moduloViewModel.onGetModulos()
@@ -202,6 +206,48 @@ fun DialogAddModulo(
                     modifier= Modifier.align(Alignment.CenterHorizontally)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
+                ////MENU NIVEL///////
+                val temas = listOf("Cálculo Diferencial","Cálculo Integral")
+                var temasVariable by remember {
+                    var desTemp:String="Cálculo Diferencial"
+                    mutableStateOf(desTemp)
+                }
+                var expandedTemas by remember {
+                    mutableStateOf(false)
+                }
+
+                ExposedDropdownMenuBox(
+                    modifier= Modifier.align(Alignment.CenterHorizontally),
+                    expanded = expandedTemas,
+                    onExpandedChange = {
+                        expandedTemas = !expandedTemas
+                    }
+                ) {
+                    TextField(
+                        value = temasVariable,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(text = "Tema", color = Color.Black)},
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTemas) },
+                        modifier = Modifier.menuAnchor()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expandedTemas,
+                        onDismissRequest = { expandedTemas = false }
+                    ) {
+                        temas.forEach { item ->
+                            DropdownMenuItem(
+                                text = { Text(text = item) },
+                                onClick = {
+                                    temasVariable = item
+                                    expandedTemas = false
+                                    //Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        }
+                    }
+                }
+
                 OutlinedTextField(
                     value = titulo,
                     onValueChange = { titulo = it },
@@ -218,7 +264,7 @@ fun DialogAddModulo(
                 TextButton(
                     onClick = {
                         onConfirm()
-                        addModulo(viewModel, modulo = Modulo(0, titulo,1))
+                        addModulo(viewModel, modulo = Modulo(0, titulo,temasVariable))
                     },
                     modifier = Modifier
                         .width(300.dp)

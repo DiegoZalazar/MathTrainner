@@ -123,4 +123,5 @@ dependencies {
 
     // Youtube video player
     implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28")
+
 }

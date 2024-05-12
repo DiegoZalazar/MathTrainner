@@ -3,7 +3,6 @@ package mx.ipn.escom.TTA024.data.network
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import mx.ipn.escom.TTA024.data.models.EstudianteModel
 import mx.ipn.escom.TTA024.data.models.LeccionModel
 import mx.ipn.escom.TTA024.di.RetrofitHelper
 

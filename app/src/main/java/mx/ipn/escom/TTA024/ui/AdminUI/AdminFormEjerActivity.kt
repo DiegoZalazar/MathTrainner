@@ -320,6 +320,7 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                             value = nivelEjercicio,
                             onValueChange = {},
                             readOnly = true,
+                            label = { Text(text = "Nivel", color = Color.Black)},
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedNiveles) },
                             modifier = Modifier.menuAnchor()
                         )
@@ -342,9 +343,6 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                     ///////////////////
                     Spacer(modifier = Modifier.height(10.dp))
                     ////MENU TIPO DE EJERCICIO///////
-                    /*MaterialTheme(
-                        color = MaterialTheme.colorScheme.background
-                    ){*/
                     ExposedDropdownMenuBox(
 
                         expanded = expandedTiposEjercicios,
@@ -357,6 +355,7 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                             value = tipoEjercicio,
                             onValueChange = {},
                             readOnly = true,
+                            label = { Text(text = "Tipo de ejercicio", color = Color.Black)},
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTiposEjercicios) },
                             modifier = Modifier.menuAnchor()
                         )

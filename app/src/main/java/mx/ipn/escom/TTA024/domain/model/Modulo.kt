@@ -4,7 +4,7 @@ import mx.ipn.escom.TTA024.data.models.ModuloModel
 
 data class Modulo (val idModulo: Int,
                   val nombreModulo: String,
-                    val idTema: Int)
+                   val tema: String)
 
-fun ModuloModel.toDomain() = Modulo(idModulo, nombreModulo,idTema)
+fun ModuloModel.toDomain() = Modulo(idModulo, nombreModulo,tema)
 //fun ModuloModel.toDomain() = Modulo(idModulo, nombreModulo)

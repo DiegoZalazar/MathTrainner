@@ -26,8 +26,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,27 +44,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import aws.smithy.kotlin.runtime.http.engine.callContext
 import com.google.gson.Gson
-import kotlinx.coroutines.currentCoroutineContext
 import mx.ipn.escom.TTA024.R
-import mx.ipn.escom.TTA024.data.models.EstudianteModel
-import mx.ipn.escom.TTA024.domain.model.Estudiante
+import mx.ipn.escom.TTA024.domain.model.Usuario
 import mx.ipn.escom.TTA024.ui.navigation.AppScreens
 import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
+import mx.ipn.escom.TTA024.ui.viewmodels.AdminUsuariosViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UsuariosComposable(navController: NavHostController) {
+fun UsuariosComposable(navController: NavHostController,
+                       adminUsuariosViewModel: AdminUsuariosViewModel
+) {
     // Just a fake data... a Pair of Int and String
     val headers = arrayOf("Id", "Nombre", "Eliminar", "Editar")
-    val estudiante1 = Estudiante(1, "adal", "danidc", "halo_chif@hotmail.com", "activo","asd")
-    val estudiante2 = Estudiante(2, "adal2", "danidc2", "halo_chif@hotmail.com2", "activo2","123")
-    val estudiante3 = Estudiante(3, "adal3", "danidc3", "halo_chif@hotmail.com3", "activo3","asd123")
-    val estudianteList = listOf<Estudiante>(estudiante1, estudiante2, estudiante3)
+    /*val estudiante1 = Usuario(1, "adal", "danidc")
+    val estudiante2 = Usuario(2, "adal2", "danidc2")
+    val estudiante3 = Usuario(3, "adal3", "danidc3")
+    val estudianteList = listOf<Usuario>(estudiante1, estudiante2, estudiante3)*/
+
+    adminUsuariosViewModel.onCreate()
+    val estudianteList by adminUsuariosViewModel.usuarioModel.observeAsState(initial = arrayListOf())
+
     // Each cell of a column must have the same weight.
     val ancho = 300
     val columsWeight = (ancho / headers.size).toFloat()
@@ -91,21 +95,23 @@ fun UsuariosComposable(navController: NavHostController) {
             }
             // Here are all the lines of your table.
             items(estudianteList) {
-                val estudiante = it
+                val usuario = it
 
                 Row(Modifier.fillMaxWidth()) {
-                    TableCell(text = estudiante.idEstudiante.toString(), weight = columsWeight)
-                    TableCell(text = estudiante.nombreUsuario, weight = columsWeight)
+                    TableCell(text = usuario.user_id.toString(), weight = columsWeight)
+                    TableCell(text = usuario.name, weight = columsWeight)
                     TableCellDeleteImageEstudiante(
                         image = R.drawable.deleteicon,
                         tamano = columsWeight,
-                        estudiante = estudiante
+                        usuario = usuario,
+                        adminUsuariosViewModel
                     )
                     TableCellEditImageEstudiante(
                         image = R.drawable.editicon,
                         tamano = columsWeight,
                         navController = navController,
-                        estudiante = estudiante
+                        usuario = usuario,
+                        adminUsuariosViewModel
                     )
 
                 }
@@ -151,7 +157,8 @@ fun DialogEliminarUsuario(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    estudiante: Estudiante
+    usuario: Usuario,
+    adminUsuariosViewModel: AdminUsuariosViewModel
 ) {
     val textoModifier = Modifier.padding(top = 5.dp)
     if (show) {
@@ -190,25 +197,19 @@ fun DialogEliminarUsuario(
                         .height(168.dp)
                 ) {
                     Text(
-                        text = "Nombre: " + estudiante.nombreEstudiante,
+                        text = "Nombre: " + usuario.name,
                         fontSize = 20.sp,
                         fontFamily = fontMonserrat,
                         modifier = textoModifier
                     )
                     Text(
-                        text = "ID: " + estudiante.idEstudiante.toString(),
+                        text = "ID: " + usuario.user_id.toString(),
                         fontSize = 20.sp,
                         fontFamily = fontMonserrat,
                         modifier = textoModifier
                     )
                     Text(
-                        text = "Correo: " + estudiante.correoEstudiante,
-                        fontSize = 20.sp,
-                        fontFamily = fontMonserrat,
-                        modifier = textoModifier
-                    )
-                    Text(
-                        text = "Usuario: " + estudiante.nombreUsuario,
+                        text = "Correo: " + usuario.email,
                         fontSize = 20.sp,
                         fontFamily = fontMonserrat,
                         modifier = textoModifier
@@ -219,7 +220,7 @@ fun DialogEliminarUsuario(
                 TextButton(
                     onClick = {
                         onConfirm()
-                        deleteUsuario()
+                        adminUsuariosViewModel.onDeleteUsuario(usuario = usuario)
                     },
                     modifier = Modifier
                         .width(300.dp)
@@ -264,16 +265,15 @@ fun DialogEliminarUsuario(
     }
 }
 
-fun deleteUsuario() {
 
-}
 
 
 @Composable
 fun RowScope.TableCellDeleteImageEstudiante(
     image: Int,
     tamano: Float,
-    estudiante: Estudiante,
+    usuario: Usuario,
+    adminUsuariosViewModel: AdminUsuariosViewModel,
 ) {
     val context = LocalContext.current
     var showDelete by rememberSaveable {
@@ -292,16 +292,17 @@ fun RowScope.TableCellDeleteImageEstudiante(
             modifier = Modifier
                 .clickable {
                     showDelete = true
+
                 }
                 .align(Alignment.Center)
         )
     }
-    DialogEliminarUsuario(showDelete, { showDelete = false }, { showDelete = false }, estudiante)
+    DialogEliminarUsuario(showDelete, { showDelete = false }, { showDelete = false }, usuario,adminUsuariosViewModel)
 
 }
 
 
-fun navigateToEstudiante(navController: NavController,estudiante: Estudiante){
+fun navigateToEstudiante(navController: NavController,estudiante: Usuario){
     val estudianteJson = Gson().toJson(estudiante)
     navController.navigate(route = AppScreens.AdminEditUserActivity.route+"/$estudianteJson")
 }
@@ -310,7 +311,8 @@ fun RowScope.TableCellEditImageEstudiante(
     image: Int,
     tamano: Float,
     navController: NavController,
-    estudiante: Estudiante
+    usuario: Usuario,
+    adminUsuariosViewModel: AdminUsuariosViewModel
 ) {
 
     Box(
@@ -325,7 +327,7 @@ fun RowScope.TableCellEditImageEstudiante(
             contentDescription = "usuario",
             modifier = Modifier
                 .clickable {
-                    navigateToEstudiante(navController,estudiante)
+                    navigateToEstudiante(navController,usuario)
                 }
                 .align(Alignment.Center)
         )
