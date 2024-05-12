@@ -1,5 +1,7 @@
 package mx.ipn.escom.TTA024
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -59,6 +61,8 @@ import mx.ipn.escom.TTA024.ui.theme.blueButton
 import mx.ipn.escom.TTA024.ui.theme.fontMonserrat
 import mx.ipn.escom.TTA024.ui.theme.redButton
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminEjerciciosViewModel
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun EjerciciosAdminComposable(navController: NavHostController, modulo: Modulo, adminEjerciciosViewModel: AdminEjerciciosViewModel){
@@ -92,7 +96,7 @@ fun EjerciciosAdminComposable(navController: NavHostController, modulo: Modulo, 
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp, modifier = Modifier
                 .align(alignment = Alignment.Start)
-                .padding(top = 30.dp, start = 10.dp)
+                .padding(top = 15.dp, start = 10.dp)
         )
         LazyColumn(
             Modifier
@@ -357,8 +361,17 @@ fun deleteEjercicio(modulo: Modulo,ejercicio: Ejercicio,adminEjerciciosViewModel
     adminEjerciciosViewModel.onDeleteEjercicioByModulo(modulo,ejercicio)
 }
 
-fun navigateToEditEjercicio(navController: NavController,ejercicio: Ejercicio?,modulo: Modulo){
-    val ejercicioJson = Gson().toJson(ejercicio)
+fun navigateToEditEjercicio(navController: NavController,ejercicio: Ejercicio,modulo: Modulo){
+    /*ejercicio.cuerpo= String(ejercicio.cuerpo.toByteArray(), Charsets.UTF_8)
+    ejercicio.paresCorrectosEjercicio= String(ejercicio.paresCorrectosEjercicio.toByteArray(), Charsets.UTF_8)
+    ejercicio.respCorrectaEjercicio= String(ejercicio.respCorrectaEjercicio.toByteArray(), Charsets.UTF_8)
+    ejercicio.respIncorrectasEjercicio= String(ejercicio.respIncorrectasEjercicio.toByteArray(), Charsets.UTF_8)*/
+    /*ejercicio.cuerpo= URLEncoder.encode(ejercicio.cuerpo, StandardCharsets.UTF_8.toString())
+    ejercicio.paresCorrectosEjercicio= URLEncoder.encode(ejercicio.paresCorrectosEjercicio, StandardCharsets.UTF_8.toString())
+    ejercicio.respCorrectaEjercicio= URLEncoder.encode(ejercicio.respCorrectaEjercicio, StandardCharsets.UTF_8.toString())
+    ejercicio.respIncorrectasEjercicio = URLEncoder.encode(ejercicio.respCorrectaEjercicio, StandardCharsets.UTF_8.toString())*/
+    Log.i("ejercicios",ejercicio.toString())
+    val ejercicioJson = Uri.encode(Gson().toJson(ejercicio))
     val moduloJson = Gson().toJson(modulo)
     navController.navigate(route = AppScreens.AdminFormEjercicioActivity.route+"/$moduloJson/$ejercicioJson")
 }

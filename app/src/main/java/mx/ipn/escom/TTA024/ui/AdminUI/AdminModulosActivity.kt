@@ -492,4 +492,5 @@ fun deleteModulo(viewModel: ModulosAdminViewModel, modulo: Modulo) {
 
 fun addModulo(viewModel: ModulosAdminViewModel, modulo: Modulo) {
     viewModel.onCreateModulo(modulo)
+    viewModel.onGetModulos()
 }

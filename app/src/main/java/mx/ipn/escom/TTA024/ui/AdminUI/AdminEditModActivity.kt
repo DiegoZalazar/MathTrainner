@@ -28,11 +28,18 @@ fun EditModulo(navController: NavHostController, modulo: ModuloModel) {
     Column(horizontalAlignment = Alignment.CenterHorizontally , modifier = Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(50.dp))
         Text(
-            text = "Tema: "+ modulo.nombreModulo,
+            text = "Tema: "+ modulo.tema,
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp, modifier = Modifier
                 .align(alignment = Alignment.Start)
                 .padding(top = 30.dp, start = 10.dp)
+        )
+        Text(
+            text = "Título módulo: "+ modulo.nombreModulo,
+            fontStyle = FontStyle.Italic,
+            fontSize = 16.sp, modifier = Modifier
+                .align(alignment = Alignment.Start)
+                .padding(top = 15.dp, start = 10.dp)
         )
         Text(
             text = "Selecciona una opción:",

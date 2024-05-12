@@ -103,7 +103,7 @@ fun LeccionesAdminComposable(
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp, modifier = Modifier
                 .align(alignment = Alignment.Start)
-                .padding(top = 30.dp, start = 10.dp)
+                .padding(top = 15.dp, start = 10.dp)
         )
         LazyColumn(
             Modifier
