@@ -187,7 +187,7 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
         !planteamiento.isEmpty()
     }
     var isValidTiempo= remember(tiempoEjercicio) {
-        !tiempoEjercicio.isEmpty() || Regex("^[0-9]+\$").matches(tiempoEjercicio)
+        !tiempoEjercicio.isEmpty() && Regex("^[0-9]+\$").matches(tiempoEjercicio)
     }
 
     val context = LocalContext.current
