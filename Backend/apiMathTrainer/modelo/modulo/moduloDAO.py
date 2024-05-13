@@ -32,8 +32,8 @@ class ModuloDAO:
     def save(self, modulo):
         try:
             with self.connection.cursor() as cursor:
-                sql = "INSERT INTO Modulo (nombreModulo) VALUES (%s)"
-                cursor.execute(sql, (modulo["nombreModulo"],))
+                sql = "INSERT INTO Modulo (nombreModulo,tema) VALUES (%s,%s)"
+                cursor.execute(sql, (modulo["nombreModulo"],modulo["tema"],))
                 self.connection.commit()
                 return cursor.lastrowid
         except pymysql.Error as e:
@@ -43,8 +43,8 @@ class ModuloDAO:
     def update(self, modulo):
         try:
             with self.connection.cursor() as cursor:
-                sql = "UPDATE Modulo SET nombreModulo = %s WHERE idModulo = %s"
-                cursor.execute(sql, (modulo["nombreModulo"], modulo["idModulo"]))
+                sql = "UPDATE Modulo SET nombreModulo = %s, tema =%s WHERE idModulo = %s"
+                cursor.execute(sql, (modulo["nombreModulo"], modulo["tema"], modulo["idModulo"]))
                 self.connection.commit()
                 return cursor.rowcount
         except pymysql.Error as e:

@@ -11,9 +11,9 @@ def lambda_handler(event, context):
     method = event['httpMethod']
 
     if method == 'GET':
-        response = examenController.GetByID(event)
+        response = examenController.Get(event)
     elif method == 'POST':
-        response = examenController.Put(event)
+        response = examenController.Post(event)
     else:
         response = {
             'statusCode': 400,

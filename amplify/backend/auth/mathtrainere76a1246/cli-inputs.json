@@ -29,7 +29,8 @@
       "name"
     ],
     "userpoolClientReadAttributes": [
-      "email"
+      "email",
+      "name"
     ],
     "userpoolClientLambdaRole": "mathtre76a1246_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": true,
@@ -86,7 +87,7 @@
     },
     "adminQueryGroup": "Admins",
     "userPoolGroups": false,
-    "adminQueries": true,
+    "adminQueries": false,
     "hostedUI": false,
     "authProviders": []
   }

@@ -32,11 +32,11 @@ class EjercicioDAO:
     def Save(self, ejercicio):
         try:
             with self.connection.cursor() as cursor:
-                sql = "INSERT INTO Ejercicio (tiempo, nivelEjercicio, planteamiento, cuerpo, resCorrecta, resIncorrecta, paresCorrectos, idModulo) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                sql = "INSERT INTO Ejercicio (planteamientoEjercicio, cuerpo, tiempoEjercicio, tipoEjercicio, nivelEjercicio, respCorrectaEjercicio, respIncorrectasEjercicio, paresCorrectos, idModulo) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 cursor.execute(sql, (
-                ejercicio["tiempo"], ejercicio["nivelEjercicio"], ejercicio["planteamiento"], ejercicio["cuerpo"],
-                ejercicio["resCorrecta"], ejercicio["resIncorrecta"], ejercicio["paresCorrectos"],
-                ejercicio["idModulo"]))
+                    ejercicio["planteamientoEjercicio"], ejercicio["cuerpo"], ejercicio["tiempoEjercicio"], ejercicio["tipoEjercicio"], ejercicio["nivelEjercicio"], ejercicio["respCorrectaEjercicio"], ejercicio["respIncorrectasEjercicio"],
+                    ejercicio["paresCorrectos"],ejercicio["idModulo"]
+                ))
                 self.connection.commit()
                 return cursor.lastrowid
         except pymysql.Error as e:
@@ -46,11 +46,12 @@ class EjercicioDAO:
     def Update(self, ejercicio):
         try:
             with self.connection.cursor() as cursor:
-                sql = "UPDATE Ejercicio SET tiempo = %s, nivelEjercicio = %s, planteamiento = %s, cuerpo = %s, resCorrecta = %s, resIncorrecta = %s, paresCorrectos = %s, idModulo = %s WHERE idEjercicio = %s"
+                sql = "UPDATE Ejercicio SET planteamientoEjercicio =%s,cuerpo = %s, tiempoEjercicio =%s, tipoEjercicio=%s, nivelEjercicio=%s, respCorrectaEjercicio=%s, respIncorrectasEjercicio=%s, paresCorrectos=%s, idModulo=%s WHERE idEjercicio = %s"
                 cursor.execute(sql, (
-                ejercicio["tiempo"], ejercicio["nivelEjercicio"], ejercicio["planteamiento"], ejercicio["cuerpo"],
-                ejercicio["resCorrecta"], ejercicio["resIncorrecta"], ejercicio["paresCorrectos"],
-                ejercicio["idModulo"], ejercicio["idEjercicio"]))
+                    ejercicio["planteamientoEjercicio"], ejercicio["cuerpo"], ejercicio["tiempoEjercicio"], ejercicio["tipoEjercicio"],
+                    ejercicio["nivelEjercicio"], ejercicio["respCorrectaEjercicio"],
+                    ejercicio["respIncorrectasEjercicio"],
+                    ejercicio["paresCorrectos"], ejercicio["idModulo"], ejercicio["idEjercicio"]))
                 self.connection.commit()
                 return cursor.rowcount
         except pymysql.Error as e:
