@@ -7,5 +7,5 @@ data class Modulo (
     val idModulo: Int,
     val nombreModulo: String,
     val tema: String,
-    val avance: Float
+    val avanceModulo: Float
 )

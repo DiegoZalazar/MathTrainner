@@ -299,7 +299,7 @@ fun ModuloItem (
                     contentAlignment = Alignment.Center,
                 ){
                     CircularProgressIndicator(
-                        progress = {moduloUi.modulo.avance},
+                        progress = {moduloUi.modulo.avanceModulo},
                         modifier = Modifier.fillMaxSize()
                     )
                     Image(
