@@ -317,7 +317,7 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                     OutlinedTextField(
                         value = planteamiento,
                         onValueChange = { planteamiento = it },
-                        label = { Text("*Planteamiento ejercicio") },
+                        label = { Text("Planteamiento ejercicio") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Next
@@ -331,7 +331,7 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                     OutlinedTextField(
                         value = cuerpo,
                         onValueChange = { cuerpo = it },
-                        label = { Text("*Cuerpo ejercicio (Integral)") },
+                        label = { Text("Cuerpo ejercicio (Integral)") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Next
@@ -344,7 +344,7 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                     OutlinedTextField(
                         value = tiempoEjercicio,
                         onValueChange = { tiempoEjercicio = it },
-                        label = { Text("*Tiempo promedio para resolver (en segundos)") },
+                        label = { Text("Tiempo promedio para resolver (en segundos)") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Next

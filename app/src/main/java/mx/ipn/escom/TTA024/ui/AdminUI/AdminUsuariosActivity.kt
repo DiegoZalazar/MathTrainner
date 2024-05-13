@@ -60,7 +60,7 @@ fun UsuariosComposable(navController: NavHostController,
                        adminUsuariosViewModel: AdminUsuariosViewModel
 ) {
     // Just a fake data... a Pair of Int and String
-    val headers = arrayOf("Id", "Nombre", "Eliminar", "Editar")
+    val headers = arrayOf("Email", "Nombre", "Eliminar", "Editar")
     /*val estudiante1 = Usuario(1, "adal", "danidc")
     val estudiante2 = Usuario(2, "adal2", "danidc2")
     val estudiante3 = Usuario(3, "adal3", "danidc3")
@@ -98,7 +98,7 @@ fun UsuariosComposable(navController: NavHostController,
                 val usuario = it
 
                 Row(Modifier.fillMaxWidth()) {
-                    TableCell(text = usuario.user_id.toString(), weight = columsWeight)
+                    TableCell(text = usuario.sub, weight = columsWeight)
                     TableCell(text = usuario.name, weight = columsWeight)
                     TableCellDeleteImageEstudiante(
                         image = R.drawable.deleteicon,
@@ -303,6 +303,7 @@ fun RowScope.TableCellDeleteImageEstudiante(
 
 
 fun navigateToEstudiante(navController: NavController,estudiante: Usuario){
+    estudiante.user_id=estudiante.sub
     val estudianteJson = Gson().toJson(estudiante)
     navController.navigate(route = AppScreens.AdminEditUserActivity.route+"/$estudianteJson")
 }

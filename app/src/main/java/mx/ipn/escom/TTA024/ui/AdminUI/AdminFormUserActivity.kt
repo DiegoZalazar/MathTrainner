@@ -146,6 +146,7 @@ fun EditUserComposable(
                                 estudiante.email= email
                                 adminUsuariosViewModel.onUpdateUsuario(estudiante)
                                 showSuccess=true
+                                navController.popBackStack()
                             }
 
                         },

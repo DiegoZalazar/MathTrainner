@@ -2,9 +2,11 @@ package mx.ipn.escom.TTA024.domain.model
 
 import mx.ipn.escom.TTA024.data.models.UsuarioModel
 
-data class Usuario(val user_id: Int,
-                   var name: String,
-                   var email: String,
+data class Usuario(
+                    var sub: String="",
+                    var user_id: String="",
+                   var name: String="",
+                   var email: String="",
 )
-fun UsuarioModel.toDomain() = Usuario(user_id, name,email)
+fun UsuarioModel.toDomain() = Usuario(sub=sub,name=name, email = email)
 

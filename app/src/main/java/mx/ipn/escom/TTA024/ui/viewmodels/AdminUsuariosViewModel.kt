@@ -33,7 +33,7 @@ class AdminUsuariosViewModel: ViewModel() {
     fun onDeleteUsuario(usuario: Usuario){
         viewModelScope.launch {
             isLoading.postValue(true)
-            deleteUsuariosUseCase(usuario.user_id)
+            deleteUsuariosUseCase(usuario)
             usuarioModel.value = usuarioModel.value?.toMutableList()?.apply {
                 remove(usuario)
             }?.toList()
