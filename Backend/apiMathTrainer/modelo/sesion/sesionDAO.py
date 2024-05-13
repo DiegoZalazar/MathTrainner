@@ -25,11 +25,12 @@ class sesionDAO:
             with self.connection.cursor() as cursor:
                 sql = "SELECT avanceModulo FROM EstudianteModulo WHERE idEstudiante = %s and idModulo = %s"
                 cursor.execute(sql, (idEstudiante, idModulo,))
-                avance = cursor.fetchall()
+                avance = cursor.fetchone()
                 if avance:
-                    return avance
+                    avance_decimal = avance["avanceModulo"]  # Obtener solo el valor decimal y redondearlo a dos decimales
+                    return str(avance_decimal)  # Convertir el valor decimal a cadena y devolverlo
                 else:
-                    return 0
+                    return 0.0
         except pymysql.Error as e:
             print(f"Error: {e}")
             return None
@@ -39,9 +40,20 @@ class sesionDAO:
             with self.connection.cursor() as cursor:
                 #todo agregar en variables o otro metodo
 
-                sql = "SELECT * FROM Lecccion WHERE nivelLeccion = %s and idModulo = %s"
-                cursor.execute(sql, (nivelLeccion, idModulo,))
+                sql = "SELECT * FROM Leccion WHERE idModulo = %s LIMIT 1"
+                cursor.execute(sql, (idModulo))
                 return cursor.fetchall()
+        except pymysql.Error as e:
+            print(f"Error al buscar todos los ejercicios: {e}")
+            return None
+
+    def updateAvance(self, data):
+        try:
+            with self.connection.cursor() as cursor:
+                sql = "UPDATE EstudianteModulo  SET avanceModulo = %s  WHERE idModulo = %s and idEstudiante = %s"
+                cursor.execute(sql, (data["avance"],data["idModulo"],data["idEstudiante"],))
+                self.connection.commit()
+                return cursor.lastrowid
         except pymysql.Error as e:
             print(f"Error al buscar todos los ejercicios: {e}")
             return None

@@ -9,6 +9,7 @@ def GetAll():
         # Create new instance DAO
         modulo_dao = ModuloDAO(os.environ['HOST'], os.environ['USER'], os.environ['PASSWORD'], os.environ['DB'])
         response_body = modulo_dao.findAll()
+        status_code = 200
     except Exception as e:
         response_body = {'message': f'Internal Server Error: {e}'}
         status_code = 500
@@ -25,12 +26,13 @@ def Post(event):
     global status_code, response_body, modulo_dao
     try:
         # Extract Data from event
+
         data = json.loads(event['body'])
-        nombreModulo = data['nombreModulo']
+        Modulo = data
 
         # Create new instance DAO
         modulo_dao = ModuloDAO(os.environ['HOST'], os.environ['USER'], os.environ['PASSWORD'], os.environ['DB'])
-        moduloId = modulo_dao.save(nombreModulo)
+        moduloId = modulo_dao.save(Modulo)
 
         response_body = f"Data insert success with: ID {moduloId}"
         status_code = 200
@@ -79,11 +81,12 @@ def Put(event):
     try:
         # Extract Data from event
         data = json.loads(event['body'])
-        nombreModulo = data['nombreModulo']
+        data["idModulo"] =idModulo
+        Modulo = data
 
         # Create new instance DAO
         modulo_dao = ModuloDAO(os.environ['HOST'], os.environ['USER'], os.environ['PASSWORD'], os.environ['DB'])
-        afectedRows = modulo_dao.update(nombreModulo)
+        afectedRows = modulo_dao.update(Modulo)
         response_body = f'Rows updated: {afectedRows}'
         status_code = 200
 

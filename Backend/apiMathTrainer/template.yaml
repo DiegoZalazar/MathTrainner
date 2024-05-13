@@ -31,20 +31,19 @@ Globals:
 
 
 Resources:
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  apiMathTrainer:
+    Type: AWS::Serverless::Api
     Properties:
-      CodeUri: hello_world/
-      Handler: app.lambda_handler
-      Runtime: python3.10
-      Architectures:
-        - x86_64
-      Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /hello
-            Method: get
+      Name: apiMathTrainer
+      StageName: Prod
+      Cors: "'*'"
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: arn:aws:cognito-idp:us-east-1:854726693500:userpool/us-east-1_3CTnaRxrx
+            Identity:
+              Header: Authorization
+
 
   ModulosFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -60,6 +59,8 @@ Resources:
           Properties:
             Path: /modulos
             Method: any
+            RestApiId: !Ref apiMathTrainer
+
   ModuloFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -74,6 +75,7 @@ Resources:
           Properties:
             Path: /modulos/{idModulo}
             Method: any
+            RestApiId: !Ref apiMathTrainer
 
   LeccionesFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -89,6 +91,8 @@ Resources:
           Properties:
             Path: /modulos/{idModulo}/lecciones
             Method: any
+            RestApiId: !Ref apiMathTrainer
+
   LeccionFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -103,6 +107,7 @@ Resources:
           Properties:
             Path: /modulos/{idModulo}/lecciones/{idLeccion}
             Method: any
+            RestApiId: !Ref apiMathTrainer
 
   EjerciciosFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -118,6 +123,8 @@ Resources:
           Properties:
             Path: /modulos/{idModulo}/ejercicios
             Method: any
+            RestApiId: !Ref apiMathTrainer
+
   EjrecicioFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -132,12 +139,13 @@ Resources:
           Properties:
             Path: /modulos/{idModulo}/ejercicios/{idEjercicio}
             Method: any
+            RestApiId: !Ref apiMathTrainer
 
   ExamenDiagnosticoFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: modelo/examen
-      Handler: examenDiagnostico.lambda_handler
+      Handler: examen.lambda_handler
       Runtime: python3.10
       Architectures:
         - x86_64
@@ -145,8 +153,11 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /estudiante/{idEstudiante}/examen
+            Path: /estudiante/examen
             Method: any
+            RestApiId: !Ref apiMathTrainer
+            Auth:
+              Authorizer: CognitoAuthorizer
 
   EjerciciosSesionFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -160,8 +171,12 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /estudiante/{idEstudiante}/sesion/ejercicios/{idModulo}
+            Path: /estudiante/sesion/ejercicios/{idModulo}
             Method: any
+            RestApiId: !Ref apiMathTrainer
+            Auth:
+              Authorizer: CognitoAuthorizer
+
 
   LeccionSesionFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -175,8 +190,75 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /estudiante/{idEstudiante}/sesion/leccion/{idModulo}
+            Path: /estudiante/sesion/leccion/{idModulo}
             Method: any
+            RestApiId: !Ref apiMathTrainer
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+  EstudianteModuloSesionFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: modelo/EstudianteModulos
+      Handler: EstudianteModulos.lambda_handler
+      Runtime: python3.10
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /estudiante/modulos
+            Method: any
+            RestApiId: !Ref apiMathTrainer
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+
+
+
+  CongnitoAuthFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: hello_world
+      Handler: app.lambda_handler
+      Runtime: python3.10
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /auth
+            Method: any
+            RestApiId: !Ref apiMathTrainer
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+  AdminUsuariosFunction:
+
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    IgnoreGlobals: '*'
+    Properties:
+      Timeout: 3
+      MemorySize: 128
+      Environment:
+        Variables:
+          UserPoolId: us-east-1_3CTnaRxrx
+      CodeUri: modelo/AdminUsuarios
+      Handler: AdminUsuarios.lambda_handler
+      Runtime: python3.10
+      Policies:
+        AmazonCognitoPowerUser
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /admins/usuarios
+            Method: any
+            RestApiId: !Ref apiMathTrainer
 
 
 Outputs:
@@ -184,7 +266,7 @@ Outputs:
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   MathTrainerApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/hello/"
+    Description: "API Gateway endpoint URL for Prod stage "
+    Value: !Sub "https://${apiMathTrainer}.execute-api.${AWS::Region}.amazonaws.com/Prod"
 
 
