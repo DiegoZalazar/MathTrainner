@@ -22,13 +22,13 @@ private val ejemplo = MultOpc(
 )
 
 class ExerciseMultOpcViewModel(
-    val ejercicio: MultOpc = ejemplo
+    val ejercicio: MultOpc
 ) : ViewModel() {
-    var opciones = shuffleOptions(ejercicio.opciones + ejemplo.respCorrecta)
+    var opciones = shuffleOptions(ejercicio.opciones + ejercicio.respCorrecta)
     private val _uiState = MutableStateFlow(MultOpcUIState(
-        instrucciones = ejemplo.instrucciones,
-        cuerpo = ejemplo.cuerpo,
-        respCorrecta = ejemplo.respCorrecta,
+        instrucciones = ejercicio.instrucciones,
+        cuerpo = ejercicio.cuerpo,
+        respCorrecta = ejercicio.respCorrecta,
         opciones = opciones,
         error = false,
         correcto = false
@@ -80,9 +80,9 @@ class ExerciseMultOpcViewModel(
     fun reset(){
         opciones = shuffleOptions(ejercicio.opciones + ejercicio.respCorrecta)
         _uiState.value = MultOpcUIState(
-            instrucciones = ejemplo.instrucciones,
-            cuerpo = ejemplo.cuerpo,
-            respCorrecta = ejemplo.respCorrecta,
+            instrucciones = ejercicio.instrucciones,
+            cuerpo = ejercicio.cuerpo,
+            respCorrecta = ejercicio.respCorrecta,
             opciones = opciones,
             error = false,
             correcto = false

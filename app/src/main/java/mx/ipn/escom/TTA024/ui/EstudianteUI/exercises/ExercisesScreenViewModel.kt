@@ -110,6 +110,8 @@ class ExercisesScreenViewModel() : ViewModel() {
     fun updateExercisesAndReset(ejercicios: List<EjercicioGeneral>) {
         var newEjercicios: MutableList<ExerciseUIState> = mutableListOf()
         Log.i("ExercisesVM", "Parsing exercises")
+        Log.i("ExercisesVM", ejercicios.toString())
+
         for(ejercicio in ejercicios){
             when (ejercicio.tipoEjercicio) {
                 "relateColumns" -> {
@@ -166,6 +168,8 @@ class ExercisesScreenViewModel() : ViewModel() {
 
     fun reset(ejercicios: List<ExerciseUIState>) {
         Log.i("ExercisesVM", "Resetting vm")
+        Log.i("ExercisesVM", ejercicios.toString())
+
         _uiState.value = ExercisesUIState()
         _uiState.update { currExerciseUIState ->
             currExerciseUIState.copy(
