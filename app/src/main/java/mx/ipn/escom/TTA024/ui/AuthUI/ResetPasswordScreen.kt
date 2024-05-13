@@ -53,9 +53,9 @@ import mx.ipn.escom.TTA024.ui.LoginScreens
 
 @Composable
 fun ResetPasswordScreen(
-    navController: NavController,
     email: String,
     modifier: Modifier = Modifier,
+    navigateNextScreen: () -> Unit
 ) {
     var code by remember { mutableStateOf("") }
     var pswd by remember { mutableStateOf("") }
@@ -212,7 +212,8 @@ fun ResetPasswordScreen(
             val resetPassswordResult = confirmResetPassword(email, pswd, code)
             if(resetPassswordResult){
                 Toast.makeText(context, "Correcto, inicia sesion", Toast.LENGTH_SHORT).show()
-                navController.popBackStack(LoginScreens.SignIn.name, true)
+//                navController.popBackStack(LoginScreens.SignIn.name, true)
+                navigateNextScreen()
             }else{
                 Toast.makeText(context, "Error, codigo incorrecto", Toast.LENGTH_SHORT).show()
             }

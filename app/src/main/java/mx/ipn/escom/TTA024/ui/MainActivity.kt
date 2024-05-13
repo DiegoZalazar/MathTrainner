@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import mx.ipn.escom.TTA024.ui.EstudianteUI.estudianteconfig.EstudianteConfigVM
 import mx.ipn.escom.TTA024.ui.EstudianteUI.home.StudentHomeViewModel
 import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 import mx.ipn.escom.TTA024.ui.viewmodels.AdminEjerciciosViewModel
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
     private val adminEjerciciosViewModel: AdminEjerciciosViewModel by viewModels()
     private val adminUsuariosViewModel: AdminUsuariosViewModel by viewModels()
     private val studentHomeViewModel: StudentHomeViewModel by viewModels()
+    private val estudianteConfigVM: EstudianteConfigVM by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -40,7 +42,8 @@ class MainActivity : ComponentActivity() {
                         adminLeccionesViewModel = adminLeccionesViewModel,
                         adminEjerciciosViewModel = adminEjerciciosViewModel,
                         studentHomeViewModel = studentHomeViewModel,
-                        adminUsuariosViewModel = adminUsuariosViewModel
+                        adminUsuariosViewModel = adminUsuariosViewModel,
+                        estudianteConfigVM = estudianteConfigVM
                     )
                 }
             }

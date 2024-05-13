@@ -55,6 +55,10 @@ import mx.ipn.escom.TTA024.ui.AuthUI.SignInScreen
 import mx.ipn.escom.TTA024.ui.AuthUI.SignUpScreen
 import mx.ipn.escom.TTA024.ui.AuthUI.VerifyCodeScreen
 import mx.ipn.escom.TTA024.ui.EstudianteUI.Lesson
+import mx.ipn.escom.TTA024.ui.EstudianteUI.estudianteconfig.EstudianteConfig
+import mx.ipn.escom.TTA024.ui.EstudianteUI.estudianteconfig.EstudianteConfigNombre
+import mx.ipn.escom.TTA024.ui.EstudianteUI.estudianteconfig.EstudianteConfigUIState
+import mx.ipn.escom.TTA024.ui.EstudianteUI.estudianteconfig.EstudianteConfigVM
 import mx.ipn.escom.TTA024.ui.EstudianteUI.home.StudentHome
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExerciseNavScreens
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExercisesScreen
@@ -78,7 +82,10 @@ enum class LoginScreens{
 
 enum class StudentScreens {
     StudentHome,
-    Leccion
+    Leccion,
+    StudentConfig,
+    StudentConfigName,
+    StudentConfigResetPswd
 }
 
 @Composable
@@ -88,7 +95,8 @@ fun MathTrainer(
     adminLeccionesViewModel: AdminLeccionesViewModel,
     adminEjerciciosViewModel: AdminEjerciciosViewModel,
     studentHomeViewModel: StudentHomeViewModel,
-    adminUsuariosViewModel: AdminUsuariosViewModel
+    adminUsuariosViewModel: AdminUsuariosViewModel,
+    estudianteConfigVM: EstudianteConfigVM
 ){
     val backStackEntry by navController.currentBackStackEntryAsState()
     val loginViewModel: LoginViewModel = viewModel()
@@ -140,7 +148,10 @@ fun MathTrainer(
                     arguments = listOf(navArgument(name = "email") {type = NavType.StringType})
                 ){
                         backStackEntry ->
-                    ResetPasswordScreen(navController = navController, email = backStackEntry.arguments?.getString("email")?: "")
+                    ResetPasswordScreen(
+                        email = backStackEntry.arguments?.getString("email")?: "",
+                        navigateNextScreen = { navController.popBackStack(LoginScreens.SignIn.name, true) }
+                    )
                 }
             }
 
@@ -161,7 +172,8 @@ fun MathTrainer(
                     StudentHome(
                         studentVM = studentHomeViewModel,
                         exercisesScreenViewModel = viewModelExercises,
-                        navController = navController
+                        navController = navController,
+                        updateConfigView = { estudianteConfigVM.reload() }
                     )
                 }
                 composable(route = ExerciseNavScreens.Exercises.name){
@@ -178,6 +190,22 @@ fun MathTrainer(
                     Lesson(
                         studentHomeViewModel = studentHomeViewModel,
                         navController = navController
+                    )
+                }
+
+                composable(route = StudentScreens.StudentConfig.name){
+                    EstudianteConfig(navController = navController)
+                }
+
+                composable(route = StudentScreens.StudentConfigName.name){
+                    EstudianteConfigNombre(navController)
+                }
+
+                composable(route = StudentScreens.StudentConfigResetPswd.name){
+                    ResetPasswordScreen(
+                        email = if (estudianteConfigVM.estudianteConfigUIState is EstudianteConfigUIState.Success)
+                                (estudianteConfigVM.estudianteConfigUIState as EstudianteConfigUIState.Success).email else "",
+                        navigateNextScreen = { navController.navigateUp() }
                     )
                 }
             }

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
@@ -69,7 +70,8 @@ import mx.ipn.escom.TTA024.ui.StudentScreens
 fun StudentHome(
     studentVM: StudentHomeViewModel = viewModel(),
     exercisesScreenViewModel: ExercisesScreenViewModel,
-    navController: NavController
+    navController: NavController,
+    updateConfigView: () -> Unit
 ) {
     var studentHomeUIState = studentVM.studentHomeUIState
     var token by remember { mutableStateOf("") }
@@ -89,6 +91,9 @@ fun StudentHome(
             studentVM.getModulos()
         } catch (error: AuthException) {
             Log.e("AuthDemo", "Failed to fetch user attributes", error)
+            navController.navigate("login"){
+                popUpTo("student") { inclusive = true }
+            }
         }
     }
 
@@ -99,6 +104,9 @@ fun StudentHome(
                 Amplify.Auth.signOut()
             } catch (error: AuthException) {
                 Log.e("AmplifyQuickstart", "Failed to sign out auth session", error)
+                navController.navigate("login"){
+                    popUpTo("student") { inclusive = true }
+                }
             }
             navController.navigate("login"){
                 popUpTo("student") { inclusive = true }
@@ -128,12 +136,16 @@ fun StudentHome(
             ModalDrawerSheet { StudentModalDrawer(
                 items = temas,
                 selected = selectedItem.value,
-                onClicItem = {
+                onClickItem = {
                     scope.launch { drawerState.close() }
                     selectedItem.value = it
                 },
                 userName = userName,
-                onClicCloseSession = { closeSesionLoading = true }
+                onClickCloseSession = { closeSesionLoading = true },
+                onClickNavToConfig = {
+                    updateConfigView()
+                    navController.navigate(StudentScreens.StudentConfig.name)
+                }
             )
             }
         }
@@ -335,9 +347,10 @@ fun ModuloTooltipContent(
 fun StudentModalDrawer(
     items : List<String>,
     selected: String,
-    onClicItem: (String) -> Unit,
+    onClickItem: (String) -> Unit,
     userName: String,
-    onClicCloseSession: () -> Unit,
+    onClickCloseSession: () -> Unit,
+    onClickNavToConfig: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxHeight()
@@ -355,7 +368,7 @@ fun StudentModalDrawer(
                     NavigationDrawerItem(
                         label = { Text(text = item) },
                         selected = item == selected,
-                        onClick = { onClicItem(item) },
+                        onClick = { onClickItem(item) },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
                 }
@@ -388,11 +401,19 @@ fun StudentModalDrawer(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ){
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = onClickNavToConfig) {
                         Text("Configuracion")
                     }
                     Spacer(Modifier.width(12.dp))
-                    OutlinedButton(onClick = { onClicCloseSession() }) {
+                    OutlinedButton(
+                        onClick = { onClickCloseSession() },
+                        colors = ButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error,
+                            containerColor = MaterialTheme.colorScheme.background,
+                            disabledContainerColor = MaterialTheme.colorScheme.background,
+                            disabledContentColor = MaterialTheme.colorScheme.onError
+                        )
+                    ) {
                         Text("Cerrar Sesion")
                     }
                 }
