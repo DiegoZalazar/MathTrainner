@@ -1,6 +1,7 @@
 package mx.ipn.escom.TTA024.ui.EstudianteUI.home
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -76,6 +78,8 @@ fun StudentHome(
     var studentHomeUIState = studentVM.studentHomeUIState
     var token by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
+
     var userName by remember { mutableStateOf("") }
     LaunchedEffect(key1 = true) {
         try {
@@ -91,6 +95,13 @@ fun StudentHome(
             studentVM.getModulos()
         } catch (error: AuthException) {
             Log.e("AuthDemo", "Failed to fetch user attributes", error)
+            try {
+                Amplify.Auth.signOut()
+            } catch (error: AuthException) {
+                Log.e("AmplifyQuickstart", "Failed to sign out auth session", error)
+                Toast.makeText(context, "Error al cerrar sesion", Toast.LENGTH_SHORT).show()
+            }
+            Toast.makeText(context, "Su sesion ha expirado", Toast.LENGTH_SHORT).show()
             navController.navigate("login"){
                 popUpTo("student") { inclusive = true }
             }

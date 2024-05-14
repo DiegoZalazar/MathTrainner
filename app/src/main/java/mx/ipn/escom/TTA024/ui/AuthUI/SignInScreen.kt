@@ -1,6 +1,8 @@
 package mx.ipn.escom.TTA024.ui.AuthUI
 
+import android.graphics.drawable.Icon
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -23,15 +28,21 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,7 +51,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import mx.ipn.escom.TTA024.ui.LoginViewModel
+import com.amplifyframework.auth.AuthException
+import com.amplifyframework.kotlin.core.Amplify
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import mx.ipn.escom.TTA024.ui.LoginScreens
 import mx.ipn.escom.TTA024.ui.smallcomponents.SignInAlertState
 import mx.ipn.escom.TTA024.ui.smallcomponents.SignInAlert
@@ -61,116 +75,140 @@ fun SignInScreen(
     var showAlert by remember { mutableStateOf(false) }
     var msgAlert by remember { mutableStateOf(SignInAlertState()) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "MathTrainer",
-            style = androidx.compose.ui.text.TextStyle(
-                fontSize = 32.sp,
-                color = Color(0xFFD62839),
-                fontWeight = FontWeight.Bold
-            )
-        )
-        Spacer(modifier = Modifier.height(32.dp))
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val pullState = rememberPullToRefreshState()
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    val onRefresh: () -> Unit = {
+        isRefreshing = true
+        coroutineScope.launch {
+            try {
+                Amplify.Auth.signOut()
+                Toast.makeText(context, "Cerrando sesion y recargando", Toast.LENGTH_SHORT).show()
+            } catch (error: AuthException) {
+                Log.e("AmplifyQuickstart", "Failed to sign out auth session", error)
+                Toast.makeText(context, "Error tratando de cerrar sesion", Toast.LENGTH_SHORT).show()
+            }
+            isRefreshing = false
+        }
+    }
+
+    PullToRefreshBox(
+        state = pullState,
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh
+    ){
         Column(
             modifier = Modifier
-                .width(330.dp)
-                .border(
-                    width = 1.dp,
-                    color = Color.LightGray,
-                    shape = MaterialTheme.shapes.large
-                )
+                .fillMaxSize()
                 .padding(16.dp)
-                .wrapContentHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
+
             Text(
-                text = "Bienvenido a MathTrainer",
-                fontWeight = FontWeight.Bold
+                text = "MathTrainer",
+                style = androidx.compose.ui.text.TextStyle(
+                    fontSize = 32.sp,
+                    color = Color(0xFFD62839),
+                    fontWeight = FontWeight.Bold
+                )
             )
-            OutlinedTextField(
-                value = usr, onValueChange = { usr = it },
-                label = { Text("Correo") },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
-
-            OutlinedTextField(
-                value = pswd, onValueChange = { pswd = it },
-                label = { Text("Contraseña") },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Done
-                ),
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    val image = if (passwordVisible)
-                        Icons.Default.VisibilityOff
-                    else Icons.Default.Visibility
-
-                    // Please provide localized description for accessibility services
-                    val description = if (passwordVisible) "Hide password" else "Show password"
-
-                    IconButton(onClick = {passwordVisible = !passwordVisible}){
-                        Icon(imageVector  = image, description)
-                    }
-                },
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    isLoading = true
-                },
+            Spacer(modifier = Modifier.height(32.dp))
+            Column(
                 modifier = Modifier
-                    .widthIn(min = 250.dp)
-                    .padding(vertical = 8.dp),
-                enabled = valido && !isLoading
+                    .width(330.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.LightGray,
+                        shape = MaterialTheme.shapes.large
+                    )
+                    .padding(16.dp)
+                    .wrapContentHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Iniciar Sesion")
+                Text(
+                    text = "Bienvenido a MathTrainer",
+                    fontWeight = FontWeight.Bold
+                )
+                OutlinedTextField(
+                    value = usr, onValueChange = { usr = it },
+                    label = { Text("Correo") },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+
+                OutlinedTextField(
+                    value = pswd, onValueChange = { pswd = it },
+                    label = { Text("Contraseña") },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        val image = if (passwordVisible)
+                            Icons.Default.VisibilityOff
+                        else Icons.Default.Visibility
+
+                        // Please provide localized description for accessibility services
+                        val description = if (passwordVisible) "Hide password" else "Show password"
+
+                        IconButton(onClick = {passwordVisible = !passwordVisible}){
+                            Icon(imageVector  = image, description)
+                        }
+                    },
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        isLoading = true
+                    },
+                    modifier = Modifier
+                        .widthIn(min = 250.dp)
+                        .padding(vertical = 8.dp),
+                    enabled = valido && !isLoading
+                ) {
+                    Text("Iniciar Sesion")
+                }
+                if(isLoading){
+                    Log.i("SignInScreen", "hola soy la barra de progreso")
+                    LinearProgressIndicator()
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = "¿Olvidaste tu contraseña?")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Recupérala",
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.clickable( onClick = { navController.navigate(LoginScreens.ForgotPassword.name) })
+                )
             }
-            if(isLoading){
-                Log.i("SignInScreen", "hola soy la barra de progreso")
-                LinearProgressIndicator()
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "¿Olvidaste tu contraseña?")
+            Spacer(modifier = Modifier.height(24.dp))
+            Text("¿No tienes una cuenta?")
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Recupérala",
+            Text(
+                text = "Registrate",
                 style = androidx.compose.ui.text.TextStyle(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 ),
-                modifier = Modifier.clickable( onClick = { navController.navigate(LoginScreens.ForgotPassword.name) })
+                modifier = Modifier.clickable( onClick = { navController.navigate(LoginScreens.SignUp.name) } )
             )
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        Text("¿No tienes una cuenta?")
-        Spacer(modifier = Modifier.height(8.dp))
-//        OutlinedButton(onClick = navigateToSignUp,
-//            modifier = Modifier    // dem: Si da error, cambia a modifier con minuscula
-//                .widthIn(min = 250.dp)
-//                .padding(vertical = 8.dp)
-//        ) {
-//            Text("Registrarse")
-//        }
-        Text(
-            text = "Registrate",
-            style = androidx.compose.ui.text.TextStyle(
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            ),
-            modifier = Modifier.clickable( onClick = { navController.navigate(LoginScreens.SignUp.name) } )
-        )
     }
+
+
+
     if(isLoading) {
         LaunchedEffect(key1 = true) {
             msgAlert = viewModel.signIn(email = usr, pswrd = pswd, home = {

@@ -1,4 +1,4 @@
-package mx.ipn.escom.TTA024.ui
+package mx.ipn.escom.TTA024.ui.AuthUI
 
 import android.util.Log
 import androidx.compose.runtime.getValue
