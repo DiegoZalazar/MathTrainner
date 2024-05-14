@@ -37,6 +37,8 @@ import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
@@ -141,6 +143,9 @@ fun StudentHome(
     val scope = rememberCoroutineScope()
     val selectedItem = remember { mutableStateOf(temas[0]) }
 
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullToRefreshState = rememberPullToRefreshState()
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -161,50 +166,63 @@ fun StudentHome(
             }
         }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+            isRefreshing = true
+                scope.launch{
+                    studentVM.getModulos()
+                    isRefreshing = false
+                    pullToRefreshState.animateToHidden()
+                }
+            },
+            state = pullToRefreshState
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.09f)
-                    .clickable { scope.launch { drawerState.open() } },
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Icon(imageVector = Icons.Default.Menu, contentDescription = "")
-                Spacer(Modifier.width(12.dp))
-                Text(text = selectedItem.value, style = MaterialTheme.typography.headlineSmall)
-            }
             Column(
                 modifier = Modifier
-                    .padding(12.dp)
-                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                when(studentHomeUIState){
-                    is StudentHomeUIState.Error -> ErrorScreen {
-                        studentVM.getModulos()
-                    }
-                    is StudentHomeUIState.Loading -> CircularProgressIndicator()
-                    is StudentHomeUIState.Success -> {
-                        Log.i("StudentHome", studentHomeUIState.modulos.toString())
-                        temas = updateTemas(studentHomeUIState.modulos)
-                        ListModulos(
-                            modulos = filterModulosByTema(studentHomeUIState.modulos, selectedItem.value),
-                            scope = scope,
-                            navToExercises = {
-                                scope.launch {
-                                    studentVM.getEjerciciosAndUpdateExercisesVM(it, exercisesScreenViewModel)
-                                    navController.navigate(ExerciseNavScreens.Exercises.name)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.09f)
+                        .clickable { scope.launch { drawerState.open() } },
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Icon(imageVector = Icons.Default.Menu, contentDescription = "")
+                    Spacer(Modifier.width(12.dp))
+                    Text(text = selectedItem.value, style = MaterialTheme.typography.headlineSmall)
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    when(studentHomeUIState){
+                        is StudentHomeUIState.Error -> ErrorScreen {
+                            studentVM.getModulos()
+                        }
+                        is StudentHomeUIState.Loading -> CircularProgressIndicator()
+                        is StudentHomeUIState.Success -> {
+                            Log.i("StudentHome", studentHomeUIState.modulos.toString())
+                            temas = updateTemas(studentHomeUIState.modulos)
+                            ListModulos(
+                                modulos = filterModulosByTema(studentHomeUIState.modulos, selectedItem.value),
+                                scope = scope,
+                                navToExercises = {
+                                    scope.launch {
+                                        studentVM.getEjerciciosAndUpdateExercisesVM(it, exercisesScreenViewModel)
+                                        navController.navigate(ExerciseNavScreens.Exercises.name)
+                                    }
+                                },
+                                navToLeccion = {
+                                    studentVM.getLeccion(it)
+                                    navController.navigate(StudentScreens.Leccion.name)
                                 }
-                            },
-                            navToLeccion = {
-                                studentVM.getLeccion(it)
-                                navController.navigate(StudentScreens.Leccion.name)
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }

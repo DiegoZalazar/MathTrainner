@@ -60,6 +60,7 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
     fun getModulos() {
         viewModelScope.launch {
             try{
+                Log.i("StudentHome", "Getting modules")
                 val resp = retrofitService.getModulos()
                 val values = arrayOf(0,1,2,1)
                 val n = resp.size
@@ -67,6 +68,7 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                 for(i in 0..<n){
                     aux.add(ModuloUI(values[((i%4))],resp[i]))
                 }
+                Log.i("StudentHome", "Getting modules done")
                 studentHomeUIState = StudentHomeUIState.Success(modulos = aux)
             }catch (e: IOException){
                 Log.i("StudentHome", e.toString())
