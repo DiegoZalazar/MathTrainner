@@ -65,7 +65,7 @@ class ExercisesScreenViewModel() : ViewModel() {
         val nextIndex = _uiState.value.currIndex + 1
         val totalExercises = _uiState.value.exercises.size
         val progress = (nextIndex.toFloat()/totalExercises)
-        if(nextIndex == totalExercises){
+        if(nextIndex == totalExercises){ // end of the game
             _uiState.update { currExerciseUIState ->
                 currExerciseUIState.copy(
                     correctExercises = correctExercises,
