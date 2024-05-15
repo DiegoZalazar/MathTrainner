@@ -162,7 +162,7 @@ fun VerifyCodeScreen(
         LaunchedEffect(key1 = true) {
             if(confirmSignUp(email, code)){
                 Toast.makeText(context, "Correcto, inicia sesion", Toast.LENGTH_SHORT).show()
-                navController.popBackStack(LoginScreens.SignIn.name, true)
+                navController.popBackStack(LoginScreens.SignIn.name, false)
             }else{
                 Toast.makeText(context, "Error, codigo incorrecto", Toast.LENGTH_SHORT).show()
             }
