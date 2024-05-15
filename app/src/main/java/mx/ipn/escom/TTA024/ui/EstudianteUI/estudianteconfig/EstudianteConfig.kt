@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -221,7 +222,8 @@ fun EstudianteConfigSuccess(
                 Text(
                     text = nombre,
                     style = textStyle,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.End
                 )
             }
             Spacer(Modifier.height(16.dp))
@@ -240,7 +242,8 @@ fun EstudianteConfigSuccess(
                 Text(
                     text = email,
                     style = textStyle,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.End
                 )
             }
         }
