@@ -1,6 +1,8 @@
 package mx.ipn.escom.TTA024.ui.EstudianteUI.exercises
 
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -198,6 +200,9 @@ fun ExercisesScreen(
         )
     }
 
+    BackHandler(enabled = true) {
+        alert = true
+    }
 }
 
 @Composable
