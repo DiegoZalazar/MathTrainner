@@ -291,7 +291,7 @@ fun ModuloItem (
     val pos = moduloUi.pos
     val values = arrayOf(0,1,2,1)
     val posWidth = values[((pos%4))] * 100.dp
-    val r = painterResource(id = R.drawable.modulodumbell)
+    val r = painterResource(id = R.drawable.modulo)
     val tooltipState = rememberTooltipState(isPersistent = true)
     Row(
         modifier = Modifier
@@ -336,8 +336,7 @@ fun ModuloItem (
                         contentDescription = "modulo",
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .padding(top = 1.dp)
-                            .padding(8.dp)
+                            .padding(9.dp)
                             .fillMaxSize()
                     )
                 }
