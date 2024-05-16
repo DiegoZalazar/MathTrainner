@@ -122,7 +122,7 @@ fun ExerciseMultOpc(
                 ){
                     ModalBottomSheetMessage(
                         correct = multOpcUIState.correcto,
-                        message = if(multOpcUIState.correcto) "¡Muy bien!" else "Respuesta correcta: ${multOpcUIState.respCorrecta}"
+                        message = if(multOpcUIState.correcto) "¡Muy bien!" else "Incorrecto"
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(16.dp),

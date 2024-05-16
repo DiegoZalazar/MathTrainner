@@ -102,7 +102,7 @@ fun ExerciseFillBlank(
                     ){
                         ModalBottomSheetMessage(
                             correct = exerciseFillBlankViewModel.correcto,
-                            message = if(exerciseFillBlankViewModel.correcto) "¡Muy bien!" else "Respuesta correcta: ${fillBlankUIState.value.respuesta}"
+                            message = if(exerciseFillBlankViewModel.correcto) "¡Muy bien!" else "Incorrecto"
                         )
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(16.dp),
