@@ -97,11 +97,11 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
         }
     }
 
-    fun sendRespuesta(respuestas: Respuestas){
+    fun sendRespuesta(modulo: Int, respuestas: Respuestas){
         viewModelScope.launch {
             try {
                 Log.i("BugEndpoint", respuestas.respuestas.toString())
-                val resp = retrofitService.postEjerciciosResultados(34,respuestas)
+                val resp = retrofitService.postEjerciciosResultados(modulo,respuestas)
                 Log.i("BugEndpoint", resp.toString())
             } catch (e: Exception) {
                 Log.i("BugEndpoint", e.toString())
@@ -121,7 +121,7 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                     Log.i("StudentHome", resp.toString())
                     ejerciciosUIState = EjerciciosUIState.Success(resp)
                     exercisesVM.updateExercisesAndReset(resp, idModulo)
-                    exercisesVM.updateSendRespuestas{ sendRespuesta(it) }
+                    exercisesVM.updateSendRespuestas{ sendRespuesta(idModulo, it) }
                 }
             } catch(e: Exception){
                 Log.i("StudentHome", "Error al obtener los ejercicios: $e")
