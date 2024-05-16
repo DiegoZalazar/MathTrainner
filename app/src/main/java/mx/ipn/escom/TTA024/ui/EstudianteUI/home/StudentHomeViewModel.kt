@@ -11,6 +11,8 @@ import kotlinx.coroutines.launch
 import mx.ipn.escom.TTA024.data.network.student.EjercicioGeneral
 import mx.ipn.escom.TTA024.data.network.student.Leccion
 import mx.ipn.escom.TTA024.data.network.student.Modulo
+import mx.ipn.escom.TTA024.data.network.student.Respuesta
+import mx.ipn.escom.TTA024.data.network.student.Respuestas
 import mx.ipn.escom.TTA024.data.network.student.StudentAPIService
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.ExercisesScreenViewModel
 import okhttp3.Interceptor
@@ -95,6 +97,18 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
         }
     }
 
+    fun sendRespuesta(respuestas: Respuestas){
+        viewModelScope.launch {
+            try {
+                Log.i("BugEndpoint", respuestas.respuestas.toString())
+                val resp = retrofitService.postEjerciciosResultados(34,respuestas)
+                Log.i("BugEndpoint", resp.toString())
+            } catch (e: Exception) {
+                Log.i("BugEndpoint", e.toString())
+            }
+        }
+    }
+
     fun getEjerciciosAndUpdateExercisesVM(idModulo: Int, exercisesVM: ExercisesScreenViewModel){
         viewModelScope.launch {
             ejerciciosUIState = EjerciciosUIState.Loading
@@ -106,7 +120,8 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                 } else {
                     Log.i("StudentHome", resp.toString())
                     ejerciciosUIState = EjerciciosUIState.Success(resp)
-                    exercisesVM.updateExercisesAndReset(resp)
+                    exercisesVM.updateExercisesAndReset(resp, idModulo)
+                    exercisesVM.updateSendRespuestas{ sendRespuesta(it) }
                 }
             } catch(e: Exception){
                 Log.i("StudentHome", "Error al obtener los ejercicios: $e")

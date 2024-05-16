@@ -176,6 +176,7 @@ fun MathTrainer(
                     ExercisesScreen(
                         exercisesUIState = uiState,
                         nextAction = viewModelExercises::nextExercise,
+                        addCountRetryAction = viewModelExercises::addIntentos,
                         cancelAction = {
                             viewModelExercises.reset()
                             navController.popBackStack(StudentScreens.StudentHome.name, inclusive = false)

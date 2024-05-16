@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import mx.ipn.escom.TTA024.data.network.student.EjercicioGeneral
+import mx.ipn.escom.TTA024.data.network.student.Respuesta
+import mx.ipn.escom.TTA024.data.network.student.Respuestas
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.columns.Columns
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.fillblank.FillBlank
 import mx.ipn.escom.TTA024.ui.EstudianteUI.exercises.multopc.MultOpc
@@ -57,15 +59,36 @@ class ExercisesScreenViewModel() : ViewModel() {
 
     private var tiempos: MutableList<Int> = mutableListOf()
     private var currTiempo: Int = 0
+    private var currNumOfIntentos = 1
+    private var currModulo = 0
+    private var listOfTiempos: List<Int> = listOf()
+    private var respuestas: MutableList<Respuesta> = mutableListOf()
+    private var sendRespuestas: (Respuestas) -> Unit = {}
 
-    fun nextExercise(correct: Boolean, nextTiempo: Int) {
+    fun nextExercise(isCorrect: Boolean, nextTiempo: Int) {
         tiempos[_uiState.value.currIndex] = nextTiempo - currTiempo
         currTiempo = nextTiempo
-        val correctExercises = if(correct) _uiState.value.correctExercises + 1 else _uiState.value.correctExercises
+        val correctExercises = if(isCorrect) _uiState.value.correctExercises + 1 else _uiState.value.correctExercises
+        val difTiempo = tiempos[_uiState.value.currIndex] - listOfTiempos[_uiState.value.currIndex]
+        val tipoEjercicio = when(_uiState.value.currExerciseUIState) {
+            is ExerciseUIState.ExerciseUIStateColumns -> "relateColumns"
+            is ExerciseUIState.ExerciseUIStateFillBlank -> "fillBlank"
+            is ExerciseUIState.ExerciseUIStateMultOpc -> "multChoice"
+            ExerciseUIState.FinishedExercises -> "error"
+        }
+        val auxRespuesta = Respuesta(
+            correcta = isCorrect,
+            intentos = currNumOfIntentos.toString(),
+            modulo = currModulo.toString(),
+            tiempo = difTiempo.toString(),
+            tipo = tipoEjercicio
+        )
+        respuestas.add(auxRespuesta)
         val nextIndex = _uiState.value.currIndex + 1
         val totalExercises = _uiState.value.exercises.size
         val progress = (nextIndex.toFloat()/totalExercises)
         if(nextIndex == totalExercises){ // end of the game
+            currNumOfIntentos = 1
             _uiState.update { currExerciseUIState ->
                 currExerciseUIState.copy(
                     correctExercises = correctExercises,
@@ -76,8 +99,11 @@ class ExercisesScreenViewModel() : ViewModel() {
                     running = false
                 )
             }
+            sendRespuestas(Respuestas(respuestas))
             Log.i("Timer", tiempos.toString())
+            respuestas = mutableListOf()
         } else{
+            currNumOfIntentos = 1
             val nextExerciseUIState = _uiState.value.exercises[nextIndex]
             _uiState.update { currExerciseUIState ->
                 currExerciseUIState.copy(
@@ -89,6 +115,14 @@ class ExercisesScreenViewModel() : ViewModel() {
                 )
             }
         }
+    }
+
+    fun addIntentos(){
+        currNumOfIntentos ++
+    }
+
+    fun updateSendRespuestas(a: (Respuestas) -> Unit){
+        sendRespuestas = a
     }
 
     fun initSesion(){
@@ -107,12 +141,16 @@ class ExercisesScreenViewModel() : ViewModel() {
         }
     }
 
-    fun updateExercisesAndReset(ejercicios: List<EjercicioGeneral>) {
+    fun updateExercisesAndReset(ejercicios: List<EjercicioGeneral>, modulo: Int) {
+        currModulo = modulo
+
+        val auxListOfTiempos: MutableList<Int> = mutableListOf()
+
         var newEjercicios: MutableList<ExerciseUIState> = mutableListOf()
         Log.i("ExercisesVM", "Parsing exercises")
         Log.i("ExercisesVM", ejercicios.toString())
-
         for(ejercicio in ejercicios){
+            auxListOfTiempos.add(ejercicio.tiempoEjercicio)
             when (ejercicio.tipoEjercicio) {
                 "relateColumns" -> {
                     newEjercicios.add(
@@ -152,7 +190,7 @@ class ExercisesScreenViewModel() : ViewModel() {
                 }
             }
         }
-
+        listOfTiempos = auxListOfTiempos
         reset(newEjercicios)
     }
 

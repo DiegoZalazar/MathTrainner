@@ -3,8 +3,10 @@ package mx.ipn.escom.TTA024.data.network.student
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 private const val BASE_URL = "https://w8b6as9g2h.execute-api.us-east-1.amazonaws.com/Prod/"
@@ -24,8 +26,8 @@ interface StudentAPIService {
     @GET("estudiante/sesion/ejercicios/{idMod}")
     suspend fun getEjerciciosModulo(@Path("idMod") idModulo: Int) : List<EjercicioGeneral>
 
-    @GET("estudiante/sesion/ejercicios/{idMod}")
-    suspend fun postEjerciciosResultados(@Path("idMod") idModulo: Int, respuestas: Respuestas)
+    @POST("estudiante/sesion/ejercicios/{idMod}")
+    suspend fun postEjerciciosResultados(@Path("idMod") idModulo: Int,@Body respuestas: Respuestas) : AvanceModulo
 }
 
 object  StudentAPI {

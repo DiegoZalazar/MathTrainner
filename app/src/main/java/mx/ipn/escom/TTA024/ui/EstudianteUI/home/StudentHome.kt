@@ -77,7 +77,7 @@ fun StudentHome(
     navController: NavController,
     updateConfigView: () -> Unit
 ) {
-    var studentHomeUIState = studentVM.studentHomeUIState
+    val studentHomeUIState = studentVM.studentHomeUIState
     var token by remember { mutableStateOf("") }
 
     val context = LocalContext.current
@@ -108,6 +108,8 @@ fun StudentHome(
                 popUpTo("student") { inclusive = true }
             }
         }
+
+
     }
 
     var closeSesionLoading by remember { mutableStateOf(false) }
@@ -169,7 +171,7 @@ fun StudentHome(
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = {
-            isRefreshing = true
+                isRefreshing = true
                 scope.launch{
                     studentVM.getModulos()
                     isRefreshing = false

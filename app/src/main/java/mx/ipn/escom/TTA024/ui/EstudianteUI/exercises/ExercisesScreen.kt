@@ -63,6 +63,7 @@ import mx.ipn.escom.TTA024.ui.smallcomponents.TimeText
 fun ExercisesScreen(
     exercisesUIState: ExercisesUIState,
     nextAction: (Boolean, Int) -> Unit = {a,b -> },
+    addCountRetryAction: () -> Unit = {},
     cancelAction: () -> Unit = {}
 ){
     val animatedProgress by animateFloatAsState(
@@ -115,7 +116,7 @@ fun ExercisesScreen(
                     contentAlignment = Alignment.Center
                 ){
                     LinearProgressIndicator(
-                        progress = animatedProgress,
+                        progress = { animatedProgress },
                         modifier = Modifier
                             .fillMaxWidth()
                             .size(width = 12.dp, height = 12.dp)
@@ -123,7 +124,7 @@ fun ExercisesScreen(
                                 color = Color.Green,
                                 shape = RoundedCornerShape(50)
                             ),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
                 Box(
@@ -146,16 +147,19 @@ fun ExercisesScreen(
                 is ExerciseUIState.ExerciseUIStateColumns -> ExerciseColumns(
                     nextAction = { nextAction(it, seconds) },
                     exerciseColumnsViewModel = ExerciseColumnsViewModel(exerciseUIState.exerciseColumns),
+                    onRetry = addCountRetryAction,
                     modifier = Modifier.padding(innerPadding)
                 )
                 is ExerciseUIState.ExerciseUIStateFillBlank -> ExerciseFillBlank(
                     nextAction = { nextAction(it, seconds)  },
                     exerciseFillBlankViewModel = ExerciseFillBlankViewModel(exerciseUIState.exerciseFillBlank),
+                    onRetry = addCountRetryAction,
                     modifier = Modifier.padding(innerPadding)
                 )
                 is ExerciseUIState.ExerciseUIStateMultOpc -> ExerciseMultOpc(
                     nextAction = { nextAction(it, seconds)  },
                     exerciseMultOpcViewModel = ExerciseMultOpcViewModel(exerciseUIState.exerciseOptions),
+                    onRetry = addCountRetryAction,
                     modifier = Modifier.padding(innerPadding)
                 )
                 is ExerciseUIState.FinishedExercises -> FinishedExercisesScreen(

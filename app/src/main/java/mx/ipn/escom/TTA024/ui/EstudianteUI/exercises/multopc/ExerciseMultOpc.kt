@@ -42,6 +42,7 @@ import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 fun ExerciseMultOpc(
     exerciseMultOpcViewModel: ExerciseMultOpcViewModel = viewModel(),
     nextAction: (Boolean) -> Unit = {},
+    onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val multOpcUIState by exerciseMultOpcViewModel.uiState.collectAsState()
@@ -129,7 +130,10 @@ fun ExerciseMultOpc(
                     ) {
                         if(!multOpcUIState.correcto){
                             ModalBottomSheetButton(
-                                onClick = { exerciseMultOpcViewModel.reset() },
+                                onClick = {
+                                    onRetry()
+                                    exerciseMultOpcViewModel.reset()
+                                },
                                 correct = multOpcUIState.correcto,
                                 message = "Reintentar"
                             )

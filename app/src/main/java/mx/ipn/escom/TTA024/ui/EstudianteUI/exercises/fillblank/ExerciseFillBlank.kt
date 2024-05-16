@@ -38,6 +38,7 @@ import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 fun ExerciseFillBlank(
     exerciseFillBlankViewModel: ExerciseFillBlankViewModel = viewModel(),
     nextAction: (Boolean) -> Unit = {},
+    onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var fillBlankUIState = exerciseFillBlankViewModel.uiState.collectAsState()
@@ -103,11 +104,27 @@ fun ExerciseFillBlank(
                             correct = exerciseFillBlankViewModel.correcto,
                             message = if(exerciseFillBlankViewModel.correcto) "¡Muy bien!" else "Respuesta correcta: ${fillBlankUIState.value.respuesta}"
                         )
-                        ModalBottomSheetButton(
-                            onClick = { nextAction(exerciseFillBlankViewModel.correcto) },
-                            correct = exerciseFillBlankViewModel.correcto,
-                            message = "Siguiente"
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            if(!exerciseFillBlankViewModel.correcto){
+                                ModalBottomSheetButton(
+                                    onClick = {
+                                        onRetry()
+                                        exerciseFillBlankViewModel.reset()
+                                    },
+                                    correct = exerciseFillBlankViewModel.correcto,
+                                    message = "Reintentar"
+                                )
+                            }
+                            ModalBottomSheetButton(
+                                onClick = { nextAction(exerciseFillBlankViewModel.correcto) },
+                                correct = exerciseFillBlankViewModel.correcto,
+                                message = "Siguiente"
+                            )
+                        }
+
                         Spacer(
                             modifier = Modifier.height(32.dp)
                         )

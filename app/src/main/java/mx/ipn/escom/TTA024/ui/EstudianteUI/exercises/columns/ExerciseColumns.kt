@@ -28,6 +28,7 @@ import mx.ipn.escom.TTA024.ui.theme.MathTrainerTheme
 fun ExerciseColumns(
     exerciseColumnsViewModel: ExerciseColumnsViewModel = viewModel(),
     nextAction: (Boolean) -> Unit = {},
+    onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -85,7 +86,10 @@ fun ExerciseColumns(
                                 )
                             }else{
                                 ModalBottomSheetButton(
-                                    onClick = { exerciseColumnsViewModel.reset() },
+                                    onClick = {
+                                        onRetry()
+                                        exerciseColumnsViewModel.reset()
+                                    },
                                     correct = exerciseColumnsViewModel.correcto,
                                     message = "Reintentar"
                                 )
