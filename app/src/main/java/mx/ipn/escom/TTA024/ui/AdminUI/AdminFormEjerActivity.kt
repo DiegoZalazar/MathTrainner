@@ -292,206 +292,242 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
         }
     }
     }) {
-            Column(
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+        ) {
+            Box(
                 modifier = Modifier
-                    .padding(it)
-                    .padding(horizontal = 24.dp)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .width(330.dp)
+                    .border(
+                        width = 1.dp, // Border width
+                        color = Color.LightGray, // Border color
+                        shape = MaterialTheme.shapes.large // Border shape (optional)
+                    )
+                    .padding(16.dp)
+                    .wrapContentHeight()
             ) {
-                Spacer(Modifier.height(16.dp))
-                ///////////////////
-                OutlinedTextField(
-                    value = planteamiento,
-                    onValueChange = { planteamiento = it },
-                    label = { Text("Planteamiento ejercicio") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
+                Column(
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(it)
+                        .padding(horizontal = 24.dp)
                         .fillMaxWidth()
-                    ,
-                    isError = !isValidPlanteamiento
-                )
-
-                OutlinedTextField(
-                    value = cuerpo,
-                    onValueChange = { cuerpo = it },
-                    label = { Text("Cuerpo ejercicio (Integral)") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .fillMaxWidth(),
-                    isError = !isvalidCuerpo
-                )
-
-                OutlinedTextField(
-                    value = tiempoEjercicio,
-                    onValueChange = { tiempoEjercicio = it },
-                    label = { Text("Tiempo promedio para resolver (en segundos)") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    isError = !isValidTiempo
-                )
-
-                ////MENU NIVEL///////
-                Text("Nivel:", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start)
-                Column(
-                    Modifier.selectableGroup()
-                ){
-                    niveles.forEach {nivel ->
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .selectable(
-                                    selected = (nivel == selectedNivelOption),
-                                    onClick = {
-                                        nivelEjercicio = nivel
-                                        onOptionNivelSelected(nivel)
-                                    },
-                                    role = Role.RadioButton
-                                )
-                                .padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = (nivel == selectedNivelOption),
-                                onClick = null // null recommended for accessibility with screenreaders
-                            )
-                            Text(
-                                text = nivel,
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
-
-                    }
-                }
-
-                ///////////////////
-                Spacer(modifier = Modifier.height(20.dp))
-                ////MENU TIPO DE EJERCICIO///////
-                Text("Tipo de ejercicio:", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start)
-                Column(
-                    Modifier.selectableGroup()
-                ){
-                    tiposEjercicios.forEach {tipo ->
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .selectable(
-                                    selected = (tipo == selectedTipoOption),
-                                    onClick = {
-                                        tipoEjercicio = tipo
-                                        onOptionTipoSelected(tipo)
-                                    },
-                                    role = Role.RadioButton
-                                )
-                                .padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = (tipo == selectedTipoOption),
-                                onClick = null // null recommended for accessibility with screenreaders
-                            )
-                            Text(
-                                text = tipo,
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
-
-                    }
-                }
-                //}
-
-                /////////////RELACIONAR COLUMNAS ///////////////////
-                if (tipoEjercicio == "Relacionar columnas") {
-                    if(ejercicio.paresCorrectosEjercicio=="" || ejercicio.paresCorrectosEjercicio=="none"){
-                        for(i in 0..7){
-                            incisos.add("")
-                        }
-                    }else{
-                        var pares: List<String> = paresCorrectos.split(";")
-                        pares.forEach {
-                            val preguntaRespuesta = it.split(":")
-                            preguntaRespuesta.forEach {
-                                incisos.add(it)
-                            }
-                        }
-                    }
-
-                    for (i in 0..3) {
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp)) {
-                            OutlinedTextField(
-                                value = incisos[i * 2],
-                                onValueChange = { incisos[i * 2] = it },
-                                label = { Text("Par " + (i+1)) },
-                                keyboardOptions = KeyboardOptions.Default.copy(
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Next
-                                ),
-                                modifier = Modifier.width(115.dp)
-                            )
-                            Spacer(modifier = Modifier.width(20.dp))
-                            OutlinedTextField(
-                                value = incisos[i * 2 + 1],
-                                onValueChange = { incisos[i * 2 + 1] = it
-                                                Log.i("incisos[]",incisos[i * 2 + 1])
-                                                },
-                                label = { Text("Par" + (i+1)) },
-                                keyboardOptions = KeyboardOptions.Default.copy(
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Next
-                                ),
-                                modifier = Modifier.width(115.dp)
-                            )
-                        }
-                    }
-                }
-                ////////////////////////////////OPCIÓN MULTIPLE////////////////////
-                if (tipoEjercicio == "Opción multiple") {
-                    if((ejercicio.respCorrectaEjercicio=="" || ejercicio.respCorrectaEjercicio=="none") && (ejercicio.respIncorrectasEjercicio=="" || ejercicio.respIncorrectasEjercicio=="none")){
-                        for(i in 0..2){
-                            listaIncorrectas.add("")
-                        }
-                    }else{
-                        var incorrectas: List<String> = respIncorrectas.split(";")
-                        incorrectas.forEach {
-                            listaIncorrectas.add(it)
-                        }
-                    }
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(Modifier.height(10.dp))
+                    ///////////////////
                     OutlinedTextField(
-                        value = respCorrecta,
-                        onValueChange = { respCorrecta = it },
-                        label = { Text("Respuesta Correcta") },
+                        value = planteamiento,
+                        onValueChange = { planteamiento = it },
+                        label = { Text("Planteamiento ejercicio") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Next
                         ),
                         modifier = Modifier
                             .padding(vertical = 16.dp)
+                            .fillMaxWidth(),
+                        isError = !isValidPlanteamiento
                     )
-                    for(i in 0..2){
+
+                    OutlinedTextField(
+                        value = cuerpo,
+                        onValueChange = { cuerpo = it },
+                        label = { Text("Cuerpo ejercicio (Integral)") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                            .fillMaxWidth(),
+                        isError = !isvalidCuerpo
+                    )
+
+                    OutlinedTextField(
+                        value = tiempoEjercicio,
+                        onValueChange = { tiempoEjercicio = it },
+                        label = { Text("Tiempo promedio para resolver (en segundos)") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                            .fillMaxWidth(),
+                        isError = !isValidTiempo
+                    )
+                    ////MENU NIVEL///////
+                    Text("Nivel:", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start)
+                    Column(
+                        Modifier.selectableGroup()
+                    ) {
+                        niveles.forEach { nivel ->
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp)
+                                    .selectable(
+                                        selected = (nivel == selectedNivelOption),
+                                        onClick = {
+                                            nivelEjercicio = nivel
+                                            onOptionNivelSelected(nivel)
+                                        },
+                                        role = Role.RadioButton
+                                    )
+                                    .padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = (nivel == selectedNivelOption),
+                                    onClick = null // null recommended for accessibility with screenreaders
+                                )
+                                Text(
+                                    text = nivel,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.padding(start = 16.dp)
+                                )
+                            }
+
+                        }
+                    }
+
+                    ///////////////////
+                    Spacer(modifier = Modifier.height(20.dp))
+                    ////MENU TIPO DE EJERCICIO///////
+                    Text(
+                        "Tipo de ejercicio:",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start
+                    )
+                    Column(
+                        Modifier.selectableGroup()
+                    ) {
+                        tiposEjercicios.forEach { tipo ->
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp)
+                                    .selectable(
+                                        selected = (tipo == selectedTipoOption),
+                                        onClick = {
+                                            tipoEjercicio = tipo
+                                            onOptionTipoSelected(tipo)
+                                        },
+                                        role = Role.RadioButton
+                                    )
+                                    .padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = (tipo == selectedTipoOption),
+                                    onClick = null // null recommended for accessibility with screenreaders
+                                )
+                                Text(
+                                    text = tipo,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.padding(start = 16.dp)
+                                )
+                            }
+
+                        }
+                    }
+                    //}
+
+                    /////////////RELACIONAR COLUMNAS ///////////////////
+                    if (tipoEjercicio == "Relacionar columnas") {
+                        if (ejercicio.paresCorrectosEjercicio == "" || ejercicio.paresCorrectosEjercicio == "none") {
+                            for (i in 0..7) {
+                                incisos.add("")
+                            }
+                        } else {
+                            var pares: List<String> = paresCorrectos.split(";")
+                            pares.forEach {
+                                val preguntaRespuesta = it.split(":")
+                                preguntaRespuesta.forEach {
+                                    incisos.add(it)
+                                }
+                            }
+                        }
+
+                        for (i in 0..3) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 16.dp)
+                            ) {
+                                OutlinedTextField(
+                                    value = incisos[i * 2],
+                                    onValueChange = { incisos[i * 2] = it },
+                                    label = { Text("Par " + (i + 1)) },
+                                    keyboardOptions = KeyboardOptions.Default.copy(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Next
+                                    ),
+                                    modifier = Modifier.width(115.dp)
+                                )
+                                Spacer(modifier = Modifier.width(20.dp))
+                                OutlinedTextField(
+                                    value = incisos[i * 2 + 1],
+                                    onValueChange = {
+                                        incisos[i * 2 + 1] = it
+                                        Log.i("incisos[]", incisos[i * 2 + 1])
+                                    },
+                                    label = { Text("Par" + (i + 1)) },
+                                    keyboardOptions = KeyboardOptions.Default.copy(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Next
+                                    ),
+                                    modifier = Modifier.width(115.dp)
+                                )
+                            }
+                        }
+                    }
+                    ////////////////////////////////OPCIÓN MULTIPLE////////////////////
+                    if (tipoEjercicio == "Opción multiple") {
+                        if ((ejercicio.respCorrectaEjercicio == "" || ejercicio.respCorrectaEjercicio == "none") && (ejercicio.respIncorrectasEjercicio == "" || ejercicio.respIncorrectasEjercicio == "none")) {
+                            for (i in 0..2) {
+                                listaIncorrectas.add("")
+                            }
+                        } else {
+                            var incorrectas: List<String> = respIncorrectas.split(";")
+                            incorrectas.forEach {
+                                listaIncorrectas.add(it)
+                            }
+                        }
                         OutlinedTextField(
-                            value = listaIncorrectas[i],
-                            onValueChange = { listaIncorrectas[i] = it },
-                            label = { Text("Respuesta incorrecta "+(i+1)) },
+                            value = respCorrecta,
+                            onValueChange = { respCorrecta = it },
+                            label = { Text("Respuesta Correcta") },
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Next
+                            ),
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
+                        )
+                        for (i in 0..2) {
+                            OutlinedTextField(
+                                value = listaIncorrectas[i],
+                                onValueChange = { listaIncorrectas[i] = it },
+                                label = { Text("Respuesta incorrecta " + (i + 1)) },
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardType = KeyboardType.Text,
+                                    imeAction = ImeAction.Next
+                                ),
+                                modifier = Modifier
+                                    .padding(vertical = 16.dp)
+                            )
+                        }
+                    }
+                    /////////////////////RESPUESTA CORRECTA /////////////////////
+                    if (tipoEjercicio == "Completar respuesta") {
+                        OutlinedTextField(
+                            value = respCorrecta,
+                            onValueChange = { respCorrecta = it },
+                            label = { Text("Respuesta Correcta") },
                             keyboardOptions = KeyboardOptions.Default.copy(
                                 keyboardType = KeyboardType.Text,
                                 imeAction = ImeAction.Next
@@ -500,24 +536,10 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                                 .padding(vertical = 16.dp)
                         )
                     }
-                }
-                /////////////////////RESPUESTA CORRECTA /////////////////////
-                if (tipoEjercicio == "Completar respuesta") {
-                    OutlinedTextField(
-                        value = respCorrecta,
-                        onValueChange = { respCorrecta = it },
-                        label = { Text("Respuesta Correcta") },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        modifier = Modifier
-                            .padding(vertical = 16.dp)
-                    )
+                    Spacer(modifier = Modifier.height(50.dp))
                 }
             }
-
-        Spacer(modifier = Modifier.height(50.dp))
+        }
 
     }
     DialogErrorForm(showError, { showError = false }, { showError = false })
