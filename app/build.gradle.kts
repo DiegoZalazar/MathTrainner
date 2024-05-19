@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "mx.ipn.escom.TTA024"
+    namespace = "mx.ipn.escom.tta047"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "mx.ipn.escom.TTA024"
+        applicationId = "mx.ipn.escom.tta047"
         minSdk = 28
         targetSdk = 33
         versionCode = 1
