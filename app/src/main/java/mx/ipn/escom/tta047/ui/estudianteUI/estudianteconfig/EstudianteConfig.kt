@@ -110,7 +110,10 @@ fun EstudianteConfig(
                         popUpTo("student") { inclusive = true }
                     }
                 },
-                borrarAvance = studentVM::borrarAvance
+                borrarAvance = studentVM::borrarAvance,
+                navToExam = {
+                    navController.navigate(StudentScreens.ExamInfo.name)
+                }
             )
         }
     }
@@ -157,6 +160,7 @@ fun EstudianteConfigSuccess(
     navToEditarNombre: () -> Unit,
     navToResetPswd: () -> Unit,
     navToLogin: () -> Unit,
+    navToExam: () -> Unit,
     borrarAvance: KSuspendFunction0<Unit>
 ) {
     val context = LocalContext.current
@@ -288,6 +292,13 @@ fun EstudianteConfigSuccess(
             modifier = Modifier.width(200.dp)
         ) {
             Text("Cambiar contraseña")
+        }
+        Spacer(Modifier.height(12.dp))
+        Button(
+            onClick = navToExam,
+            modifier = Modifier.width(200.dp)
+        ) {
+            Text("Realizar Examen")
         }
         Spacer(Modifier.height(12.dp))
         Button(

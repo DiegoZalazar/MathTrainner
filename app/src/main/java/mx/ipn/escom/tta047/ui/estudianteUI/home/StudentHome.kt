@@ -97,6 +97,9 @@ fun StudentHome(
             studentVM.getModulos()
             val examenDone = studentVM.getExamenDone()
             Log.i("StudentHome", "Examen hecho: $examenDone")
+            if(!examenDone){
+                navController.navigate(StudentScreens.ExamInfo.name)
+            }
         } catch (error: AuthException) {
             Log.e("AuthDemo", "Failed to fetch user attributes", error)
             try {

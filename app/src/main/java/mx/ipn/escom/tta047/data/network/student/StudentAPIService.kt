@@ -33,6 +33,12 @@ interface StudentAPIService {
 
     @GET("estudiante/examen/info")
     suspend fun getExamenDone() : Boolean
+
+    @GET("estudiante/examen")
+    suspend fun getExamenEjercicios() : List<EjercicioGeneral>
+
+    @POST("estudiante/examen")
+    suspend fun postExamenResultados(@Body respuestas: Respuestas) : ResultadosExamen
 }
 
 object  StudentAPI {

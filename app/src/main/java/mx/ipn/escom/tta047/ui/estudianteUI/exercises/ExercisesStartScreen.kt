@@ -59,7 +59,8 @@ fun ExercisesStartScreen(
             is EjerciciosUIState.Success -> ExercisesStartScreenSuccess(
                 regresar = regresar,
                 navToExercises = navToExercises,
-                nombreModulo = exercisesUIState.nombreModulo
+                nombreModulo = exercisesUIState.nombreModulo,
+                examDone = studentVM.examenDone
             )
         }
     }
@@ -70,7 +71,8 @@ fun ExercisesStartScreenSuccess(
     modifier: Modifier = Modifier,
     regresar: () -> Unit = {},
     navToExercises: () -> Unit = {},
-    nombreModulo: String = "ejercicios calculo"
+    nombreModulo: String = "ejercicios calculo",
+    examDone: Boolean
 ) {
     var circularBarProgress by remember { mutableStateOf(0.0f) }
     var loadProgress by remember { mutableStateOf(true) }
@@ -120,11 +122,13 @@ fun ExercisesStartScreenSuccess(
             )
         }
         Spacer(Modifier.height(16.dp))
-        Text(
-            text = "Recuerda revisar la lección antes de hacer los ejercicios.",
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge
-        )
+        if(examDone){
+            Text(
+                text = "Recuerda revisar la lección antes de hacer los ejercicios.",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
         Spacer(Modifier.height(32.dp))
         OutlinedButton(onClick = regresar) {
             Text("Regresar")
