@@ -39,7 +39,7 @@ sealed interface LeccionUIState {
 }
 
 sealed interface EjerciciosUIState {
-    data class Success(val ejercicios: List<EjercicioGeneral>): EjerciciosUIState
+    data class Success(val ejercicios: List<EjercicioGeneral>, val nombreModulo: String): EjerciciosUIState
     object Error: EjerciciosUIState
     object Loading: EjerciciosUIState
     object NoContent: EjerciciosUIState
@@ -101,11 +101,12 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                 Log.i("BugEndpoint", resp.toString())
             } catch (e: Exception) {
                 Log.i("BugEndpoint", e.toString())
+
             }
         }
     }
 
-    fun getEjerciciosAndUpdateExercisesVM(idModulo: Int, exercisesVM: ExercisesScreenViewModel){
+    fun getEjerciciosAndUpdateExercisesVM(idModulo: Int, exercisesVM: ExercisesScreenViewModel, nombreModulo: String){
         viewModelScope.launch {
             ejerciciosUIState = EjerciciosUIState.Loading
             try {
@@ -115,7 +116,7 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                     ejerciciosUIState = EjerciciosUIState.NoContent
                 } else {
                     Log.i("StudentHome", resp.toString())
-                    ejerciciosUIState = EjerciciosUIState.Success(resp)
+                    ejerciciosUIState = EjerciciosUIState.Success(resp, nombreModulo)
                     exercisesVM.updateExercisesAndReset(resp, idModulo)
                     exercisesVM.updateSendRespuestas{ sendRespuesta(idModulo, it) }
                 }
@@ -124,6 +125,10 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                 ejerciciosUIState = EjerciciosUIState.Error
             }
         }
+    }
+
+    suspend fun borrarAvance(){
+        retrofitService.borrarAvance()
     }
 
     fun updateToken(newToken: String){

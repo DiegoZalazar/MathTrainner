@@ -49,12 +49,16 @@ import androidx.navigation.NavController
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.kotlin.core.Amplify
 import mx.ipn.escom.tta047.ui.StudentScreens
+import mx.ipn.escom.tta047.ui.estudianteUI.home.StudentHomeViewModel
+import mx.ipn.escom.tta047.ui.smallcomponents.ConfirmAlert
+import kotlin.reflect.KSuspendFunction0
 
 @Composable
 fun EstudianteConfig(
     navController: NavController,
     estudianteConfigVM: EstudianteConfigVM = viewModel(),
-    modifier: Modifier = Modifier
+    studentVM: StudentHomeViewModel,
+    modifier: Modifier = Modifier,
 ) {
     var estudianteConfigUIState = estudianteConfigVM.estudianteConfigUIState
 
@@ -105,7 +109,8 @@ fun EstudianteConfig(
                     navController.navigate("login"){
                         popUpTo("student") { inclusive = true }
                     }
-                }
+                },
+                borrarAvance = studentVM::borrarAvance
             )
         }
     }
@@ -151,7 +156,8 @@ fun EstudianteConfigSuccess(
     padding: PaddingValues,
     navToEditarNombre: () -> Unit,
     navToResetPswd: () -> Unit,
-    navToLogin: () -> Unit
+    navToLogin: () -> Unit,
+    borrarAvance: KSuspendFunction0<Unit>
 ) {
     val context = LocalContext.current
     var loadResetPassword by remember { mutableStateOf(false) }
@@ -185,6 +191,32 @@ fun EstudianteConfigSuccess(
         }
     }
 
+    var borrarAvance by remember { mutableStateOf(false) }
+    var borrarAvanceLoading by remember { mutableStateOf(false) }
+    if(borrarAvance){
+        ConfirmAlert(
+            confirmQuestion = "¿Estás seguro?",
+            confirmAlertMsg = "Se perderá todo tu avance en los módulos.",
+            onDimiss = {borrarAvance = false},
+            onConfirm = {
+                borrarAvanceLoading = true
+            }
+        )
+    }
+    if(borrarAvanceLoading){
+        LaunchedEffect(key1 = true) {
+            try {
+                borrarAvance()
+                Toast.makeText(context, "Avance borrado", Toast.LENGTH_SHORT).show()
+            } catch (error: Exception) {
+                Log.e("EstudianteConfig", "Error al borrar avance: $error")
+                Toast.makeText(context, "Error al borrar avance", Toast.LENGTH_SHORT).show()
+            }
+            borrarAvanceLoading = false
+            borrarAvance = false
+
+        }
+    }
     Column(
         modifier = modifier
             .padding(padding)
@@ -256,6 +288,13 @@ fun EstudianteConfigSuccess(
             modifier = Modifier.width(200.dp)
         ) {
             Text("Cambiar contraseña")
+        }
+        Spacer(Modifier.height(12.dp))
+        Button(
+            onClick = { borrarAvance = true },
+            modifier = Modifier.width(200.dp)
+        ) {
+            Text("Borrar avance")
         }
         Spacer(Modifier.height(12.dp))
         OutlinedButton(

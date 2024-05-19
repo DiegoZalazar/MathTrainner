@@ -59,6 +59,7 @@ import mx.ipn.escom.tta047.ui.estudianteUI.home.StudentHome
 import mx.ipn.escom.tta047.ui.estudianteUI.exercises.ExerciseNavScreens
 import mx.ipn.escom.tta047.ui.estudianteUI.exercises.ExercisesScreen
 import mx.ipn.escom.tta047.ui.estudianteUI.exercises.ExercisesScreenViewModel
+import mx.ipn.escom.tta047.ui.estudianteUI.exercises.ExercisesStartScreen
 import mx.ipn.escom.tta047.ui.estudianteUI.home.StudentHomeViewModel
 import mx.ipn.escom.tta047.ui.navigation.AppScreens
 import mx.ipn.escom.tta047.ui.viewmodels.AdminEjerciciosViewModel
@@ -172,6 +173,19 @@ fun MathTrainer(
                         updateConfigView = { estudianteConfigVM.reload() }
                     )
                 }
+
+                composable(route = ExerciseNavScreens.StartExercises.name) {
+                    ExercisesStartScreen(
+                        studentVM = studentHomeViewModel,
+                        regresar = {
+                            navController.navigateUp()
+                        },
+                        navToExercises = {
+                            navController.navigate(ExerciseNavScreens.Exercises.name)
+                        }
+                    )
+                }
+
                 composable(route = ExerciseNavScreens.Exercises.name){
                     ExercisesScreen(
                         exercisesUIState = uiState,
@@ -191,7 +205,7 @@ fun MathTrainer(
                 }
 
                 composable(route = StudentScreens.StudentConfig.name){
-                    EstudianteConfig(navController = navController)
+                    EstudianteConfig(navController = navController, studentVM = studentHomeViewModel)
                 }
 
                 composable(route = StudentScreens.StudentConfigName.name){

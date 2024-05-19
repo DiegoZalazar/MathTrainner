@@ -213,10 +213,10 @@ fun StudentHome(
                             ListModulos(
                                 modulos = filterModulosByTema(studentHomeUIState.modulos, selectedItem.value),
                                 scope = scope,
-                                navToExercises = {
+                                navToExercises = { a, b ->
                                     scope.launch {
-                                        studentVM.getEjerciciosAndUpdateExercisesVM(it, exercisesScreenViewModel)
-                                        navController.navigate(ExerciseNavScreens.Exercises.name)
+                                        studentVM.getEjerciciosAndUpdateExercisesVM(a, exercisesScreenViewModel, b)
+                                        navController.navigate(ExerciseNavScreens.StartExercises.name)
                                     }
                                 },
                                 navToLeccion = {
@@ -267,7 +267,7 @@ fun ErrorScreen(
 fun ListModulos(
     modulos: List<ModuloUI>,
     scope: CoroutineScope,
-    navToExercises: (Int) -> Unit,
+    navToExercises: (Int, String) -> Unit,
     navToLeccion: (Int) -> Unit
 ){
     Column {
@@ -287,7 +287,7 @@ fun ListModulos(
 fun ModuloItem (
     moduloUi: ModuloUI,
     scope: CoroutineScope,
-    navToExercises: (Int) -> Unit,
+    navToExercises: (Int, String) -> Unit,
     navToLeccion: (Int) -> Unit
 ) {
     val pos = moduloUi.pos
@@ -316,7 +316,7 @@ fun ModuloItem (
                             },
                             toExercises = {
                                 scope.launch { tooltipState.dismiss() }
-                                navToExercises(moduloUi.modulo.idModulo)
+                                navToExercises(moduloUi.modulo.idModulo, moduloUi.modulo.nombreModulo)
                             }
                         )
                     }

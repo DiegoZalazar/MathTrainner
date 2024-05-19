@@ -18,56 +18,5 @@ import androidx.navigation.compose.rememberNavController
 
 enum class ExerciseNavScreens(val title: String){
     StartExercises("Start"),
-    Exercises("Session Of Exercises")
-}
-
-@Composable
-fun ExampleNavExercises (
-    navController: NavHostController = rememberNavController() // Host Controller and initialization 2)
-) {
-    val backStackEntry by navController.currentBackStackEntryAsState() // Host Controller and initialization 2)
-    val currentScreen = ExerciseNavScreens.valueOf(
-        backStackEntry?.destination?.route ?: ExerciseNavScreens.StartExercises.name
-    )
-    val viewModel : ExercisesScreenViewModel = viewModel()
-    val uiState by viewModel.uiState.collectAsState()
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = ExerciseNavScreens.StartExercises.name
-        ){
-            composable(route = ExerciseNavScreens.StartExercises.name){
-                StarExercisesScreen(navigateToExercises = {navController.navigate(ExerciseNavScreens.Exercises.name)})
-            }
-
-            composable(route = ExerciseNavScreens.Exercises.name){
-                ExercisesScreen(
-                    exercisesUIState = uiState,
-                    nextAction = viewModel::nextExercise,
-                    cancelAction = {
-                        viewModel.reset()
-                        navController.popBackStack(ExerciseNavScreens.StartExercises.name, inclusive = false)
-                    })
-            }
-        }
-    }
-}
-
-@Composable
-fun StarExercisesScreen(
-    navigateToExercises: ()->Unit
-){
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ){
-        Button(
-            onClick = navigateToExercises
-        ){
-            Text("Iniciar Ejercicios")
-        }
-    }
+    Exercises("Session Of Exercises"),
 }
