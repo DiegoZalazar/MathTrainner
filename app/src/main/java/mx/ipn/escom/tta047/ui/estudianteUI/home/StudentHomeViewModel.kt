@@ -58,6 +58,14 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
     var examenDone by mutableStateOf(false)
         private set
 
+    var selectedTema by mutableStateOf("Cálculo Diferencial")
+        private set
+
+    fun updateSelectedTema(tema: String){
+        Log.i("StudentHome", "Tema update: $tema")
+        selectedTema = tema
+    }
+
     fun getModulos() {
         viewModelScope.launch {
             studentHomeUIState = try{
