@@ -30,6 +30,9 @@ interface StudentAPIService {
 
     @PUT("estudiante/modulos")
     suspend fun borrarAvance()
+
+    @GET("estudiante/examen/info")
+    suspend fun getExamenDone() : Boolean
 }
 
 object  StudentAPI {

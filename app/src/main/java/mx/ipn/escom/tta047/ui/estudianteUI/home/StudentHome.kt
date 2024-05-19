@@ -95,6 +95,8 @@ fun StudentHome(
             token = session.tokensResult.value?.idToken?: "no hay token"
             studentVM.updateToken(token)
             studentVM.getModulos()
+            val examenDone = studentVM.getExamenDone()
+            Log.i("StudentHome", "Examen hecho: $examenDone")
         } catch (error: AuthException) {
             Log.e("AuthDemo", "Failed to fetch user attributes", error)
             try {

@@ -131,6 +131,10 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
         retrofitService.borrarAvance()
     }
 
+    suspend fun getExamenDone(): Boolean {
+        return retrofitService.getExamenDone()
+    }
+
     fun updateToken(newToken: String){
         val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
