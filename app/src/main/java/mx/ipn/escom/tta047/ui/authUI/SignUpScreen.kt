@@ -1,6 +1,7 @@
 package mx.ipn.escom.tta047.ui.authUI
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -67,7 +69,6 @@ fun SignUpScreen(
     var terms by remember { mutableStateOf(false) }
 
     var loading by remember { mutableStateOf(false) }
-    var isSignUpComplete = false
     val validName = remember(name){
         name.isEmpty() || Regex("^[a-zA-Z0-9_ -]{3,60}\$").matches(name)
     }
@@ -83,6 +84,8 @@ fun SignUpScreen(
     val validForm = remember(name, email, pswd, pswdConfirm, validName, validEmail, validPassword, validConfirmationPassword){
         name.isNotEmpty() && email.isNotEmpty() && pswd.isNotEmpty() && pswdConfirm.isNotEmpty() && validName && validEmail && validPassword && validConfirmationPassword
     }
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -248,13 +251,28 @@ fun SignUpScreen(
             CircularProgressIndicator()
         }
         LaunchedEffect(key1 = true) {
-            isSignUpComplete = signUp(email = email, nombre = name, password = pswdConfirm)
-            if(isSignUpComplete){
-                navController.navigate("home"){
-                    popUpTo("login")
+            val options = AuthSignUpOptions.builder()
+                .userAttribute(AuthUserAttributeKey.email(), email)
+                .userAttribute(AuthUserAttributeKey.name(), name)
+                .build()
+            try {
+                val result = Amplify.Auth.signUp(email, pswdConfirm, options)
+                Log.i("AuthQuickStart", "Result: $result")
+                if(!result.isSignUpComplete){
+                    navController.navigate("${LoginScreens.VerifyCode.name}/${email}")
+                } else {
+                    Toast.makeText(context, "Inicia sesion",Toast.LENGTH_SHORT).show()
+                    navController.navigate("home"){
+                        popUpTo("login")
+                    }
                 }
-            }else{
-                navController.navigate("${LoginScreens.VerifyCode.name}/${email}")
+            } catch (error: AuthException) {
+                Log.e("AuthQuickStart", "Sign up failed", error)
+                if(error.message == "Username already exists in the system."){
+                    Toast.makeText(context, "Error, el correo ya esta registrado", Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(context, "Ocurrio un error inesperado", Toast.LENGTH_SHORT).show()
+                }
             }
             loading = false
         }

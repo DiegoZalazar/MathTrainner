@@ -2,6 +2,7 @@ package mx.ipn.escom.tta047.ui.adminUI
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,6 +72,7 @@ fun BodyPrincipalAdministrador(
 @Composable
 fun PrincipalAdministrador(navController: NavController) {
     var userName by remember { mutableStateOf("") }
+    val context = LocalContext.current
     LaunchedEffect(key1 = true) {
         try {
             val attributes = Amplify.Auth.fetchUserAttributes()
@@ -80,10 +83,18 @@ fun PrincipalAdministrador(navController: NavController) {
 
             val session = Amplify.Auth.fetchAuthSession() as AWSCognitoAuthSession
             val token = session.tokensResult.value?.idToken?: "no hay token"
-//            studentVM.updateToken(token)
-//            studentVM.getModulos()
         } catch (error: AuthException) {
             Log.e("AuthDemo", "Failed to fetch user attributes", error)
+            try {
+                Amplify.Auth.signOut()
+            } catch (error: AuthException) {
+                Log.e("AmplifyQuickstart", "Failed to sign out auth session", error)
+                Toast.makeText(context, "Error al cerrar sesion", Toast.LENGTH_SHORT).show()
+            }
+            Toast.makeText(context, "Su sesion ha expirado", Toast.LENGTH_SHORT).show()
+            navController.navigate("login"){
+                popUpTo("admin") { inclusive = true }
+            }
         }
     }
 
