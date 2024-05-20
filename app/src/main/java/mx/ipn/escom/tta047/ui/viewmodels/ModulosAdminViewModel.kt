@@ -45,9 +45,7 @@ class ModulosAdminViewModel: ViewModel() {
         viewModelScope.launch {
             isLoading.postValue(true)
             insertModuloUseCase(modulo)
-            modulosModel.value = modulosModel.value?.toMutableList()?.apply {
-                add(modulo)
-            }?.toList()
+            onGetModulos()
             isLoading.postValue(false)
         }
     }

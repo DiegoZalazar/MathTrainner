@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -64,7 +65,7 @@ import mx.ipn.escom.tta047.ui.viewmodels.AdminLeccionesViewModel
 fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,leccion: Leccion,adminLeccionesViewModel: AdminLeccionesViewModel){
 
     var editLeccion=true
-    if (leccion?.idLeccion==0 && leccion?.tituloLeccion.equals("none")){
+    if (leccion?.idLeccion==0 || leccion?.tituloLeccion.equals("") || leccion?.tituloLeccion.equals("none")){
         editLeccion=false
     }
     Log.i("editleccion",editLeccion.toString())
@@ -116,7 +117,7 @@ fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,lecc
     }
 
     val niveles = listOf("Facil","Intermedio","Dificil")
-    val (selectedNivelOption, onOptionNivelSelected) = remember { mutableStateOf(niveles[0]) }
+    val (selectedNivelOption, onOptionNivelSelected) = remember { mutableStateOf(nivelEjercicio) }
 
 
     Scaffold(topBar = {
@@ -252,7 +253,7 @@ fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,lecc
                         modifier = Modifier
                             .padding(vertical = 16.dp)
                     )
-
+                    Text("Nivel:", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start)
                     Column(
                         Modifier.selectableGroup()
                     ) {

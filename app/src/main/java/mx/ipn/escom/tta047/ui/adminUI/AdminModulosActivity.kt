@@ -262,6 +262,7 @@ fun DialogAddModulo(
                     onClick = {
                         onConfirm()
                         addModulo(viewModel, modulo = Modulo(0, titulo,temasVariable))
+                        titulo=""
                     },
                     modifier = Modifier
                         .width(300.dp)
@@ -283,7 +284,8 @@ fun DialogAddModulo(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 TextButton(
-                    onClick = { onDismiss() },
+                    onClick = { onDismiss()
+                              titulo=""},
                     modifier = Modifier
                         .width(300.dp)
                         .height(58.dp)
@@ -489,5 +491,4 @@ fun deleteModulo(viewModel: ModulosAdminViewModel, modulo: Modulo) {
 
 fun addModulo(viewModel: ModulosAdminViewModel, modulo: Modulo) {
     viewModel.onCreateModulo(modulo)
-    viewModel.onGetModulos()
 }
