@@ -165,9 +165,9 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
     }
 
     val niveles = listOf("Facil","Intermedio","Dificil")
-    val (selectedNivelOption, onOptionNivelSelected) = remember { mutableStateOf(niveles[0]) }
+    val (selectedNivelOption, onOptionNivelSelected) = remember { mutableStateOf(nivelEjercicio) }
     val tiposEjercicios = listOf("Opción multiple","Relacionar columnas","Completar respuesta")
-    val (selectedTipoOption, onOptionTipoSelected) = remember { mutableStateOf(tiposEjercicios[0]) }
+    val (selectedTipoOption, onOptionTipoSelected) = remember { mutableStateOf(tipoEjercicio) }
 
 
     val isvalidCuerpo = remember(cuerpo){
