@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,13 +40,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import mx.ipn.escom.tta047.domain.model.Ejercicio
 import mx.ipn.escom.tta047.domain.model.Leccion
 import mx.ipn.escom.tta047.domain.model.Modulo
 import mx.ipn.escom.tta047.ui.theme.blueButton
@@ -69,6 +76,23 @@ fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,lecc
         mutableStateOf(titTemp)
     }
 
+    var nivelEjercicio by remember {
+        var desTemp:String="Facil"
+        if(editLeccion){
+            val lvl=leccion.nivelLeccion.toString()
+            if(lvl=="1"){
+                desTemp="Facil"
+            }
+            if(lvl=="2"){
+                desTemp="Intermedio"
+            }
+            if(lvl=="3"){
+                desTemp="Dificil"
+            }
+        }
+        mutableStateOf(desTemp)
+    }
+
     var descripcion by remember {
         var desTemp:String=""
         if(editLeccion){
@@ -90,6 +114,9 @@ fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,lecc
         }
         mutableStateOf(recursoMultimedia)
     }
+
+    val niveles = listOf("Facil","Intermedio","Dificil")
+    val (selectedNivelOption, onOptionNivelSelected) = remember { mutableStateOf(niveles[0]) }
 
 
     Scaffold(topBar = {
@@ -136,7 +163,16 @@ fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,lecc
                     if(editLeccion){
                         id=leccion.idLeccion
                     }
-                      val leccionNueva: Leccion = Leccion(id,titulo,descripcion,0,modulo.idModulo,recursoMultimedia)
+                    if(nivelEjercicio=="Facil"){
+                        nivelEjercicio="1"
+                    }
+                    if(nivelEjercicio=="Intermedio"){
+                        nivelEjercicio="2"
+                    }
+                    if(nivelEjercicio=="Dificil"){
+                        nivelEjercicio="3"
+                    }
+                      val leccionNueva: Leccion = Leccion(id,titulo,descripcion,nivelEjercicio.toInt(),modulo.idModulo,recursoMultimedia)
                     if(editLeccion){
                         adminLeccionesViewModel.onUpdateLeccion(leccion,leccionNueva)
                     }else{
@@ -216,6 +252,42 @@ fun AdminFormLeccionComposable(navController: NavController,modulo: Modulo ,lecc
                         modifier = Modifier
                             .padding(vertical = 16.dp)
                     )
+
+                    Column(
+                        Modifier.selectableGroup()
+                    ) {
+                        niveles.forEach { nivel ->
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp)
+                                    .selectable(
+                                        selected = (nivel == selectedNivelOption),
+                                        onClick = {
+                                            nivelEjercicio = nivel
+                                            onOptionNivelSelected(nivel)
+                                        },
+                                        role = Role.RadioButton
+                                    )
+                                    .padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = (nivel == selectedNivelOption),
+                                    onClick = null // null recommended for accessibility with screenreaders
+                                )
+                                Text(
+                                    text = nivel,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.padding(start = 16.dp)
+                                )
+                            }
+
+                        }
+                    }
+
+                    ///////////////////
+                    Spacer(modifier = Modifier.height(20.dp))
 
                 }
             }
