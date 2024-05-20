@@ -181,7 +181,9 @@ fun MathTrainer(
                         exercisesScreenViewModel = viewModelExercises,
                         onSkipExam = {
                             studentHomeViewModel.dimissExamDone()
-                            navController.navigateUp()
+                            navController.navigate(StudentScreens.StudentHome.name){
+                                popUpTo(StudentScreens.ExamInfo.name) {inclusive = true}
+                            }
                         },
                         onStartExam = {
                             studentHomeViewModel.getExamenEjercicios(viewModelExercises)
