@@ -6,6 +6,7 @@ import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP
 import retrofit2.http.Headers
 import retrofit2.http.PUT;
 
@@ -18,7 +19,8 @@ interface UsuariosApiClient {
             @Body usuarioModel: UsuarioModelUpdate
     ): Response<String>
 
-    @DELETE("/Prod/admins/usuarios")
+    @HTTP(method = "DELETE", path = "/Prod/admins/usuarios", hasBody = true)
+    //@DELETE("/Prod/admins/usuarios")
     suspend fun deleteEstudiante(@Body usuarioModel: UsuarioModel): Response<String>
 
 }
