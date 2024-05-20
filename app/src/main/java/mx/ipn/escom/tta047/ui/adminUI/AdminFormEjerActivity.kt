@@ -296,13 +296,14 @@ fun AdminFormEjercicioComposable(navController: NavController,modulo: Modulo ,ej
                     )
                     .padding(16.dp)
                     .wrapContentHeight()
+                    .verticalScroll(rememberScrollState())
             ) {
                 Column(
                     modifier = Modifier
                         .padding(it)
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()),
+                        ,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(Modifier.height(10.dp))

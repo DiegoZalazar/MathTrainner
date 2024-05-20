@@ -2,6 +2,7 @@ package mx.ipn.escom.tta047.ui.estudianteUI.home
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
@@ -95,6 +97,11 @@ fun StudentHome(
             token = session.tokensResult.value?.idToken?: "no hay token"
             studentVM.updateToken(token)
             studentVM.getModulos()
+            val examenDone = studentVM.getExamenDone()
+            Log.i("StudentHome", "Examen hecho: $examenDone")
+            if(!examenDone){
+                navController.navigate(StudentScreens.ExamInfo.name)
+            }
         } catch (error: AuthException) {
             Log.e("AuthDemo", "Failed to fetch user attributes", error)
             try {
@@ -143,7 +150,7 @@ fun StudentHome(
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val selectedItem = remember { mutableStateOf(temas[0]) }
+    val selectedTema = studentVM.selectedTema
 
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
@@ -153,10 +160,10 @@ fun StudentHome(
         drawerContent = {
             ModalDrawerSheet { StudentModalDrawer(
                 items = temas,
-                selected = selectedItem.value,
+                selected = selectedTema,
                 onClickItem = {
+                    studentVM.updateSelectedTema(it)
                     scope.launch { drawerState.close() }
-                    selectedItem.value = it
                 },
                 userName = userName,
                 onClickCloseSession = { closeSesionLoading = true },
@@ -195,7 +202,7 @@ fun StudentHome(
                 ){
                     Icon(imageVector = Icons.Default.Menu, contentDescription = "")
                     Spacer(Modifier.width(12.dp))
-                    Text(text = selectedItem.value, style = MaterialTheme.typography.headlineSmall)
+                    Text(text = selectedTema, style = MaterialTheme.typography.headlineSmall)
                 }
                 Column(
                     modifier = Modifier
@@ -211,12 +218,12 @@ fun StudentHome(
                             Log.i("StudentHome", studentHomeUIState.modulos.toString())
                             temas = updateTemas(studentHomeUIState.modulos)
                             ListModulos(
-                                modulos = filterModulosByTema(studentHomeUIState.modulos, selectedItem.value),
+                                modulos = filterModulosByTema(studentHomeUIState.modulos, selectedTema),
                                 scope = scope,
-                                navToExercises = {
+                                navToExercises = { a, b ->
                                     scope.launch {
-                                        studentVM.getEjerciciosAndUpdateExercisesVM(it, exercisesScreenViewModel)
-                                        navController.navigate(ExerciseNavScreens.Exercises.name)
+                                        studentVM.getEjerciciosAndUpdateExercisesVM(a, exercisesScreenViewModel, b)
+                                        navController.navigate(ExerciseNavScreens.StartExercises.name)
                                     }
                                 },
                                 navToLeccion = {
@@ -242,9 +249,12 @@ fun updateTemas(modulos: List<ModuloUI>): List<String> {
 
 fun filterModulosByTema(modulos: List<ModuloUI>, tema: String): List<ModuloUI> {
     val res: MutableList<ModuloUI> = mutableListOf()
+    val values = arrayOf(0,1,2,1)
+    var n = 0
     for(modulo in modulos) {
         if(modulo.modulo.tema == tema){
-            res.add(modulo)
+            res.add(ModuloUI(values[((n%4))],modulo.modulo))
+            n++
         }
     }
     return res
@@ -267,7 +277,7 @@ fun ErrorScreen(
 fun ListModulos(
     modulos: List<ModuloUI>,
     scope: CoroutineScope,
-    navToExercises: (Int) -> Unit,
+    navToExercises: (Int, String) -> Unit,
     navToLeccion: (Int) -> Unit
 ){
     Column {
@@ -287,7 +297,7 @@ fun ListModulos(
 fun ModuloItem (
     moduloUi: ModuloUI,
     scope: CoroutineScope,
-    navToExercises: (Int) -> Unit,
+    navToExercises: (Int, String) -> Unit,
     navToLeccion: (Int) -> Unit
 ) {
     val pos = moduloUi.pos
@@ -295,6 +305,7 @@ fun ModuloItem (
     val posWidth = values[((pos%4))] * 100.dp
     val r = painterResource(id = R.drawable.modulo)
     val tooltipState = rememberTooltipState(isPersistent = true)
+    val animatedProgress by animateFloatAsState(targetValue = moduloUi.modulo.avanceModulo, animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec)
     Row(
         modifier = Modifier
             .width(300.dp)
@@ -316,7 +327,7 @@ fun ModuloItem (
                             },
                             toExercises = {
                                 scope.launch { tooltipState.dismiss() }
-                                navToExercises(moduloUi.modulo.idModulo)
+                                navToExercises(moduloUi.modulo.idModulo, moduloUi.modulo.nombreModulo)
                             }
                         )
                     }
@@ -330,7 +341,7 @@ fun ModuloItem (
                     contentAlignment = Alignment.Center,
                 ){
                     CircularProgressIndicator(
-                        progress = {moduloUi.modulo.avanceModulo},
+                        progress = {animatedProgress},
                         modifier = Modifier.fillMaxSize()
                     )
                     Image(

@@ -39,7 +39,7 @@ sealed interface LeccionUIState {
 }
 
 sealed interface EjerciciosUIState {
-    data class Success(val ejercicios: List<EjercicioGeneral>): EjerciciosUIState
+    data class Success(val ejercicios: List<EjercicioGeneral>, val nombreModulo: String): EjerciciosUIState
     object Error: EjerciciosUIState
     object Loading: EjerciciosUIState
     object NoContent: EjerciciosUIState
@@ -54,6 +54,17 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
         private set
     var ejerciciosUIState: EjerciciosUIState by mutableStateOf(EjerciciosUIState.Loading)
         private set
+
+    var examenDone by mutableStateOf(false)
+        private set
+
+    var selectedTema by mutableStateOf("Cálculo Diferencial")
+        private set
+
+    fun updateSelectedTema(tema: String){
+        Log.i("StudentHome", "Tema update: $tema")
+        selectedTema = tema
+    }
 
     fun getModulos() {
         viewModelScope.launch {
@@ -72,7 +83,21 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                 Log.i("StudentHome", e.toString())
                 StudentHomeUIState.Error
             }
+            try {
+                examenDone = retrofitService.getExamenDone()
+                Log.i("StudentHome", "StudentVM examen: $examenDone")
+            } catch (e: Exception) {
+                Log.i("StudentHome", "Error al verificar el examen")
+            }
         }
+    }
+
+    fun reloadExamDone(){
+        viewModelScope.launch{ examenDone = retrofitService.getExamenDone() }
+    }
+
+    fun dimissExamDone(){
+        examenDone = true
     }
 
     fun getLeccion(idModulo: Int){
@@ -101,11 +126,45 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                 Log.i("BugEndpoint", resp.toString())
             } catch (e: Exception) {
                 Log.i("BugEndpoint", e.toString())
+
             }
         }
     }
 
-    fun getEjerciciosAndUpdateExercisesVM(idModulo: Int, exercisesVM: ExercisesScreenViewModel){
+    fun getExamenEjercicios(exercisesVM: ExercisesScreenViewModel){
+        viewModelScope.launch {
+            ejerciciosUIState = EjerciciosUIState.Loading
+            try{
+                val resp = retrofitService.getExamenEjercicios()
+                if(resp.isEmpty()){
+                    Log.i("StudentHome", "no hay ejercicios")
+                    ejerciciosUIState = EjerciciosUIState.NoContent
+                } else {
+                    Log.i("StudentHome", resp.toString())
+                    ejerciciosUIState = EjerciciosUIState.Success(resp, "Examen Diagnóstico.")
+                    exercisesVM.updateExercisesAndReset(resp)
+                    exercisesVM.updateSendRespuestas{ sendResultadosExamen(it) }
+                }
+            } catch (e : Exception){
+                Log.i("StudentHome", "Error al obtener los ejercicios del examen: $e")
+                ejerciciosUIState = EjerciciosUIState.Error
+            }
+        }
+    }
+
+    fun sendResultadosExamen(respuestas: Respuestas){
+        viewModelScope.launch {
+            try {
+                Log.i("BugEndpoint", respuestas.respuestas.toString())
+                val resp = retrofitService.postExamenResultados(respuestas)
+                Log.i("BugEndpoint", "Resultados: ${resp.resultados}")
+            } catch (e: Exception) {
+                Log.i("BugEndpoint", e.toString())
+            }
+        }
+    }
+
+    fun getEjerciciosAndUpdateExercisesVM(idModulo: Int, exercisesVM: ExercisesScreenViewModel, nombreModulo: String){
         viewModelScope.launch {
             ejerciciosUIState = EjerciciosUIState.Loading
             try {
@@ -115,8 +174,8 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                     ejerciciosUIState = EjerciciosUIState.NoContent
                 } else {
                     Log.i("StudentHome", resp.toString())
-                    ejerciciosUIState = EjerciciosUIState.Success(resp)
-                    exercisesVM.updateExercisesAndReset(resp, idModulo)
+                    ejerciciosUIState = EjerciciosUIState.Success(resp, nombreModulo)
+                    exercisesVM.updateExercisesAndReset(resp)
                     exercisesVM.updateSendRespuestas{ sendRespuesta(idModulo, it) }
                 }
             } catch(e: Exception){
@@ -124,6 +183,14 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                 ejerciciosUIState = EjerciciosUIState.Error
             }
         }
+    }
+
+    suspend fun borrarAvance(){
+        retrofitService.borrarAvance()
+    }
+
+    suspend fun getExamenDone(): Boolean {
+        return retrofitService.getExamenDone()
     }
 
     fun updateToken(newToken: String){

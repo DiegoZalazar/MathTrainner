@@ -4,5 +4,6 @@ data class FillBlank(
     val instrucciones: String,
     val latex: String,
     val respuesta: String,
-    val tiempo: Int = 0
+    val tiempo: Int = 0,
+    val modulo: Int = 0
 )

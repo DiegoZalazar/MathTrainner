@@ -5,5 +5,6 @@ data class MultOpc(
     val cuerpo: String,
     val respCorrecta: String,
     val opciones: List<String>,
-    val tiempo: Int = 0
+    val tiempo: Int = 0,
+    val modulo: Int = 0
 )

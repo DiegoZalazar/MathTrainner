@@ -55,10 +55,12 @@ import mx.ipn.escom.tta047.ui.estudianteUI.estudianteconfig.EstudianteConfig
 import mx.ipn.escom.tta047.ui.estudianteUI.estudianteconfig.EstudianteConfigNombre
 import mx.ipn.escom.tta047.ui.estudianteUI.estudianteconfig.EstudianteConfigUIState
 import mx.ipn.escom.tta047.ui.estudianteUI.estudianteconfig.EstudianteConfigVM
+import mx.ipn.escom.tta047.ui.estudianteUI.exam.ExamInfoScreen
 import mx.ipn.escom.tta047.ui.estudianteUI.home.StudentHome
 import mx.ipn.escom.tta047.ui.estudianteUI.exercises.ExerciseNavScreens
 import mx.ipn.escom.tta047.ui.estudianteUI.exercises.ExercisesScreen
 import mx.ipn.escom.tta047.ui.estudianteUI.exercises.ExercisesScreenViewModel
+import mx.ipn.escom.tta047.ui.estudianteUI.exercises.ExercisesStartScreen
 import mx.ipn.escom.tta047.ui.estudianteUI.home.StudentHomeViewModel
 import mx.ipn.escom.tta047.ui.navigation.AppScreens
 import mx.ipn.escom.tta047.ui.viewmodels.AdminEjerciciosViewModel
@@ -81,7 +83,8 @@ enum class StudentScreens {
     Leccion,
     StudentConfig,
     StudentConfigName,
-    StudentConfigResetPswd
+    StudentConfigResetPswd,
+    ExamInfo
 }
 
 @Composable
@@ -94,7 +97,6 @@ fun MathTrainer(
     adminUsuariosViewModel: AdminUsuariosViewModel,
     estudianteConfigVM: EstudianteConfigVM
 ){
-    val backStackEntry by navController.currentBackStackEntryAsState()
     val loginViewModel: LoginViewModel = viewModel()
     val viewModelExercises : ExercisesScreenViewModel = viewModel()
     val uiState by viewModelExercises.uiState.collectAsState()
@@ -172,6 +174,35 @@ fun MathTrainer(
                         updateConfigView = { estudianteConfigVM.reload() }
                     )
                 }
+
+                composable(route = StudentScreens.ExamInfo.name){
+                    ExamInfoScreen(
+                        studentVM = studentHomeViewModel,
+                        exercisesScreenViewModel = viewModelExercises,
+                        onSkipExam = {
+                            studentHomeViewModel.dimissExamDone()
+                            navController.navigateUp()
+                        },
+                        onStartExam = {
+                            studentHomeViewModel.getExamenEjercicios(viewModelExercises)
+                            navController.navigate(ExerciseNavScreens.StartExercises.name)
+                        },
+                        examDone = studentHomeViewModel.examenDone
+                    )
+                }
+
+                composable(route = ExerciseNavScreens.StartExercises.name) {
+                    ExercisesStartScreen(
+                        studentVM = studentHomeViewModel,
+                        regresar = {
+                            navController.navigateUp()
+                        },
+                        navToExercises = {
+                            navController.navigate(ExerciseNavScreens.Exercises.name)
+                        }
+                    )
+                }
+
                 composable(route = ExerciseNavScreens.Exercises.name){
                     ExercisesScreen(
                         exercisesUIState = uiState,
@@ -191,7 +222,7 @@ fun MathTrainer(
                 }
 
                 composable(route = StudentScreens.StudentConfig.name){
-                    EstudianteConfig(navController = navController)
+                    EstudianteConfig(navController = navController, studentVM = studentHomeViewModel)
                 }
 
                 composable(route = StudentScreens.StudentConfigName.name){

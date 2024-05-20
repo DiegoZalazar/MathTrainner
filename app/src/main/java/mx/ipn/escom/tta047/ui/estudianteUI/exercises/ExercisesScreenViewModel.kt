@@ -14,9 +14,9 @@ import mx.ipn.escom.tta047.ui.estudianteUI.exercises.fillblank.FillBlank
 import mx.ipn.escom.tta047.ui.estudianteUI.exercises.multopc.MultOpc
 
 sealed interface ExerciseUIState {
-    data class ExerciseUIStateColumns(val exerciseColumns: Columns) : ExerciseUIState
-    data class ExerciseUIStateMultOpc(val exerciseOptions: MultOpc) : ExerciseUIState
-    data class ExerciseUIStateFillBlank(val exerciseFillBlank: FillBlank) : ExerciseUIState
+    data class ExerciseUIStateColumns(val exerciseColumns: Columns, val idModulo: Int) : ExerciseUIState
+    data class ExerciseUIStateMultOpc(val exerciseOptions: MultOpc, val idModulo: Int) : ExerciseUIState
+    data class ExerciseUIStateFillBlank(val exerciseFillBlank: FillBlank, val idModulo: Int) : ExerciseUIState
     object FinishedExercises: ExerciseUIState
 }
 
@@ -30,14 +30,16 @@ private val ejerciciosTest: List<ExerciseUIState> = listOf(
                 Pair("\\int{dx}","x+C"),
                 Pair("\\int{\\frac{du}{u}}","ln(u)+C")
             )
-        )
+        ),
+        0
     ),
     ExerciseUIState.ExerciseUIStateFillBlank(
         FillBlank(
             instrucciones = "Completa el cambio de variable en el siguiente procedimiento",
             latex = "\\int{\\frac{1}{x-1}dx}, u=\\_\\_\\_, du=dx \\\\ \\int{\\frac{1}{u}du} \\\\ =ln(u)+C \\\\ =ln(x-1)+C",
             respuesta = "x-1"
-        )
+        ),
+        0
     ),
     ExerciseUIState.ExerciseUIStateMultOpc(
         MultOpc(
@@ -49,7 +51,8 @@ private val ejerciciosTest: List<ExerciseUIState> = listOf(
                 "u=6x,du=6",
                 "u=3x^2+2x,du=x+1"
             )
-        )
+        ),
+        0
     )
 )
 
@@ -75,6 +78,12 @@ class ExercisesScreenViewModel() : ViewModel() {
             is ExerciseUIState.ExerciseUIStateFillBlank -> "fillBlank"
             is ExerciseUIState.ExerciseUIStateMultOpc -> "multChoice"
             ExerciseUIState.FinishedExercises -> "error"
+        }
+        currModulo = when(_uiState.value.currExerciseUIState){
+            is ExerciseUIState.ExerciseUIStateColumns -> (_uiState.value.currExerciseUIState as ExerciseUIState.ExerciseUIStateColumns).idModulo
+            is ExerciseUIState.ExerciseUIStateFillBlank -> (_uiState.value.currExerciseUIState as ExerciseUIState.ExerciseUIStateFillBlank).idModulo
+            is ExerciseUIState.ExerciseUIStateMultOpc -> (_uiState.value.currExerciseUIState as ExerciseUIState.ExerciseUIStateMultOpc).idModulo
+            ExerciseUIState.FinishedExercises -> 0
         }
         val auxRespuesta = Respuesta(
             correcta = isCorrect,
@@ -141,8 +150,7 @@ class ExercisesScreenViewModel() : ViewModel() {
         }
     }
 
-    fun updateExercisesAndReset(ejercicios: List<EjercicioGeneral>, modulo: Int) {
-        currModulo = modulo
+    fun updateExercisesAndReset(ejercicios: List<EjercicioGeneral>) {
 
         val auxListOfTiempos: MutableList<Int> = mutableListOf()
 
@@ -159,7 +167,8 @@ class ExercisesScreenViewModel() : ViewModel() {
                                 instrucciones = ejercicio.planteamientoEjercicio,
                                 pares = paresCorrectosToList(ejercicio.paresCorrectos?:"error"),
                                 tiempo = ejercicio.tiempoEjercicio
-                            )
+                            ),
+                            ejercicio.idModulo
                         )
                     )
                 }
@@ -171,7 +180,8 @@ class ExercisesScreenViewModel() : ViewModel() {
                                 latex = ejercicio.cuerpo?:"Error",
                                 respuesta = ejercicio.respCorrectaEjercicio?:"Error",
                                 tiempo = ejercicio.tiempoEjercicio
-                            )
+                            ),
+                            ejercicio.idModulo
                         )
                     )
                 }
@@ -184,7 +194,8 @@ class ExercisesScreenViewModel() : ViewModel() {
                                 respCorrecta = ejercicio.respCorrectaEjercicio?:"error",
                                 opciones = (ejercicio.respIncorrectasEjercicio?:"error").split(";"),
                                 tiempo = ejercicio.tiempoEjercicio
-                            )
+                            ),
+                            ejercicio.idModulo
                         )
                     )
                 }

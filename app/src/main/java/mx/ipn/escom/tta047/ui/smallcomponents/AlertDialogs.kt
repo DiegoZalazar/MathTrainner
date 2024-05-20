@@ -3,14 +3,17 @@ package mx.ipn.escom.tta047.ui.smallcomponents
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -57,6 +60,49 @@ fun SignInAlert(
         }
     }
     Log.i("SignInScreen", "alert messagge{ title:${state.title}, msg:${state.msg} }")
+}
+
+@Composable
+fun ConfirmAlert(
+    confirmQuestion: String = "Estas eguro??",
+    confirmAlertMsg: String = "Se borrara todo",
+    onDimiss: () -> Unit = {},
+    onConfirm: () -> Unit = {}
+){
+    Dialog(
+        onDismissRequest = onDimiss
+    ){
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ){
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Text(text = confirmQuestion, style = MaterialTheme.typography.headlineSmall)
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(text = confirmAlertMsg)
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = onConfirm
+                ) {
+                    Text("Si, confimar")
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(onClick = onDimiss) {
+                    Text("No, cancelar")
+                }
+
+            }
+        }
+    }
 }
 
 @Preview(device = "id:pixel_5")
