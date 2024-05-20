@@ -97,9 +97,9 @@ fun StudentHome(
             token = session.tokensResult.value?.idToken?: "no hay token"
             studentVM.updateToken(token)
             studentVM.getModulos()
-            val examenDone = studentVM.getExamenDone()
-            Log.i("StudentHome", "Examen hecho: $examenDone")
-            if(!examenDone){
+            val examDone = studentVM.getExamenDone()
+            Log.i("StudentHome", "Examen hecho: $examDone")
+            if(!examDone && !studentVM.dimissExam){
                 navController.navigate(StudentScreens.ExamInfo.name)
             }
         } catch (error: AuthException) {
@@ -166,7 +166,10 @@ fun StudentHome(
                     scope.launch { drawerState.close() }
                 },
                 userName = userName,
-                onClickCloseSession = { closeSesionLoading = true },
+                onClickCloseSession = {
+                    studentVM.resetDimissExamDone()
+                    closeSesionLoading = true
+                },
                 onClickNavToConfig = {
                     updateConfigView()
                     navController.navigate(StudentScreens.StudentConfig.name)

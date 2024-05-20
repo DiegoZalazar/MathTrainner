@@ -106,6 +106,7 @@ fun EstudianteConfig(
                     navController.navigate(StudentScreens.StudentConfigResetPswd.name)
                 },
                 navToLogin = {
+                    studentVM.resetDimissExamDone()
                     navController.navigate("login"){
                         popUpTo("student") { inclusive = true }
                     }

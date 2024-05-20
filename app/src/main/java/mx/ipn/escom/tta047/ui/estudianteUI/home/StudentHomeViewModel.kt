@@ -55,7 +55,9 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
     var ejerciciosUIState: EjerciciosUIState by mutableStateOf(EjerciciosUIState.Loading)
         private set
 
-    var examenDone by mutableStateOf(false)
+    var examenDone by mutableStateOf(true)
+        private set
+    var dimissExam by mutableStateOf(false)
         private set
 
     var selectedTema by mutableStateOf("Cálculo Diferencial")
@@ -83,12 +85,12 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
                 Log.i("StudentHome", e.toString())
                 StudentHomeUIState.Error
             }
-            try {
-                examenDone = retrofitService.getExamenDone()
-                Log.i("StudentHome", "StudentVM examen: $examenDone")
-            } catch (e: Exception) {
-                Log.i("StudentHome", "Error al verificar el examen")
-            }
+//            try {
+//                examenDone = retrofitService.getExamenDone()
+//                Log.i("StudentHome", "StudentVM examen: $examenDone")
+//            } catch (e: Exception) {
+//                Log.i("StudentHome", "Error al verificar el examen")
+//            }
         }
     }
 
@@ -97,7 +99,11 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
     }
 
     fun dimissExamDone(){
-        examenDone = true
+        dimissExam = true
+    }
+
+    fun resetDimissExamDone(){
+        dimissExam = false
     }
 
     fun getLeccion(idModulo: Int){
@@ -190,26 +196,31 @@ class StudentHomeViewModel(token: String = "") : ViewModel() {
     }
 
     suspend fun getExamenDone(): Boolean {
-        return retrofitService.getExamenDone()
+        val aux = retrofitService.getExamenDone()
+        Log.i("StudentVM", "Exam done: $aux")
+        return aux
     }
 
     fun updateToken(newToken: String){
-        val client = OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val originalRequest = chain.request()
-                val newRequest = originalRequest.newBuilder()
-                    .addHeader("Authorization", newToken)
-                    .build()
-                chain.proceed(newRequest)
-            }
-            .build()
-        val retrofit = Retrofit.Builder()
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
-            .build()
+        viewModelScope.launch {
+            val client = OkHttpClient.Builder()
+                .addInterceptor { chain ->
+                    val originalRequest = chain.request()
+                    val newRequest = originalRequest.newBuilder()
+                        .addHeader("Authorization", newToken)
+                        .build()
+                    chain.proceed(newRequest)
+                }
+                .build()
+            val retrofit = Retrofit.Builder()
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(BASE_URL)
+                .build()
 
-        retrofitService = retrofit.create(StudentAPIService::class.java)
+            retrofitService = retrofit.create(StudentAPIService::class.java)
+            examenDone = getExamenDone()
+        }
     }
 
     init {
