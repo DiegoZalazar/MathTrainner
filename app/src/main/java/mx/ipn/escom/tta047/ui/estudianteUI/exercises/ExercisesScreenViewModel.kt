@@ -186,6 +186,8 @@ class ExercisesScreenViewModel() : ViewModel() {
                     )
                 }
                 "multChoice" -> {
+                    Log.i("ExercisesVM",(ejercicio.respIncorrectasEjercicio?:"error").split(";").toString())
+                    Log.i("ExercisesVM",ejercicio.respCorrectaEjercicio?:"error")
                     newEjercicios.add(
                         ExerciseUIState.ExerciseUIStateMultOpc(
                             MultOpc(

@@ -31,7 +31,7 @@ fun LaTeXView(
     val state = rememberWebViewState("file:///android_asset/latex_render.html")
 
     if (state.loadingState is LoadingState.Finished) {
-        webView?.loadUrl("javascript:addBody('${latex}')")
+        webView?.loadUrl("javascript:addBody(\"${latex}\")")
     }
     com.google.accompanist.web.WebView(
         state = state,

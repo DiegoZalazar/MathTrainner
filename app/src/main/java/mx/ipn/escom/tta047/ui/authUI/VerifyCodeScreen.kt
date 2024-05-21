@@ -3,6 +3,7 @@ package mx.ipn.escom.tta047.ui.authUI
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -150,7 +151,8 @@ fun VerifyCodeScreen(
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
-                    )
+                    ),
+                    modifier = Modifier.clickable { navController.navigateUp() }
                 )
             }
         }
