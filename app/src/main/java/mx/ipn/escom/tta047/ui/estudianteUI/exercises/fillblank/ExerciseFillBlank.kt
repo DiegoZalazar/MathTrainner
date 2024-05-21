@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -53,19 +55,13 @@ fun ExerciseFillBlank(
             .fillMaxSize()
             .padding(16.dp)
         ,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
-        ){
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.verticalScroll(rememberScrollState())
+                modifier = Modifier
+                    .fillMaxHeight(0.4f)
+                    .verticalScroll(rememberScrollState())
             ){
                 Text(
                     text = fillBlankUIState.value.instrucciones,
@@ -85,18 +81,21 @@ fun ExerciseFillBlank(
                 }
 
             }
-
             Button(
                 onClick = { exerciseFillBlankViewModel.comprobar() },
-                modifier = modifier
+                modifier = Modifier
                     .widthIn(min = 250.dp)
-                    .padding(vertical = 8.dp),
+                    .padding(vertical = 16.dp),
                 enabled = !exerciseFillBlankViewModel.resuelto
             ) {
                 Text("Comprobar")
             }
 
-            FillBlankComponent(exerciseFillBlankViewModel.respuesta, exerciseFillBlankViewModel::addToRespuesta, exerciseFillBlankViewModel::dropFromRespuesta)
+            Column(
+                modifier = Modifier.wrapContentHeight()
+            ){
+                FillBlankComponent(exerciseFillBlankViewModel.respuesta, exerciseFillBlankViewModel::addToRespuesta, exerciseFillBlankViewModel::dropFromRespuesta)
+            }
 
             val sheetState = rememberModalBottomSheetState()
             if(exerciseFillBlankViewModel.resuelto){
@@ -141,7 +140,7 @@ fun ExerciseFillBlank(
                     }
                 }
             }
-        }
+
     }
 }
 
@@ -197,54 +196,6 @@ fun FillBlankComponent(
                 KeyButton(key = "←", onClic = { drop() })
             }
         }
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 1.dp),
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            KeyButton("7", { add("7") })
-//            KeyButton("8", { add("8") })
-//            KeyButton("9", { add("9") })
-//            KeyButton("/", { add("/") })
-//            KeyButton("*", { add("*") })
-//        }
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 1.dp),
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            KeyButton("4", { add("4") })
-//            KeyButton("5", { add("5") })
-//            KeyButton("6", { add("6") })
-//            KeyButton("√", { add("√") })
-//            KeyButton("-", { add("-") })
-//        }
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 1.dp),
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            KeyButton("1", { add("1") })
-//            KeyButton("2", { add("2") })
-//            KeyButton("3", { add("3") })
-//            KeyButton("^", { add("^") })
-//            KeyButton("+", { add("+") })
-//        }
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 1.dp),
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            KeyButton(".", { add(".") })
-//            KeyButton("0", { add("0") })
-//            KeyButton("x", { add("x") })
-//            KeyButton("dx", { add("dx") })
-//            KeyButton("←", { drop() })
-//        }
     }
 }
 

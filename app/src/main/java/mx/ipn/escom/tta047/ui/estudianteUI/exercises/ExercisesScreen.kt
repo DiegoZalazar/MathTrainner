@@ -270,7 +270,7 @@ fun FinishedExercisesScreen(
                 animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
             )
             CircularProgressIndicator(
-                progress = animatedProgress,
+                progress = {animatedProgress},
                 modifier = Modifier.size(100.dp)
             )
 

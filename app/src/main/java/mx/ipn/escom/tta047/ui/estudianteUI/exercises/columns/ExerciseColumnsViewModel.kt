@@ -32,6 +32,10 @@ class ExerciseColumnsViewModel(
     var incorrecto by mutableStateOf(false)
     var correcto by mutableStateOf(false)
 
+    fun getInstrucciones(): String {
+        return exerciseColumns.instrucciones
+    }
+
 
     private fun shuffleOpciones(){
         val l = exerciseColumns.pares

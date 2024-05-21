@@ -14,6 +14,9 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +34,7 @@ fun ExerciseColumns(
     onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val instrucciones by remember { mutableStateOf(exerciseColumnsViewModel.getInstrucciones()) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -46,7 +50,7 @@ fun ExerciseColumns(
                 .fillMaxHeight()
         ){
             InstructionsText(
-                text = "Relaciona las integrales con su resultado:",
+                text = instrucciones,
                 modifier = Modifier
                     .padding(16.dp)
             )
@@ -75,7 +79,9 @@ fun ExerciseColumns(
                     ){
                         ModalBottomSheetMessage(correct = exerciseColumnsViewModel.correcto)
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ){
                             if(exerciseColumnsViewModel.correcto){
