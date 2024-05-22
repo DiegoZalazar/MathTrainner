@@ -215,7 +215,23 @@ Resources:
               Authorizer: CognitoAuthorizer
 
 
-
+  EstudianteExamenInfoFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: modelo/examen
+      Handler: ExamenInfo.lambda_handler
+      Runtime: python3.10
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /estudiante/examen/info
+            Method: any
+            RestApiId: !Ref apiMathTrainer
+            Auth:
+              Authorizer: CognitoAuthorizer
 
   CongnitoAuthFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -236,7 +252,6 @@ Resources:
               Authorizer: CognitoAuthorizer
 
   AdminUsuariosFunction:
-
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     IgnoreGlobals: '*'
     Properties:

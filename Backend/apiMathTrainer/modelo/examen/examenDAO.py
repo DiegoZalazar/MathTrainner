@@ -24,14 +24,47 @@ class ExamenDAO:
     def SetNivel(self,data):
         try:
             with self.connection.cursor() as cursor:
-                sql = "INSERT INTO EstudianteModulo (idModulo,idEstudiante,avanceModulo) VALUES (%s,%s,%s)"
-                cursor.execute(sql, (data["idModulo"],data["idEstudiante"],data["avance"],))
+                sql = "UPDATE EstudianteModulo SET avanceModulo = %s WHERE idModulo = %s and idEstudiante =%s"
+                cursor.execute(sql, (data["avance"], data["idModulo"], data["idEstudiante"],))
                 self.connection.commit()
                 return cursor.lastrowid
         except pymysql.Error as e:
             print(f"Error al buscar todos los ejercicios: {e}")
             return None
 
+    def UpdateExamenInfo(self,data):
+        try:
+            with self.connection.cursor() as cursor:
+                sql = "UPDATE EvaluacionDiagnostico SET realizado = %s WHERE idEstudiante = %s"
+                cursor.execute(sql, (data["realizado"],data["idEstudiante"]))
+                self.connection.commit()
+                return cursor.lastrowid
+        except pymysql.Error as e:
+            print(f"Error al buscar todos los ejercicios: {e}")
+            return None
+
+    def GetExamenInfo(self,data):
+        try:
+            with self.connection.cursor() as cursor:
+                sql = "SELECT realizado FROM EvaluacionDiagnostico WHERE idEstudiante = %s"
+                cursor.execute(sql, (data["idEstudiante"]))
+                resultado = cursor.fetchone()
+                if resultado:
+                    return bool(resultado["realizado"])
+                else:
+                    sql = "INSERT INTO EvaluacionDiagnostico (idEstudiante, realizado) VALUES (%s, %s)"
+                    cursor.execute(sql, (data["idEstudiante"], False))
+                    self.connection.commit()
+
+                    sql = "SELECT realizado FROM EvaluacionDiagnostico WHERE idEstudiante = %s"
+                    cursor.execute(sql, (data["idEstudiante"]))
+                    resultado = cursor.fetchone()
+                    if resultado:
+                        return bool(resultado["realizado"])
+
+        except pymysql.Error as e:
+            print(f"Error al buscar todos los ejercicios: {e}")
+            return None
 
     def __del__(self):
         self.connection.close()

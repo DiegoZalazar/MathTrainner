@@ -62,7 +62,7 @@ architecture = "x86_64"
 handler = "examenDiagnostico.lambda_handler"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["ExamenDiagnosticoFunction"]
+functions = ["ExamenDiagnosticoFunction", "EstudianteExamenInfoFunction"]
 
 [function_build_definitions.78cf51ea-c333-4ca4-85ca-939a90162391]
 codeuri = "C:\\Users\\diego\\AndroidStudioProjects\\MathTrainer\\Backend\\apiMathTrainer\\modelo\\AdminUsuarios"

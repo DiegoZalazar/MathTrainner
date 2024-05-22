@@ -40,8 +40,8 @@ class sesionDAO:
             with self.connection.cursor() as cursor:
                 #todo agregar en variables o otro metodo
 
-                sql = "SELECT * FROM Leccion WHERE idModulo = %s LIMIT 1"
-                cursor.execute(sql, (idModulo))
+                sql = "SELECT * FROM Leccion WHERE idModulo = %s and nivelLeccion =%s"
+                cursor.execute(sql, (idModulo,nivelLeccion))
                 return cursor.fetchall()
         except pymysql.Error as e:
             print(f"Error al buscar todos los ejercicios: {e}")

@@ -35,7 +35,19 @@ class ModuloDAO:
                 sql = "INSERT INTO Modulo (nombreModulo,tema) VALUES (%s,%s)"
                 cursor.execute(sql, (modulo["nombreModulo"],modulo["tema"],))
                 self.connection.commit()
-                return cursor.lastrowid
+                idModulo = cursor.lastrowid
+
+                sql = "SELECT * FROM Estudiante"
+                cursor.execute(sql)
+                estudiantes = cursor.fetchall()
+
+                for estudiante in estudiantes:
+                    sql="INSERT INTO EstudianteModulo (idEstudiante,idModulo,avanceModulo) VALUES (%s,%s,%s)"
+                    cursor.execute(sql,(estudiante["idEstudiante"], idModulo, 0.0))
+                    self.connection.commit()
+
+
+                return idModulo
         except pymysql.Error as e:
             print(f"Error al guardar el módulo: {e}")
             return None

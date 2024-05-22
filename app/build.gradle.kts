@@ -13,8 +13,8 @@ android {
         applicationId = "mx.ipn.escom.tta047"
         minSdk = 28
         targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.5"
 
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

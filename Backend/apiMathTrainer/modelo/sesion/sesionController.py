@@ -19,11 +19,11 @@ def GetSesionEjercicio(event):
         # todo agregar funcio completado
         nivelEjercicio = 1
         avanceModulo = float(avanceModulo)
-        if 0.0 <= avanceModulo <= .33:
+        if 0.0 <= avanceModulo < .34:
             nivelEjercicio = 1
-        elif .34 <= avanceModulo <= .66:
+        elif .34 <= avanceModulo < .67:
             nivelEjercicio = 2
-        elif .67 >= avanceModulo:
+        elif avanceModulo >= .67:
             nivelEjercicio = 3
 
         response_body = session_dao.CreateSesionEjercicio(idModulo, nivelEjercicio)
@@ -53,20 +53,21 @@ def PostSesionEjercicio(event):
         idEstudiante = event['requestContext']['authorizer']['claims']['sub']
         idModulo = event['pathParameters']['idModulo']
         for respuesta in data["respuestas"]:
-            variables = [int(respuesta["correcta"]), int(respuesta["tipo"]), int(respuesta["tiempo"]),
+            variables = [bool(respuesta["correcta"]), str(respuesta["tipo"]), int(respuesta["tiempo"]),
                          int(respuesta["intentos"])]
             avance += ArbolEvaluacion.calcular_valor(variables)
 
+        avance = float(avance/100)
         avanceActual = float(session_dao.FindAvance(idEstudiante, idModulo))
         avanceTotal = 0.0
         if avanceActual < .34:
             avanceTotal = avanceActual + avance
-            if avanceTotal > .34:
+            if avanceTotal >= .33:
                 avanceTotal = .34
 
         elif avanceActual >= .34 and avanceActual < .67:
             avanceTotal = avanceActual + avance
-            if avanceTotal > .67:
+            if avanceTotal >= .66:
                 avanceTotal = .67
         elif avanceActual >= .67:
             avanceTotal = avanceActual + avance
@@ -79,6 +80,7 @@ def PostSesionEjercicio(event):
             "idEstudiante": idEstudiante
 
         }
+       
 
         rows = session_dao.updateAvance(estudianteModulo)
 
@@ -109,18 +111,19 @@ def GetSesionLeccion(event):
         # Create new instance DAO
         session_dao = sesionDAO(os.environ['HOST'], os.environ['USER'], os.environ['PASSWORD'], os.environ['DB'])
         # todo acabar el avance de modulo
-        # avanceModulo = session_dao.FindAvance(idEstudiante, idModulo)
+        idEstudiante = event['requestContext']['authorizer']['claims']['sub']
+        avanceModulo = session_dao.FindAvance(idEstudiante, idModulo)
         # avanceModulo = .40
         # todo ver que regresa y hacer cast
 
-        nivelLeccion = 0
+        nivelLeccion = 1
 
-        # if 0 <= avanceModulo <= .33:
-        #    nivelLeccion = 0
-        # elif .34 <= avanceModulo <= .66:
-        #    nivelLeccion = 1
-        # elif .67 >= avanceModulo:
-        #    nivelLeccion = 2
+        if 0 <= avanceModulo <= .33:
+            nivelLeccion = 1
+        elif .34 <= avanceModulo <= .66:
+            nivelLeccion = 2
+        elif .67 >= avanceModulo:
+            nivelLeccion = 3
 
         response_body = session_dao.CreateSesionLeccion(idModulo, nivelLeccion)
         status_code = 200
