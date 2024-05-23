@@ -4,6 +4,7 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mx.ipn.escom.tta047.data.models.UsuarioModel
+import mx.ipn.escom.tta047.data.models.UsuarioModelDelete
 import mx.ipn.escom.tta047.data.models.UsuarioModelUpdate
 import mx.ipn.escom.tta047.di.RetrofitHelper
 
@@ -18,7 +19,7 @@ class UsuariosService{
         }
     }
 
-    suspend fun deleteUsuario(usuarioModel: UsuarioModel): String{
+    suspend fun deleteUsuario(usuarioModel: UsuarioModelDelete): String{
         return withContext(Dispatchers.IO) {
             var response = retrofit.create(UsuariosApiClient::class.java).deleteEstudiante(usuarioModel)
             Log.i("ResultAPI",response.toString())

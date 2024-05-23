@@ -1,6 +1,7 @@
 package mx.ipn.escom.tta047.data.network
 
 import mx.ipn.escom.tta047.data.models.UsuarioModel;
+import mx.ipn.escom.tta047.data.models.UsuarioModelDelete
 import mx.ipn.escom.tta047.data.models.UsuarioModelUpdate
 import retrofit2.Response;
 import retrofit2.http.Body;
@@ -21,6 +22,6 @@ interface UsuariosApiClient {
 
     @HTTP(method = "DELETE", path = "/Prod/admins/usuarios", hasBody = true)
     //@DELETE("/Prod/admins/usuarios")
-    suspend fun deleteEstudiante(@Body usuarioModel: UsuarioModel): Response<String>
+    suspend fun deleteEstudiante(@Body usuarioModel: UsuarioModelDelete): Response<String>
 
 }

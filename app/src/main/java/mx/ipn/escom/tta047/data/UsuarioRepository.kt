@@ -1,6 +1,7 @@
 package mx.ipn.escom.tta047.data
 
 import mx.ipn.escom.tta047.data.models.UsuarioModel
+import mx.ipn.escom.tta047.data.models.UsuarioModelDelete
 import mx.ipn.escom.tta047.data.models.UsuarioModelUpdate
 import mx.ipn.escom.tta047.data.network.UsuariosService
 import mx.ipn.escom.tta047.domain.model.Usuario
@@ -13,7 +14,7 @@ class UsuarioRepository  {
         return response.map { it.toDomain() }
     }
 
-    suspend fun deleteUsuarioFromApi(usuarioModel: UsuarioModel): String {
+    suspend fun deleteUsuarioFromApi(usuarioModel: UsuarioModelDelete): String {
         val response: String = api.deleteUsuario(usuarioModel)
         return response
     }

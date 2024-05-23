@@ -1,5 +1,6 @@
 package mx.ipn.escom.tta047
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -359,8 +360,7 @@ fun deleteLeccion(modulo: Modulo,leccion: Leccion, adminLeccionesViewModel: Admi
 }
 
 fun navigateToEditLeccion(navController: NavController,modulo: Modulo ,leccion: Leccion){
-    leccion.recursoMultimedia= URLEncoder.encode(leccion.recursoMultimedia, StandardCharsets.UTF_8.toString())
-    val leccionJson = Gson().toJson(leccion)
+    val leccionJSON = Uri.encode(Gson().toJson(leccion))
     val moduloJson = Gson().toJson(modulo)
-    navController.navigate(route = AppScreens.AdminFormLeccActivity.route+"/$moduloJson/$leccionJson")
+    navController.navigate(route = AppScreens.AdminFormLeccActivity.route+"/$moduloJson/$leccionJSON")
 }
